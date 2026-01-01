@@ -26,7 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     final url =
-    Uri.parse('http://192.168.1.7:8000/api/users/register/'); // Android emulator
+    Uri.parse('http://192.168.1.9:8000/api/users/register/'); // Android emulator
 
     try {
       final response = await http.post(
