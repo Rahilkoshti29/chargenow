@@ -1,4 +1,5 @@
-import 'package:chargenow/register.dart';
+import 'package:chargenow/login_page.dart';
+import 'package:chargenow/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const RegisterPage(),
+      home: const LoginPage(),
     );
   }
 }

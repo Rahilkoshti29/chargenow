@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,7 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     final url =
-    Uri.parse('http://192.168.1.9:8000/api/users/register/'); // Android emulator
+    Uri.parse("${Apiconst.base_url}users/register/"); // Android emulator
 
     try {
       final response = await http.post(
