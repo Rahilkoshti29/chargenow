@@ -25,6 +25,7 @@ class CommonTextFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
+      cursorColor: Colors.grey.shade400,
       validator: validator,
       keyboardType: keyboardType,
       decoration: InputDecoration(
