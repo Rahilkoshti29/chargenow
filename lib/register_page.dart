@@ -1,7 +1,6 @@
-import 'dart:convert';
-import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+
+enum RegisterType { user, operator }
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -11,134 +10,178 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  RegisterType selectedType = RegisterType.user;
+
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-
-  bool isLoading = false;
-
-  Future<void> registerUser() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final url =
-    Uri.parse("${Apiconst.base_url}users/register/"); // Android emulator
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "user_name": nameController.text.trim(),
-          "user_email": emailController.text.trim(),
-          "user_password": passwordController.text,
-          "user_phone": phoneController.text.trim(),
-          "user_address": addressController.text.trim(),
-        }),
-      );
-
-      setState(() {
-        isLoading = false;
-      });
-
-      if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration Successful')),
-        );
-
-        // Clear fields after success
-        nameController.clear();
-        emailController.clear();
-        passwordController.clear();
-        phoneController.clear();
-        addressController.clear();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.body)),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Server error')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: const Text("Register"),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
-                validator: (value) =>
-                value!.isEmpty ? 'Enter your name' : null,
-              ),
 
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) =>
-                value!.isEmpty ? 'Enter email' : null,
-              ),
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
 
-              TextFormField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) =>
-                value!.length < 6 ? 'Minimum 6 characters' : null,
-              ),
+          // 🔹 TOP ROLE SELECTOR
+          _buildRoleSelector(),
 
-              TextFormField(
-                controller: phoneController,
-                decoration: const InputDecoration(labelText: 'Phone Number'),
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                value!.length != 10 ? 'Enter 10 digit number' : null,
-              ),
+          const SizedBox(height: 20),
 
-              TextFormField(
-                controller: addressController,
-                decoration: const InputDecoration(labelText: 'Address'),
-                validator: (value) =>
-                value!.isEmpty ? 'Enter address' : null,
+          // 🔹 FORM
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: selectedType == RegisterType.user
+                    ? _userForm()
+                    : _operatorForm(),
               ),
-
-              const SizedBox(height: 20),
-
-              ElevatedButton(
-                onPressed: isLoading
-                    ? null
-                    : () {
-                  if (_formKey.currentState!.validate()) {
-                    registerUser();
-                  }
-                },
-                child: isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Register'),
-              ),
-            ],
+            ),
           ),
+        ],
+      ),
+
+      // 🔹 BOTTOM BUTTON
+      bottomNavigationBar: _buildBottomButton(),
+    );
+  }
+
+  // ======================================================
+  // ROLE SELECTOR
+  // ======================================================
+
+  Widget _buildRoleSelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _roleButton("User", RegisterType.user),
+        const SizedBox(width: 10),
+        _roleButton("Operator", RegisterType.operator),
+      ],
+    );
+  }
+
+  Widget _roleButton(String title, RegisterType type) {
+    final bool isSelected = selectedType == type;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedType = type;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue : Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ======================================================
+  // USER FORM
+  // ======================================================
+
+  Widget _userForm() {
+    return Column(
+      children: [
+        _inputField("Full Name"),
+        const SizedBox(height: 12),
+
+        _inputField("Email"),
+        const SizedBox(height: 12),
+
+        _inputField("Phone Number"),
+        const SizedBox(height: 12),
+
+        _inputField("Password", isPassword: true),
+      ],
+    );
+  }
+
+  // ======================================================
+  // OPERATOR FORM
+  // ======================================================
+
+  Widget _operatorForm() {
+    return Column(
+      children: [
+        _inputField("Operator Name"),
+        const SizedBox(height: 12),
+
+        _inputField("Company Name"),
+        const SizedBox(height: 12),
+
+        _inputField("Vehicle Number"),
+        const SizedBox(height: 12),
+
+        _inputField("Phone Number"),
+        const SizedBox(height: 12),
+
+        _inputField("Password", isPassword: true),
+      ],
+    );
+  }
+
+  // ======================================================
+  // COMMON INPUT FIELD
+  // ======================================================
+
+  Widget _inputField(String label, {bool isPassword = false}) {
+    return TextFormField(
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "$label is required";
+        }
+        return null;
+      },
+    );
+  }
+
+  // ======================================================
+  // BOTTOM BUTTON
+  // ======================================================
+
+  Widget _buildBottomButton() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      height: 80,
+      child: ElevatedButton(
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            if (selectedType == RegisterType.user) {
+              debugPrint("User Registered");
+            } else {
+              debugPrint("Operator Registered");
+            }
+          }
+        },
+        child: Text(
+          selectedType == RegisterType.user
+              ? "Register as User"
+              : "Register as Operator",
+          style: const TextStyle(fontSize: 16),
         ),
       ),
     );
