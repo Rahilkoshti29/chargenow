@@ -13,6 +13,9 @@ class _USerDashboardState extends State<USerDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("USerDashboard page"),),
+      body: Center(
+        child: Text("USerDashboard page"),
+      ),
     );
   }
 }
