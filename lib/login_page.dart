@@ -24,16 +24,14 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: isLoading
-          ?  Center(
-              child: CircularProgressIndicator(color: Color(0xff2ecc71)),
-            )
+          ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
           : Column(
               children: [
                 Expanded(
                   flex: 4,
                   child: Container(
                     width: double.infinity,
-                    decoration:  BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Color(0xff2ecc71), Color(0xff27ae60)],
                         begin: Alignment.topLeft,
@@ -61,24 +59,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 Expanded(
                   flex: 6,
                   child: Transform.translate(
-                    offset:  Offset(
-                      0,
-                      -30,
-                    ),
+                    offset: Offset(0, -30),
                     child: ClipRRect(
-                      borderRadius:  BorderRadius.vertical(
+                      borderRadius: BorderRadius.vertical(
                         top: Radius.circular(35),
                       ),
                       child: Container(
                         color: Colors.white,
-                        padding:  EdgeInsets.fromLTRB(25, 40, 25, 25),
+                        padding: EdgeInsets.fromLTRB(25, 40, 25, 25),
                         child: SingleChildScrollView(
                           child: Form(
                             key: _formKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                 Center(
+                                Center(
                                   child: Text(
                                     "Welcome Back!",
                                     style: TextStyle(
@@ -88,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
 
-                                 SizedBox(height: 30),
+                                SizedBox(height: 30),
 
                                 CommonTextFormField(
                                   controller: emailController,
@@ -106,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                 ),
 
-                                 SizedBox(height: 20),
+                                SizedBox(height: 20),
 
                                 CommonTextFormField(
                                   controller: passwordController,
@@ -134,14 +129,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                 ),
 
-                                 SizedBox(height: 30),
+                                SizedBox(height: 30),
 
                                 SizedBox(
                                   width: double.infinity,
                                   height: 55,
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:  Color(0xff2ecc71),
+                                      backgroundColor: Color(0xff2ecc71),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30),
                                       ),
@@ -151,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ScaffoldMessenger.of(
                                           context,
                                         ).showSnackBar(
-                                           SnackBar(
+                                          SnackBar(
                                             content: Text("Login Successful"),
                                           ),
                                         );
@@ -168,17 +163,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
 
-                                 SizedBox(height: 25),
+                                SizedBox(height: 25),
 
                                 Center(
                                   child: GestureDetector(
                                     onTap: () {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => RegisterPage()));
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => RegisterPage(),
+                                        ),
+                                      );
                                     },
-                                    child:  Text.rich(
+                                    child: Text.rich(
                                       TextSpan(
                                         text: "Don't have an account? ",
                                         style: TextStyle(color: Colors.black),
