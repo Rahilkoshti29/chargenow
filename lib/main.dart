@@ -1,5 +1,4 @@
 import 'package:chargenow/login_page.dart';
-import 'package:chargenow/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
