@@ -1,20 +1,20 @@
 
 import 'package:flutter/material.dart';
 
-class USerDashboard extends StatefulWidget {
-  const USerDashboard({super.key});
+class UserDashboard extends StatefulWidget {
+  const UserDashboard({super.key});
 
   @override
-  State<USerDashboard> createState() => _USerDashboardState();
+  State<UserDashboard> createState() => _UserDashboardState();
 }
 
-class _USerDashboardState extends State<USerDashboard> {
+class _UserDashboardState extends State<UserDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("USerDashboard page"),),
+      appBar: AppBar(title: Text("UserDashboard page"),),
       body: Center(
-        child: Text("USerDashboard page"),
+        child: Text("UserDashboard page"),
       ),
     );
   }
