@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/CommonWidget/textfomfield.dart';
 import 'package:chargenow/login_page.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   RegisterType selectedType = RegisterType.user;
 
-  // ================= CONTROLLERS =================
+  // controllers
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController userEmailController = TextEditingController();
   final TextEditingController userPhoneController = TextEditingController();
@@ -39,10 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isLoading = false;
   bool hidePassword = true;
   final Color primaryGreen = const Color(0xFF2ECC71);
-  final FocusNode _licenseFocusNode = FocusNode();
-
-  final ImagePicker _picker = ImagePicker();
-  XFile? pickedFile;
+  PlatformFile? pickedFile;
 
   Future<void> registerUser(BuildContext context) async {
     setState(() => isLoading = true);
@@ -61,10 +58,11 @@ class _RegisterPageState extends State<RegisterPage> {
           "user_address": userAddressController.text.trim(),
         }),
       );
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.body}");
 
       final Map<String, dynamic> data = jsonDecode(response.body);
 
-      // ✅ SUCCESS
       if (response.statusCode == 201 && data['success'] == true) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['token']);
@@ -75,14 +73,11 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
 
-        // ⏳ small delay so user sees success msg
         await Future.delayed(const Duration(milliseconds: 800));
 
-        // 🔙 BACK TO LOGIN PAGE
         Navigator.pop(context);
       } else {
         String errorMessage = 'Registration failed';
-
         if (data.containsKey('user_email')) {
           errorMessage = data['user_email'][0];
         } else if (data.containsKey('message')) {
@@ -105,12 +100,104 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future<void> pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  Future<void> registerOperator(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
 
-    if (image != null) {
+    if (pickedFile == null || pickedFile!.path == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please upload license document")),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    final uri = Uri.parse('${Apiconst.base_url}auth/operator/register/');
+
+    try {
+      final request = http.MultipartRequest('POST', uri);
+
+      request.fields['operator_name'] = operatorNameController.text.trim();
+      request.fields['operator_email'] = operatorEmailController.text.trim();
+      request.fields['operator_phone'] = operatorPhoneController.text.trim();
+      request.fields['operator_password'] = operatorPasswordController.text
+          .trim();
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'operator_license_doc',
+          pickedFile!.path!,
+        ),
+      );
+
+      final streamedResponse = await request.send();
+      final responseBody = await streamedResponse.stream.bytesToString();
+
+      debugPrint("Status Code: ${streamedResponse.statusCode}");
+      debugPrint("Body: $responseBody");
+
+      final data = jsonDecode(responseBody);
+
+      if (streamedResponse.statusCode == 201 && data['success'] == true) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['token']);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(data['message'])));
+
+        await Future.delayed(const Duration(milliseconds: 800));
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      } else {
+        String errorMsg = 'Registration failed';
+
+        //  FILE ERROR (PDF / SIZE / TYPE)
+        if (data.containsKey('operator_license_doc')) {
+          errorMsg = data['operator_license_doc'][0];
+        }
+        //  EMAIL ALREADY EXISTS
+        else if (data.containsKey('operator_email')) {
+          errorMsg = data['operator_email'][0];
+        }
+        //  GENERIC MESSAGE
+        else if (data.containsKey('message')) {
+          errorMsg = data['message'];
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMsg),
+            // backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("Operator Register Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Something went wrong"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> pickLicenseFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+    );
+
+    if (result != null) {
       setState(() {
-        pickedFile = image;
+        pickedFile = result.files.first;
+        operatorLicenseController.text = pickedFile!.name;
       });
     }
   }
@@ -119,12 +206,10 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: isLoading
           ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
           : Column(
               children: [
-                // ================= HEADER =================
                 Container(
                   height: 230,
                   width: double.infinity,
@@ -149,7 +234,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 20),
 
-                // ================= ROLE SELECTOR =================
+                // ROLE SELECTOR
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -161,7 +246,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 20),
 
-                // ================= FORM =================
+                //  FORM
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -174,7 +259,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
 
-                // ================= REGISTER BUTTON =================
+                //  REGISTER BUTTON
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -195,7 +280,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               if (selectedType == RegisterType.user) {
                                 registerUser(context); // 👤 User API
                               } else {
-                                // registerOperator();  // 🚐 Operator API
+                                registerOperator(context);
                               }
                             }
                           },
@@ -244,7 +329,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // ================= ROLE CHIP =================
+  //  ROLE CHIP
   Widget roleChip(String text, RegisterType type) {
     final isSelected = selectedType == type;
     return GestureDetector(
@@ -271,7 +356,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // ================= USER FORM =================
+  // USER FORM
   Widget userForm() {
     return Column(
       children: [
@@ -340,7 +425,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // ================= OPERATOR FORM =================
+  //  OPERATOR FORM
   Widget operatorForm() {
     return Column(
       children: [
@@ -409,75 +494,17 @@ class _RegisterPageState extends State<RegisterPage> {
           keyboardType: TextInputType.none,
           suffixIcon: IconButton(
             icon: const Icon(Icons.upload_file),
-            onPressed: pickImage,
+            onPressed: pickLicenseFile,
           ),
         ),
 
-        if (pickedFile != null)
+        if (pickedFile != null &&
+            ['jpg', 'jpeg', 'png'].contains(pickedFile!.extension))
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Image.file(File(pickedFile!.path), height: 120),
+            child: Image.file(File(pickedFile!.path!), height: 120),
           ),
       ],
     );
   }
 }
-
-// Future<void> registerOperatorApi() async {
-//   if (!_formKey.currentState!.validate()) return;
-//
-//   if (pickedFile == null) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(content: Text("Please upload license document")),
-//     );
-//     return;
-//   }
-//
-//   final mimeTypeData =
-//   lookupMimeType(pickedFile!.path)?.split('/');
-//
-//   final request = http.MultipartRequest(
-//     'POST',
-//     Uri.parse("YOUR_API_URL_HERE"),
-//   );
-//
-//   request.fields['operator_name'] = operatorNameController.text;
-//   request.fields['operator_email'] = operatorEmailController.text;
-//   request.fields['operator_phone'] = operatorPhoneController.text;
-//   request.fields['operator_password'] = operatorPasswordController.text;
-//
-//   request.files.add(
-//     await http.MultipartFile.fromPath(
-//       'operator_license_doc',
-//       pickedFile!.path,
-//       contentType: MediaType(
-//         mimeTypeData![0],
-//         mimeTypeData[1],
-//       ),
-//     ),
-//   );
-//
-//   try {
-//     final response = await request.send();
-//     final responseBody = await response.stream.bytesToString();
-//
-//     final data = jsonDecode(responseBody);
-//
-//     if (response.statusCode == 200 && data['error'] == false) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text(data['message'])),
-//       );
-//       Navigator.pushReplacement(
-//         context,
-//         MaterialPageRoute(builder: (_) => const LoginScreen()),
-//       );
-//     } else {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text(data['message'] ?? "Registration failed")),
-//       );
-//     }
-//   } catch (e) {
-//     debugPrint("API Error: $e");
-//   }
-// }
-
