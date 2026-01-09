@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class UserDashboard extends StatefulWidget {
@@ -12,10 +11,9 @@ class _UserDashboardState extends State<UserDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("UserDashboard page"),),
-      body: Center(
-        child: Text("UserDashboard page"),
-      ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: Text("UserDashboard page")),
+      body: Center(child: Text("UserDashboard page")),
     );
   }
 }

@@ -23,36 +23,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool hidePassword = true;
   bool isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkToken();
-  }
-
-  /// ✅ AUTO LOGIN IF TOKEN EXISTS
-  Future<void> _checkToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
-    if (token != null) {
-      final role = prefs.getInt('role');
-
-      if (role == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const UserDashboard()),
-        );
-      } else if (role == 2) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const VanoperatorDashboard()),
-        );
-      }
-    }
-  }
-
-  /// ✅ SINGLE LOGIN API CALL
   Future<void> login(BuildContext context) async {
     setState(() => isLoading = true);
 
@@ -91,9 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  /// ✅ SAVE TOKEN & REDIRECT
-  Future<void> _handleLoginSuccess(
-      BuildContext context, dynamic data) async {
+  Future<void> _handleLoginSuccess(BuildContext context, dynamic data) async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setString('token', data['token']);
@@ -101,21 +69,21 @@ class _LoginScreenState extends State<LoginScreen> {
     await prefs.setString('email', data['user']['email']);
     await prefs.setString('name', data['user']['name']);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(data['message'])),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(data['message'])));
 
     await Future.delayed(const Duration(milliseconds: 400));
 
     if (data['user']['role'] == 1) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const UserDashboard()),
+        MaterialPageRoute(builder: (_) => UserDashboard()),
       );
     } else if (data['user']['role'] == 2) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const VanoperatorDashboard()),
+        MaterialPageRoute(builder: (_) => VanoperatorDashboard()),
       );
     }
   }
@@ -127,148 +95,153 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: false,
       body: isLoading
           ? const Center(
-        child: CircularProgressIndicator(color: Color(0xff2ecc71)),
-      )
+              child: CircularProgressIndicator(color: Color(0xff2ecc71)),
+            )
           : Column(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xff2ecc71), Color(0xff27ae60)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.ev_station,
-                      color: Colors.white, size: 80),
-                  SizedBox(height: 10),
-                  Text(
-                    "ChargeNow",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xff2ecc71), Color(0xff27ae60)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.ev_station, color: Colors.white, size: 80),
+                        SizedBox(height: 10),
+                        Text(
+                          "ChargeNow",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 6,
-            child: Transform.translate(
-              offset: const Offset(0, -30),
-              child: ClipRRect(
-                borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(35)),
-                child: Container(
-                  color: Colors.white,
-                  padding:
-                  const EdgeInsets.fromLTRB(25, 40, 25, 25),
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          const Text(
-                            "Welcome Back!",
-                            style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 30),
-                          CommonTextFormField(
-                            controller: emailController,
-                            hintText: "Email",
-                            prefixIcon: Icons.email_outlined,
-                            validator: (v) {
-                              if (v!.isEmpty) return "Email required";
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          CommonTextFormField(
-                            controller: passwordController,
-                            hintText: "Password",
-                            prefixIcon: Icons.lock_outline,
-                            obscureText: hidePassword,
-                            suffixIcon: IconButton(
-                              icon: Icon(hidePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                              onPressed: () =>
-                                  setState(() => hidePassword = !hidePassword),
-                            ),
-                            validator: (v) {
-                              if (v!.isEmpty) return "Password required";
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 30),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 55,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                const Color(0xff2ecc71),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(30),
+                ),
+                Expanded(
+                  flex: 6,
+                  child: Transform.translate(
+                    offset: const Offset(0, -30),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(35),
+                      ),
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.fromLTRB(25, 40, 25, 25),
+                        child: SingleChildScrollView(
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                const Text(
+                                  "Welcome Back!",
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  login(context);
-                                }
-                              },
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                                const SizedBox(height: 30),
+                                CommonTextFormField(
+                                  controller: emailController,
+                                  hintText: "Email",
+                                  prefixIcon: Icons.email_outlined,
+                                  validator: (v) {
+                                    if (v!.isEmpty) return "Email required";
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                CommonTextFormField(
+                                  controller: passwordController,
+                                  hintText: "Password",
+                                  prefixIcon: Icons.lock_outline,
+                                  obscureText: hidePassword,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      hidePassword
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
+                                    onPressed: () => setState(
+                                      () => hidePassword = !hidePassword,
+                                    ),
+                                  ),
+                                  validator: (v) {
+                                    if (v!.isEmpty) return "Password required";
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 30),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 55,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xff2ecc71),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        login(context);
+                                      }
+                                    },
+                                    child: const Text(
+                                      "Login",
+                                      style: TextStyle(
+                                        fontSize: 25,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 25),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => RegisterPage(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text.rich(
+                                    TextSpan(
+                                      text: "Don't have an account? ",
+                                      children: [
+                                        TextSpan(
+                                          text: "Sign Up",
+                                          style: TextStyle(
+                                            color: Color(0xff2ecc71),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 25),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => RegisterPage()),
-                              );
-                            },
-                            child: const Text.rich(
-                              TextSpan(
-                                text: "Don't have an account? ",
-                                children: [
-                                  TextSpan(
-                                    text: "Sign Up",
-                                    style: TextStyle(
-                                        color: Color(0xff2ecc71),
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

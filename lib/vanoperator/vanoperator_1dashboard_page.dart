@@ -11,10 +11,9 @@ class _VanoperatorDashboardState extends State<VanoperatorDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("VanoperatorDashboard page"),),
-      body: Center(
-        child: Text("VanoperatorDashboardState page"),
-      ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: Text("VanoperatorDashboard page")),
+      body: Center(child: Text("VanoperatorDashboardState page")),
     );
   }
 }

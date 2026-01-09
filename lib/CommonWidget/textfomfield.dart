@@ -11,7 +11,6 @@ class CommonTextFormField extends StatelessWidget {
   final bool showCursor;
   final TextInputType keyboardType;
 
-
   const CommonTextFormField({
     super.key,
     required this.controller,
@@ -23,7 +22,6 @@ class CommonTextFormField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.readOnly = false,
     this.showCursor = true,
-
   });
 
   @override
@@ -42,8 +40,10 @@ class CommonTextFormField extends StatelessWidget {
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.grey.shade100,
-        contentPadding:
-        const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 20,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
