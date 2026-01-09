@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/CommonWidget/textfomfield.dart';
 import 'package:chargenow/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum RegisterType { user, operator }
 
@@ -37,6 +41,75 @@ class _RegisterPageState extends State<RegisterPage> {
   final Color primaryGreen = const Color(0xFF2ECC71);
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
+
+  Future<void> registerUser(BuildContext context) async {
+    setState(() => isLoading = true);
+
+    final url = Uri.parse('${Apiconst.base_url}auth/user/register/');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "user_name": userNameController.text.trim(),
+          "user_email": userEmailController.text.trim(),
+          "user_password": userPasswordController.text.trim(),
+          "user_phone": userPhoneController.text.trim(),
+          "user_address": userAddressController.text.trim(),
+        }),
+      );
+
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+      // ✅ SUCCESS
+      if (response.statusCode == 201 && data['success'] == true) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['token']);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(data['message']),
+           // backgroundColor: Colors.green,
+          ),
+        );
+
+        // ⏳ small delay so user sees success msg
+        await Future.delayed(const Duration(milliseconds: 800));
+
+        // 🔙 BACK TO LOGIN PAGE
+        Navigator.pop(context);
+      }
+
+      else {
+        String errorMessage = 'Registration failed';
+
+        if (data.containsKey('user_email')) {
+          errorMessage = data['user_email'][0];
+        } else if (data.containsKey('message')) {
+          errorMessage = data['message'];
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+
 
   Future<void> pickImage() async {
     final XFile? image = await _picker.pickImage(
@@ -125,20 +198,14 @@ class _RegisterPageState extends State<RegisterPage> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),//
-                      //onPressed: () {
-                       // if (selectedType == RegisterType.user) {
-                       //   registerUserApi();
-                      //  } else {
-                      //    registerOperatorApi();
-                      //  }
-                     // },
+
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          debugPrint(
-                            selectedType == RegisterType.user
-                                ? "User Register API Call"
-                                : "Operator Register API Call",
-                          );
+                          if (selectedType == RegisterType.user) {
+                            registerUser(context);      // 👤 User API
+                          } else {
+                           // registerOperator();  // 🚐 Operator API
+                          }
                         }
                       },
                       child: Text(
@@ -271,12 +338,12 @@ class _RegisterPageState extends State<RegisterPage> {
               });
             },
           ),
-          validator: (v) {
-            if (v == null || v.isEmpty) return "Enter Password";
-            final regex = RegExp(
-                r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$');
-            return regex.hasMatch(v) ? null : "Weak Password";
-          },
+          // validator: (v) {
+          //   if (v == null || v.isEmpty) return "Enter Password";
+          //   final regex = RegExp(
+          //       r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$');
+          //   return regex.hasMatch(v) ? null : "Weak Password";
+          // },
         ),
       ],
     );
