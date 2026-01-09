@@ -7,7 +7,10 @@ class CommonTextFormField extends StatelessWidget {
   final bool obscureText;
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
+  final bool readOnly;
+  final bool showCursor;
   final TextInputType keyboardType;
+
 
   const CommonTextFormField({
     super.key,
@@ -18,6 +21,9 @@ class CommonTextFormField extends StatelessWidget {
     this.suffixIcon,
     this.validator,
     this.keyboardType = TextInputType.text,
+    this.readOnly = false,
+    this.showCursor = true,
+
   });
 
   @override
@@ -28,6 +34,8 @@ class CommonTextFormField extends StatelessWidget {
       cursorColor: Colors.grey.shade400,
       validator: validator,
       keyboardType: keyboardType,
+      readOnly: readOnly,
+      showCursor: showCursor,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: Icon(prefixIcon),

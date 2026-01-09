@@ -2,11 +2,11 @@ import 'package:chargenow/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
+    _,
+  ) {
     runApp(const MyApp());
   });
 }
@@ -19,9 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const LoginScreen(),
     );
   }

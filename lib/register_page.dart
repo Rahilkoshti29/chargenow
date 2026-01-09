@@ -33,12 +33,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController operatorEmailController = TextEditingController();
   final TextEditingController operatorPhoneController = TextEditingController();
   final TextEditingController operatorPasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController operatorLicenseController =
-  TextEditingController();
+      TextEditingController();
   bool isLoading = false;
   bool hidePassword = true;
   final Color primaryGreen = const Color(0xFF2ECC71);
+  final FocusNode _licenseFocusNode = FocusNode();
+
   final ImagePicker _picker = ImagePicker();
   XFile? pickedFile;
 
@@ -50,9 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       final response = await http.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "user_name": userNameController.text.trim(),
           "user_email": userEmailController.text.trim(),
@@ -71,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(data['message']),
-           // backgroundColor: Colors.green,
+            // backgroundColor: Colors.green,
           ),
         );
 
@@ -80,9 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
         // 🔙 BACK TO LOGIN PAGE
         Navigator.pop(context);
-      }
-
-      else {
+      } else {
         String errorMessage = 'Registration failed';
 
         if (data.containsKey('user_email')) {
@@ -91,11 +89,9 @@ class _RegisterPageState extends State<RegisterPage> {
           errorMessage = data['message'];
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -109,12 +105,8 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-
-
   Future<void> pickImage() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       setState(() {
@@ -123,132 +115,132 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
 
       body: isLoading
-        ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
-        : Column(
-          children: [
-            // ================= HEADER =================
-            Container(
-              height: 230,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: primaryGreen,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-              ),
-              child: const Center(
-                child: Text(
-                  "Register Now !!",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // ================= ROLE SELECTOR =================
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
+          : Column(
               children: [
-                roleChip("User", RegisterType.user),
-                const SizedBox(width: 12),
-                roleChip("Operator", RegisterType.operator),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // ================= FORM =================
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Form(
-                  key: _formKey,
-                  child: selectedType == RegisterType.user
-                      ? userForm()
-                      : operatorForm(),
-                ),
-              ),
-            ),
-
-            // ================= REGISTER BUTTON =================
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryGreen,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),//
-
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          if (selectedType == RegisterType.user) {
-                            registerUser(context);      // 👤 User API
-                          } else {
-                           // registerOperator();  // 🚐 Operator API
-                          }
-                        }
-                      },
-                      child: Text(
-                        selectedType == RegisterType.user
-                            ? "Register as User"
-                            : "Register as Operator",style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                // ================= HEADER =================
+                Container(
+                  height: 230,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: primaryGreen,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Register Now !!",
+                      style: TextStyle(
                         color: Colors.white,
-                      ),
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const LoginScreen()),
-                      );
-                    },
-                    child: const Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: "Already have an account? "),
-                          TextSpan(
-                            text: "Login",
+                ),
+
+                const SizedBox(height: 20),
+
+                // ================= ROLE SELECTOR =================
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    roleChip("User", RegisterType.user),
+                    const SizedBox(width: 12),
+                    roleChip("Operator", RegisterType.operator),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // ================= FORM =================
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Form(
+                      key: _formKey,
+                      child: selectedType == RegisterType.user
+                          ? userForm()
+                          : operatorForm(),
+                    ),
+                  ),
+                ),
+
+                // ================= REGISTER BUTTON =================
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: 55,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryGreen,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ), //
+
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              if (selectedType == RegisterType.user) {
+                                registerUser(context); // 👤 User API
+                              } else {
+                                // registerOperator();  // 🚐 Operator API
+                              }
+                            }
+                          },
+                          child: Text(
+                            selectedType == RegisterType.user
+                                ? "Register as User"
+                                : "Register as Operator",
                             style: TextStyle(
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xff2ecc71),
+                              color: Colors.white,
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 14),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LoginScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: "Already have an account? "),
+                              TextSpan(
+                                text: "Login",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff2ecc71),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-
     );
   }
 
@@ -288,7 +280,7 @@ class _RegisterPageState extends State<RegisterPage> {
           hintText: "User Name",
           prefixIcon: Icons.person,
           validator: (v) =>
-          v == null || v.isEmpty ? "Enter a Valid Name" : null,
+              v == null || v.isEmpty ? "Enter a Valid Name" : null,
         ),
         SizedBox(height: 20),
         CommonTextFormField(
@@ -299,7 +291,8 @@ class _RegisterPageState extends State<RegisterPage> {
           validator: (v) {
             if (v == null || v.isEmpty) return "Enter Email";
             final regex = RegExp(
-                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+            );
             return regex.hasMatch(v) ? null : "Enter Valid Email";
           },
         ),
@@ -320,8 +313,7 @@ class _RegisterPageState extends State<RegisterPage> {
           controller: userAddressController,
           hintText: "User Address",
           prefixIcon: Icons.home,
-          validator: (v) =>
-          v == null || v.isEmpty ? "Enter Address" : null,
+          validator: (v) => v == null || v.isEmpty ? "Enter Address" : null,
         ),
         SizedBox(height: 20),
         CommonTextFormField(
@@ -330,8 +322,7 @@ class _RegisterPageState extends State<RegisterPage> {
           prefixIcon: Icons.lock,
           obscureText: hidePassword,
           suffixIcon: IconButton(
-            icon: Icon(
-                hidePassword ? Icons.visibility_off : Icons.visibility),
+            icon: Icon(hidePassword ? Icons.visibility_off : Icons.visibility),
             onPressed: () {
               setState(() {
                 hidePassword = !hidePassword;
@@ -357,8 +348,7 @@ class _RegisterPageState extends State<RegisterPage> {
           controller: operatorNameController,
           hintText: "Operator Name",
           prefixIcon: Icons.person,
-          validator: (v) =>
-          v == null || v.isEmpty ? "Enter Name" : null,
+          validator: (v) => v == null || v.isEmpty ? "Enter Name" : null,
         ),
         SizedBox(height: 20),
         CommonTextFormField(
@@ -369,7 +359,8 @@ class _RegisterPageState extends State<RegisterPage> {
           validator: (v) {
             if (v == null || v.isEmpty) return "Enter Email";
             final regex = RegExp(
-                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+            );
             return regex.hasMatch(v) ? null : "Invalid Email";
           },
         ),
@@ -392,40 +383,40 @@ class _RegisterPageState extends State<RegisterPage> {
           prefixIcon: Icons.lock,
           obscureText: hidePassword,
           suffixIcon: IconButton(
-            icon: Icon(
-                hidePassword ? Icons.visibility_off : Icons.visibility),
+            icon: Icon(hidePassword ? Icons.visibility_off : Icons.visibility),
             onPressed: () {
               setState(() {
                 hidePassword = !hidePassword;
               });
             },
           ),
-          validator: (v) {
-            if (v == null || v.isEmpty) return "Enter Password";
-            final regex = RegExp(
-                r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$');
-            return regex.hasMatch(v) ? null : "Weak Password";
-          },
+          // validator: (v) {
+          //   if (v == null || v.isEmpty) return "Enter Password";
+          //   final regex = RegExp(
+          //     r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$',
+          //   );
+          //   return regex.hasMatch(v) ? null : "Weak Password";
+          // },
         ),
         SizedBox(height: 20),
         CommonTextFormField(
           controller: operatorLicenseController,
           hintText: "Upload License",
           prefixIcon: Icons.document_scanner,
-          validator: (v) =>
-          v == null || v.isEmpty ? "Upload License" : null,
+          validator: (v) => v == null || v.isEmpty ? "Upload License" : null,
+          readOnly: true,
+          showCursor: false,
+          keyboardType: TextInputType.none,
           suffixIcon: IconButton(
             icon: const Icon(Icons.upload_file),
             onPressed: pickImage,
           ),
         ),
+
         if (pickedFile != null)
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Image.file(
-              File(pickedFile!.path),
-              height: 120,
-            ),
+            child: Image.file(File(pickedFile!.path), height: 120),
           ),
       ],
     );
@@ -489,40 +480,4 @@ class _RegisterPageState extends State<RegisterPage> {
 //     debugPrint("API Error: $e");
 //   }
 // }
-
-// Future<void> registerUserApi() async {
-//   if (!_formKey.currentState!.validate()) return;
-//
-//   try {
-//     final response = await http.post(
-//       Uri.parse("YOUR_API_URL_HERE"),
-//       body: {
-//         'user_name': userNameController.text,
-//         'user_email': userEmailController.text,
-//         'user_phone': userPhoneController.text,
-//         'user_address': userAddressController.text,
-//         'user_password': userPasswordController.text,
-//       },
-//     );
-//
-//     final data = jsonDecode(response.body);
-//
-//     if (data['error'] == false) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text(data['message'])),
-//       );
-//       Navigator.pushReplacement(
-//         context,
-//         MaterialPageRoute(builder: (_) => const LoginScreen()),
-//       );
-//     } else {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text(data['message'])),
-//       );
-//     }
-//   } catch (e) {
-//     debugPrint("User API Error: $e");
-//   }
-// }
-
 
