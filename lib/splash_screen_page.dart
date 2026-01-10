@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chargenow/user/user_1dashboard_page.dart';
 import 'package:chargenow/vanoperator/vanoperator_1dashboard_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(const Duration(milliseconds: 1000)); // splash delay
+    await Future.delayed( Duration(milliseconds: 2000)); // splash delay
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -50,23 +51,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff2ecc71),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.ev_station, size: 90, color: Colors.white),
-            SizedBox(height: 20),
-            Text(
-              "ChargeNow",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
+            SvgPicture.asset(
+              "assets/images/logo.svg",
+              height: 250,
+              fit: BoxFit.contain,
             ),
             SizedBox(height: 25),
-            CircularProgressIndicator(color: Colors.white),
+            CircularProgressIndicator(color: Color(0xff2ecc71)),
           ],
         ),
       ),

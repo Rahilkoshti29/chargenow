@@ -7,6 +7,7 @@ import 'package:chargenow/CommonWidget/textfomfield.dart';
 import 'package:chargenow/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+         SnackBar(
           content: Text("Something went wrong"),
           backgroundColor: Colors.red,
         ),
@@ -74,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context,
     ).showSnackBar(SnackBar(content: Text(data['message'])));
 
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(Duration(milliseconds: 400));
 
     if (data['user']['role'] == 1) {
       Navigator.pushReplacement(
@@ -95,16 +96,14 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xff2ecc71)),
-            )
+          ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
           : Column(
               children: [
                 Expanded(
                   flex: 4,
                   child: Container(
                     width: double.infinity,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Color(0xff2ecc71), Color(0xff27ae60)],
                         begin: Alignment.topLeft,
@@ -113,16 +112,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.ev_station, color: Colors.white, size: 80),
-                        SizedBox(height: 10),
-                        Text(
-                          "ChargeNow",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      children: [
+                        SvgPicture.asset(
+                          "assets/images/logo.svg",
+                          height: 250,
+                          color: Colors.white,
+                          fit: BoxFit.contain,
                         ),
                       ],
                     ),
@@ -131,27 +126,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 Expanded(
                   flex: 6,
                   child: Transform.translate(
-                    offset: const Offset(0, -30),
+                    offset: Offset(0, -30),
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
+                      borderRadius: BorderRadius.vertical(
                         top: Radius.circular(35),
                       ),
                       child: Container(
                         color: Colors.white,
-                        padding: const EdgeInsets.fromLTRB(25, 40, 25, 25),
+                        padding: EdgeInsets.fromLTRB(25, 40, 25, 25),
                         child: SingleChildScrollView(
                           child: Form(
                             key: _formKey,
                             child: Column(
                               children: [
-                                const Text(
-                                  "Welcome Back!",
+                                Text(
+                                  "Power Up with ChargeNow",
                                   style: TextStyle(
-                                    fontSize: 28,
+                                    fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 30),
+                                SizedBox(height: 30),
                                 CommonTextFormField(
                                   controller: emailController,
                                   hintText: "Email",
@@ -161,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 20),
+                                SizedBox(height: 20),
                                 CommonTextFormField(
                                   controller: passwordController,
                                   hintText: "Password",
@@ -182,13 +177,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 30),
+                                SizedBox(height: 30),
                                 SizedBox(
                                   width: double.infinity,
                                   height: 55,
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xff2ecc71),
+                                      backgroundColor: Color(0xff2ecc71),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30),
                                       ),
@@ -198,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         login(context);
                                       }
                                     },
-                                    child: const Text(
+                                    child: Text(
                                       "Login",
                                       style: TextStyle(
                                         fontSize: 25,
@@ -208,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 25),
+                                SizedBox(height: 25),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -218,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     );
                                   },
-                                  child: const Text.rich(
+                                  child: Text.rich(
                                     TextSpan(
                                       text: "Don't have an account? ",
                                       children: [

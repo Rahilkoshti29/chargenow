@@ -73,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
 
-        await Future.delayed(const Duration(milliseconds: 800));
+        await Future.delayed(Duration(milliseconds: 800));
 
         Navigator.pop(context);
       } else {
@@ -90,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Something went wrong. Please try again.'),
           backgroundColor: Colors.red,
         ),
@@ -104,9 +104,9 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!_formKey.currentState!.validate()) return;
 
     if (pickedFile == null || pickedFile!.path == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please upload license document")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Please upload license document")));
       return;
     }
 
@@ -146,11 +146,11 @@ class _RegisterPageState extends State<RegisterPage> {
           context,
         ).showSnackBar(SnackBar(content: Text(data['message'])));
 
-        await Future.delayed(const Duration(milliseconds: 800));
+        await Future.delayed(Duration(milliseconds: 800));
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          MaterialPageRoute(builder: (_) => LoginScreen()),
         );
       } else {
         String errorMsg = 'Registration failed';
@@ -178,7 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       debugPrint("Operator Register Error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text("Something went wrong"),
           backgroundColor: Colors.red,
         ),
@@ -215,41 +215,61 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: primaryGreen,
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(40),
                       bottomRight: Radius.circular(40),
                     ),
                   ),
-                  child: const Center(
-                    child: Text(
-                      "Register Now !!",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  child: SafeArea(
+                    bottom: false,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 10),
+                        Text(
+                          "Power Up Your Journey",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            "Set Up Your Profile & Start Charging Smarter",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 // ROLE SELECTOR
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     roleChip("User", RegisterType.user),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     roleChip("Operator", RegisterType.operator),
                   ],
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 //  FORM
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Form(
                       key: _formKey,
                       child: selectedType == RegisterType.user
@@ -261,7 +281,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //  REGISTER BUTTON
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20),
                   child: Column(
                     children: [
                       SizedBox(
@@ -296,17 +316,15 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const LoginScreen(),
-                            ),
+                            MaterialPageRoute(builder: (_) => LoginScreen()),
                           );
                         },
-                        child: const Text.rich(
+                        child: Text.rich(
                           TextSpan(
                             children: [
                               TextSpan(text: "Already have an account? "),
@@ -339,7 +357,7 @@ class _RegisterPageState extends State<RegisterPage> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 26, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? primaryGreen : Colors.white,
           borderRadius: BorderRadius.circular(25),
@@ -493,7 +511,7 @@ class _RegisterPageState extends State<RegisterPage> {
           showCursor: false,
           keyboardType: TextInputType.none,
           suffixIcon: IconButton(
-            icon: const Icon(Icons.upload_file),
+            icon: Icon(Icons.upload_file),
             onPressed: pickLicenseFile,
           ),
         ),
@@ -501,7 +519,7 @@ class _RegisterPageState extends State<RegisterPage> {
         if (pickedFile != null &&
             ['jpg', 'jpeg', 'png'].contains(pickedFile!.extension))
           Padding(
-            padding: const EdgeInsets.only(top: 10),
+            padding: EdgeInsets.only(top: 10),
             child: Image.file(File(pickedFile!.path!), height: 120),
           ),
       ],
