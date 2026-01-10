@@ -23,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool hidePassword = true;
   bool isLoading = false;
+
   Future<void> login(BuildContext context) async {
     setState(() => isLoading = true);
 
