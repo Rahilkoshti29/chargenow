@@ -14,11 +14,11 @@ class OnBoardingPage extends StatefulWidget {
 class _OnBoardingPageState extends State<OnBoardingPage> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
-  /// ✅ This is the MOST IMPORTANT method
+
   Future<void> _onIntroEnd(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
 
-    // 🔥 Mark onboarding as completed
+
     await prefs.setBool('seen_onboarding', true);
 
     if (!mounted) return;
@@ -61,10 +61,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
       pages: [
         PageViewModel(
-          title: "Welcome to ChargeNow",
+          title: "Welcome To ChargeNow",
           body:
-          "Your smart EV charging companion ⚡\n"
-              "Find nearby charging stations and power your journey with ease.",
+          "Your Smart EV Charging Companion \n"
+              "Find Nearby Charging Operators And Power Your Journey With Ease..",
           image: _buildImage('Intro1.png'),
           decoration: pageDecoration.copyWith(
             bodyFlex: 2,
@@ -72,10 +72,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           ),
         ),
         PageViewModel(
-          title: "Charge Smarter, Drive Further",
+          title: "Seamless Booking & Service",
           body:
-          "Locate verified charging stations in real-time.\n"
-              "No waiting. No confusion. Just seamless charging.",
+          "Connect Users, Van Operators For \n Hassle Free Remote EV Charging From \nStart To Finish..",
           image: _buildImage('Intro2.png'),
           decoration: pageDecoration.copyWith(
             bodyFlex: 2,
@@ -83,10 +82,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           ),
         ),
         PageViewModel(
-          title: "Built for Drivers & Operators",
+          title: "Operators powering Your EV",
           body:
-          "Whether you’re an EV driver or a station operator,\n"
-              "ChargeNow connects everyone on one platform.",
+            "Find Available Charging Services,\n"
+              "View And Book Remotely With Fingertips..",
           image: _buildImage('Intro3.png'),
           decoration: pageDecoration.copyWith(
             bodyFlex: 2,
@@ -101,7 +100,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       showSkipButton: true,
       showBackButton: false,
 
-      skip: const Text(
+      skip: Text(
         "Skip",
         style: TextStyle(
           color: Color(0xFF2ECC71),
@@ -109,12 +108,12 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           fontWeight: FontWeight.w600,
         ),
       ),
-      next: const CircleAvatar(
+      next:  CircleAvatar(
         radius: 24,
         backgroundColor: Color(0xFF2ECC71),
         child: Icon(Icons.arrow_forward, color: Colors.white),
       ),
-      done: const CircleAvatar(
+      done:  CircleAvatar(
         radius: 24,
         backgroundColor: Color(0xFF2ECC71),
         child: Text(
@@ -124,12 +123,12 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       ),
 
       curve: Curves.fastLinearToSlowEaseIn,
-      controlsMargin: const EdgeInsets.all(16),
+      controlsMargin:  EdgeInsets.all(16),
       controlsPadding: kIsWeb
-          ? const EdgeInsets.all(12)
-          : const EdgeInsets.fromLTRB(8, 4, 8, 4),
+          ?  EdgeInsets.all(12)
+          :  EdgeInsets.fromLTRB(8, 4, 8, 4),
 
-      dotsDecorator: const DotsDecorator(
+      dotsDecorator:  DotsDecorator(
         size: Size(10, 10),
         color: Color(0xFF2ECC71),
         activeSize: Size(22, 10),
