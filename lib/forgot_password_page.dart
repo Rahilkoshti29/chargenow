@@ -77,7 +77,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           ), // optional if icon is single-color
         ),
 
-        automaticallyImplyLeading: false,
+
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
