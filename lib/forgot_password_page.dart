@@ -113,7 +113,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
               SizedBox(height: 35),
 
-              /// EMAIL
+
               CommonTextFormField(
                 controller: emailController,
                 hintText: "Email",
@@ -132,7 +132,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
               SizedBox(height: 20),
 
-              /// NEW PASSWORD
+
               CommonTextFormField(
                 controller: passwordController,
                 hintText: "New Password",
@@ -161,7 +161,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
               SizedBox(height: 20),
 
-              /// CONFIRM PASSWORD
               CommonTextFormField(
                 controller: confirmPasswordController,
                 hintText: "Confirm Password",
@@ -192,7 +191,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
               SizedBox(height: 35),
 
-              /// SUBMIT BUTTON
+
               SizedBox(
                 width: double.infinity,
                 height: 55,
