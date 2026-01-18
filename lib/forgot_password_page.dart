@@ -203,19 +203,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        onPressed: isLoading ? null : resetPassword,
-                        child: isLoading
-                            ? CircularProgressIndicator(
-                                color: Color(0xff2ecc71),
-                              )
-                            : Text(
-                                "Reset Password",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                        onPressed:  resetPassword,
+                        child: Text(
+                          "Reset Password",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
