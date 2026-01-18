@@ -15,24 +15,28 @@ class _UserDashboardState extends State<UserDashboard> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text("User Dashboard page")),
-      body: Center(child: Column(
-        children: [
-          Text("User Dashboard page"),
-          ElevatedButton( child: Text("Logout"),
-          onPressed: () async {
-            final pref = await SharedPreferences.getInstance();
-            await pref.clear();
-            await pref.setBool('seen', true);
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (BuildContext context) => LoginScreen()),
-                    (Route<dynamic> route) => false);
-            // Add logout functionality here
-          },
+      body: Center(
+        child: Column(
+          children: [
+            Text("User Dashboard page"),
+            ElevatedButton(
+              child: Text("Logout"),
+              onPressed: () async {
+                final pref = await SharedPreferences.getInstance();
+                await pref.clear();
+                await pref.setBool('seen', true);
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => LoginScreen(),
+                  ),
+                  (Route<dynamic> route) => false,
+                );
+                // Add logout functionality here
+              },
+            ),
+          ],
+        ),
       ),
-        ],
-      )
-    ),
     );
   }
 }

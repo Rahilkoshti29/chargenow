@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
+        SnackBar(
           content: Text("Something went wrong"),
           backgroundColor: Colors.red,
         ),

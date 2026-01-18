@@ -15,23 +15,28 @@ class _VanoperatorDashboardState extends State<VanoperatorDashboard> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(title: Text("Vanoperator Dashboard page")),
-      body: Center(child: Column(
+      body: Center(
+        child: Column(
           children: [
             Text("Vanoperator DashboardState page"),
-            ElevatedButton( child: Text("Logout"),
+            ElevatedButton(
+              child: Text("Logout"),
               onPressed: () async {
                 final pref = await SharedPreferences.getInstance();
                 await pref.clear();
                 await pref.setBool('seen', true);
                 Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => LoginScreen()),
-                        (Route<dynamic> route) => false);
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => LoginScreen(),
+                  ),
+                  (Route<dynamic> route) => false,
+                );
                 // Add logout functionality here
               },
             ),
-          ]
-          )),
+          ],
+        ),
+      ),
     );
   }
 }
