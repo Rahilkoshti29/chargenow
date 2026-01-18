@@ -84,141 +84,144 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           "Forgot Password",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor:Color(0xff2ecc71),
+        backgroundColor: Color(0xff2ecc71),
       ),
-      body:  isLoading
-    ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
-        :
-    SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: 25,
-          right: 25,
-          top: 40,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 30,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Reset Password",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
+          : SingleChildScrollView(
+              padding: EdgeInsets.only(
+                left: 25,
+                right: 25,
+                top: 40,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 30,
               ),
-              SizedBox(height: 8),
-              Text(
-                "Enter your email and set a new password",
-                style: TextStyle(color: Colors.grey),
-              ),
-
-              SizedBox(height: 35),
-
-
-              CommonTextFormField(
-                controller: emailController,
-                hintText: "Email",
-                prefixIcon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                validator: (v) {
-                  if (v == null || v.isEmpty) {
-                    return "Email is required";
-                  }
-                  if (!v.contains('@')) {
-                    return "Enter valid email";
-                  }
-                  return null;
-                },
-              ),
-
-              SizedBox(height: 20),
-
-
-              CommonTextFormField(
-                controller: passwordController,
-                hintText: "New Password",
-                prefixIcon: Icons.lock_outline,
-                obscureText: hidePassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    hidePassword ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      hidePassword = !hidePassword;
-                    });
-                  },
-                ),
-                validator: (v) {
-                  if (v == null || v.isEmpty) {
-                    return "Password is required";
-                  }
-                  if (v.length < 6) {
-                    return "Minimum 6 characters";
-                  }
-                  return null;
-                },
-              ),
-
-              SizedBox(height: 20),
-
-              CommonTextFormField(
-                controller: confirmPasswordController,
-                hintText: "Confirm Password",
-                prefixIcon: Icons.lock_outline,
-                obscureText: hideConfirmPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    hideConfirmPassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      hideConfirmPassword = !hideConfirmPassword;
-                    });
-                  },
-                ),
-                validator: (v) {
-                  if (v == null || v.isEmpty) {
-                    return "Confirm your password";
-                  }
-                  if (v != passwordController.text) {
-                    return "Passwords do not match";
-                  }
-                  return null;
-                },
-              ),
-
-              SizedBox(height: 35),
-
-
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:  Color(0xff2ecc71),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Reset Password",
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  onPressed: isLoading ? null : resetPassword,
-                  child: isLoading
-                      ?  CircularProgressIndicator(color: Color(0xff2ecc71))
-                      : Text(
-                          "Reset Password",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                    SizedBox(height: 8),
+                    Text(
+                      "Enter your email and set a new password",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+
+                    SizedBox(height: 35),
+
+                    CommonTextFormField(
+                      controller: emailController,
+                      hintText: "Email",
+                      prefixIcon: Icons.email_outlined,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return "Email is required";
+                        }
+                        if (!v.contains('@')) {
+                          return "Enter valid email";
+                        }
+                        return null;
+                      },
+                    ),
+
+                    SizedBox(height: 20),
+
+                    CommonTextFormField(
+                      controller: passwordController,
+                      hintText: "New Password",
+                      prefixIcon: Icons.lock_outline,
+                      obscureText: hidePassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          hidePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            hidePassword = !hidePassword;
+                          });
+                        },
+                      ),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return "Password is required";
+                        }
+                        if (v.length < 6) {
+                          return "Minimum 6 characters";
+                        }
+                        return null;
+                      },
+                    ),
+
+                    SizedBox(height: 20),
+
+                    CommonTextFormField(
+                      controller: confirmPasswordController,
+                      hintText: "Confirm Password",
+                      prefixIcon: Icons.lock_outline,
+                      obscureText: hideConfirmPassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          hideConfirmPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            hideConfirmPassword = !hideConfirmPassword;
+                          });
+                        },
+                      ),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return "Confirm your password";
+                        }
+                        if (v != passwordController.text) {
+                          return "Passwords do not match";
+                        }
+                        return null;
+                      },
+                    ),
+
+                    SizedBox(height: 35),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 55,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff2ecc71),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        onPressed: isLoading ? null : resetPassword,
+                        child: isLoading
+                            ? CircularProgressIndicator(
+                                color: Color(0xff2ecc71),
+                              )
+                            : Text(
+                                "Reset Password",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
