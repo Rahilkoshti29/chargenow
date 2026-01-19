@@ -30,24 +30,29 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     try {
       final response = await http.post(
         Uri.parse('${Apiconst.base_url}auth/forgot-password/'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": emailController.text.trim(),
-          "password": passwordController.text.trim(),
-          "confirm_password": confirmPasswordController.text.trim(),
+          "new_password": confirmPasswordController.text.trim(),
         }),
       );
 
       final data = jsonDecode(response.body);
 
-      setState(() => isLoading = false);
-
       if (response.statusCode == 200 && data['success'] == true) {
+        // ✅ SUCCESS
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'] ?? "Password updated")),
+          SnackBar(
+            content: Text(data['message']),
+          ),
         );
-        Navigator.pop(context);
+
+        // Go back to login after short delay
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.pop(context);
+        });
       } else {
+        // ❌ API ERROR (email not found etc.)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(data['message'] ?? "Something went wrong"),
@@ -55,11 +60,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           ),
         );
       }
-    } catch (_) {
-      setState(() => isLoading = false);
+    } catch (e) {
+      // ❌ NETWORK / SERVER ERROR
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Server error"), backgroundColor: Colors.red),
+        const SnackBar(
+          content: Text("Server error. Please try again."),
+          backgroundColor: Colors.red,
+        ),
       );
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
@@ -76,9 +86,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             color: Colors.white,
           ), // optional if icon is single-color
         ),
-
-
-        centerTitle: true,
+         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           "Forgot Password",
@@ -135,6 +143,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                     CommonTextFormField(
                       controller: passwordController,
+
                       hintText: "New Password",
                       prefixIcon: Icons.lock_outline,
                       obscureText: hidePassword,
@@ -154,11 +163,30 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         if (v == null || v.isEmpty) {
                           return "Password is required";
                         }
-                        if (v.length < 6) {
-                          return "Minimum 6 characters";
-                        }
+
+                        // if (v.length < 8) {
+                        //   return "Must be at least 8 characters";
+                        // }
+                        //
+                        // if (!RegExp(r'[A-Z]').hasMatch(v)) {
+                        //   return "Must contain at least 1 uppercase letter";
+                        // }
+                        //
+                        // if (!RegExp(r'[a-z]').hasMatch(v)) {
+                        //   return "Must contain at least 1 lowercase letter";
+                        // }
+                        //
+                        // if (!RegExp(r'[0-9]').hasMatch(v)) {
+                        //   return "Must contain at least 1 number";
+                        // }
+                        //
+                        // if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+                        //   return "Must contain at least 1 special character (!@#\$&*~)";
+                        // }
+
                         return null;
                       },
+
                     ),
 
                     SizedBox(height: 20),
@@ -203,7 +231,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        onPressed:  resetPassword,
+                        onPressed: resetPassword,
                         child: Text(
                           "Reset Password",
                           style: TextStyle(

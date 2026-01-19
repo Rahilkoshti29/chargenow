@@ -435,12 +435,34 @@ class _RegisterPageState extends State<RegisterPage> {
               });
             },
           ),
-          // validator: (v) {
-          //   if (v == null || v.isEmpty) return "Enter Password";
-          //   final regex = RegExp(
-          //       r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$');
-          //   return regex.hasMatch(v) ? null : "Weak Password";
-          // },
+          validator: (v) {
+            if (v == null || v.isEmpty) {
+              return "Password is required";
+            }
+
+            // if (v.length < 8) {
+            //   return "Must be at least 8 characters";
+            // }
+            //
+            // if (!RegExp(r'[A-Z]').hasMatch(v)) {
+            //   return "Must contain at least 1 uppercase letter";
+            // }
+            //
+            // if (!RegExp(r'[a-z]').hasMatch(v)) {
+            //   return "Must contain at least 1 lowercase letter";
+            // }
+            //
+            // if (!RegExp(r'[0-9]').hasMatch(v)) {
+            //   return "Must contain at least 1 number";
+            // }
+            //
+            // if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+            //   return "Must contain at least 1 special character (!@#\$&*~)";
+            // }
+
+            return null;
+          },
+
         ),
       ],
     );
@@ -496,13 +518,34 @@ class _RegisterPageState extends State<RegisterPage> {
               });
             },
           ),
-          // validator: (v) {
-          //   if (v == null || v.isEmpty) return "Enter Password";
-          //   final regex = RegExp(
-          //     r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$',
-          //   );
-          //   return regex.hasMatch(v) ? null : "Weak Password";
-          // },
+          validator: (v) {
+            if (v == null || v.isEmpty) {
+              return "Password is required";
+            }
+
+            // if (v.length < 8) {
+            //   return "Must be at least 8 characters";
+            // }
+            //
+            // if (!RegExp(r'[A-Z]').hasMatch(v)) {
+            //   return "Must contain at least 1 uppercase letter";
+            // }
+            //
+            // if (!RegExp(r'[a-z]').hasMatch(v)) {
+            //   return "Must contain at least 1 lowercase letter";
+            // }
+            //
+            // if (!RegExp(r'[0-9]').hasMatch(v)) {
+            //   return "Must contain at least 1 number";
+            // }
+            //
+            // if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+            //   return "Must contain at least 1 special character (!@#\$&*~)";
+            // }
+
+            return null;
+          },
+
         ),
         SizedBox(height: 20),
         CommonTextFormField(
