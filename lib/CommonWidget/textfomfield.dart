@@ -36,7 +36,6 @@ class CommonTextFormField extends StatelessWidget {
 
       showCursor: showCursor,
       decoration: InputDecoration(
-
         hintText: hintText,
         prefixIcon: Icon(prefixIcon),
         suffixIcon: suffixIcon,

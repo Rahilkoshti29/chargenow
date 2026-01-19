@@ -40,19 +40,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
-        // ✅ SUCCESS
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message']),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(data['message'])));
 
-        // Go back to login after short delay
-        Future.delayed(const Duration(seconds: 1), () {
+        Future.delayed( Duration(seconds: 1), () {
           Navigator.pop(context);
         });
       } else {
-        // ❌ API ERROR (email not found etc.)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(data['message'] ?? "Something went wrong"),
@@ -61,9 +56,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         );
       }
     } catch (e) {
-      // ❌ NETWORK / SERVER ERROR
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+         SnackBar(
           content: Text("Server error. Please try again."),
           backgroundColor: Colors.red,
         ),
@@ -86,7 +80,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             color: Colors.white,
           ), // optional if icon is single-color
         ),
-         centerTitle: true,
+        centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           "Forgot Password",
@@ -186,7 +180,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                         return null;
                       },
-
                     ),
 
                     SizedBox(height: 20),

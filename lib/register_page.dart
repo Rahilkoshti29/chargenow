@@ -462,7 +462,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
             return null;
           },
-
         ),
       ],
     );
@@ -545,7 +544,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
             return null;
           },
-
         ),
         SizedBox(height: 20),
         CommonTextFormField(
