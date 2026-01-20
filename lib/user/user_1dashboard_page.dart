@@ -53,10 +53,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
 
     final response = await http.get(
       Uri.parse('${Apiconst.base_url}user/vehicles/'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
     if (response.statusCode != 200) {
@@ -159,11 +156,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
 
   Widget _emptyDashboard() {
     return Column(
-      children: [
-        _noVehicleCard(),
-        const SizedBox(height: 28),
-        _offersRow(),
-      ],
+      children: [_noVehicleCard(), const SizedBox(height: 28), _offersRow()],
     );
   }
 
@@ -174,9 +167,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(26),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 14),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 14)],
       ),
       child: Column(
         children: [
@@ -186,8 +177,11 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
               color: primaryGreen.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.directions_car,
-                size: 60, color: primaryGreen),
+            child: const Icon(
+              Icons.directions_car,
+              size: 60,
+              color: primaryGreen,
+            ),
           ),
           const SizedBox(height: 18),
           const Text(
@@ -240,17 +234,14 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(26),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 14),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 14)],
       ),
       child: Column(
         children: [
           Align(
             alignment: Alignment.topRight,
             child: Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: primaryGreen.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(20),
@@ -258,13 +249,11 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
               child: const Text('See Details'),
             ),
           ),
-          const Icon(Icons.directions_car,
-              size: 70, color: primaryGreen),
+          const Icon(Icons.directions_car, size: 70, color: primaryGreen),
           const SizedBox(height: 12),
           Text(
             '${vehicle['vehicle_company']} ${vehicle['vehicle_name']}',
-            style: const TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(vehicle['vehicle_number']),
@@ -307,21 +296,19 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(22),
-          boxShadow: const [
-            BoxShadow(color: Colors.black12, blurRadius: 10),
-          ],
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: primaryGreen),
             const SizedBox(height: 10),
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
-            Text(subtitle,
-                style: const TextStyle(color: Colors.black54)),
+            Text(subtitle, style: const TextStyle(color: Colors.black54)),
           ],
         ),
       ),
