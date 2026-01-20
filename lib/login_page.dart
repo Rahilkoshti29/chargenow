@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (data['user']['role'] == 1) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => UserDashboard()),
+        MaterialPageRoute(builder: (_) => UserDashboardPage()),
       );
     } else if (data['user']['role'] == 2) {
       Navigator.pushReplacement(
