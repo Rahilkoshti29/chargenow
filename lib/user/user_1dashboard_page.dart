@@ -21,50 +21,32 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   void initState() {
     super.initState();
     _loadUserName();
-    _refreshVehicles(); // 🔥 ALWAYS load from API
+    _refreshVehicles();
   }
-
-  // ---------------- LOAD USER ----------------
 
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userName = prefs.getString('name') ?? 'User';
-    });
+    userName = prefs.getString('name') ?? 'User';
+    setState(() {});
   }
-
-  // ---------------- REFRESH VEHICLES ----------------
 
   void _refreshVehicles() {
-    setState(() {
-      vehicleFuture = _fetchVehicles();
-    });
+    vehicleFuture = _fetchVehicles();
+    setState(() {});
   }
-
-  // ---------------- FETCH VEHICLES ----------------
 
   Future<List<dynamic>> _fetchVehicles() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-
-    if (token == null || token.isEmpty) {
-      throw Exception('Token missing');
-    }
 
     final response = await http.get(
       Uri.parse('${Apiconst.base_url}user/vehicles/'),
       headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
-    if (response.statusCode != 200) {
-      throw Exception('Server error ${response.statusCode}');
-    }
-
     final decoded = jsonDecode(response.body);
     return decoded['data'] ?? [];
   }
-
-  // ---------------- UI ----------------
 
   @override
   Widget build(BuildContext context) {
@@ -73,74 +55,81 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
 
       // ================= APP BAR =================
       appBar: AppBar(
+        automaticallyImplyActions: false,
+        backgroundColor: const Color(0xFF2ECC71),
         elevation: 0,
-        backgroundColor: const Color(0xFFF2FFF7),
-        automaticallyImplyLeading: false,
-        titleSpacing: 0,
         title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
+          padding: const EdgeInsets.only(left: 16),
           child: Text(
             'Hello, $userName 👋',
             style: const TextStyle(
+              color: Colors.black,
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
             ),
           ),
         ),
         actions: const [
-          Icon(Icons.notifications_none, size: 26, color: Colors.black),
+          Icon(Icons.notifications_none, color: Colors.black),
           SizedBox(width: 16),
-          Icon(Icons.person_outline, size: 26, color: Colors.black),
-          SizedBox(width: 18),
+          Icon(Icons.person_outline, color: Colors.black),
+          SizedBox(width: 16),
         ],
       ),
 
       // ================= BODY =================
-      body: Padding(
-        padding: const EdgeInsets.all(18),
-        child: RefreshIndicator(
-          color: primaryGreen,
-          onRefresh: () async {
-            _refreshVehicles();
-          },
-          child: FutureBuilder<List<dynamic>>(
-            future: vehicleFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(color: primaryGreen),
-                );
-              }
-
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    snapshot.error.toString(),
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                );
-              }
-
-              final vehicles = snapshot.data ?? [];
-
-              // 👇 IMPORTANT: ListView for RefreshIndicator
-              return ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  vehicles.isEmpty
-                      ? _emptyDashboard()
-                      : _vehicleDashboard(vehicles[0]),
-                ],
+      body: RefreshIndicator(
+        color: primaryGreen,
+        onRefresh: () async => _refreshVehicles(),
+        child: FutureBuilder<List<dynamic>>(
+          future: vehicleFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: primaryGreen),
               );
-            },
-          ),
+            }
+
+            final vehicles = snapshot.data ?? [];
+
+            return ListView(
+              padding: const EdgeInsets.all(18),
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                // ================= EMPTY STATE =================
+                if (vehicles.isEmpty) ...[
+                  _emptyCenterCard(),
+                  const SizedBox(height: 28),
+                  _offersRow(),
+                ]
+                // ================= VEHICLE LIST =================
+                else ...[
+                  SizedBox(
+                    height: 360,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: vehicles.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index < vehicles.length) {
+                          return _vehicleCard(vehicles[index]);
+                        } else {
+                          return _addVehicleCard();
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  _offersRow(),
+                ],
+              ],
+            );
+          },
         ),
       ),
 
       // ================= BOTTOM NAV =================
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
+        currentIndex: 0,
         selectedItemColor: primaryGreen,
         unselectedItemColor: Colors.grey,
         items: const [
@@ -152,45 +141,44 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
     );
   }
 
-  // ================= EMPTY DASHBOARD =================
+  // ================= EMPTY CENTER CARD =================
 
-  Widget _emptyDashboard() {
-    return Column(
-      children: [_noVehicleCard(), const SizedBox(height: 28), _offersRow()],
-    );
-  }
-
-  Widget _noVehicleCard() {
+  Widget _emptyCenterCard() {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(26),
+      padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 14)],
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
               color: primaryGreen.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.directions_car,
-              size: 60,
+              size: 70,
               color: primaryGreen,
             ),
           ),
           const SizedBox(height: 18),
           const Text(
-            'No cars to charge',
+            'No Cars to Charge',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           const Text(
-            'Add a car to get started',
+            'Add a Car to Get Started',
             style: TextStyle(color: Colors.black54),
           ),
           const SizedBox(height: 24),
@@ -201,13 +189,18 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                 backgroundColor: primaryGreen,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(22),
                 ),
               ),
-              onPressed: () {
-                // Navigate to Add Vehicle Page
-              },
-              child: const Text('Add a car'),
+              onPressed: () {},
+              child: const Text(
+                'Add a Car',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ],
@@ -215,62 +208,118 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
     );
   }
 
-  // ================= VEHICLE DASHBOARD =================
-
-  Widget _vehicleDashboard(dynamic vehicle) {
-    return Column(
-      children: [
-        _vehicleCard(vehicle),
-        const SizedBox(height: 28),
-        _offersRow(),
-      ],
-    );
-  }
+  // ================= VEHICLE CARD =================
 
   Widget _vehicleCard(dynamic vehicle) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      width: 330,
+      margin: const EdgeInsets.only(right: 18),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 14)],
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Align(
             alignment: Alignment.topRight,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: primaryGreen.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text('See Details'),
+              child: Text(
+                'Details',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
-          const Icon(Icons.directions_car, size: 70, color: primaryGreen),
-          const SizedBox(height: 12),
+          const SizedBox(height: 18),
+          const Icon(Icons.directions_car, size: 90, color: primaryGreen),
+          const SizedBox(height: 16),
           Text(
             '${vehicle['vehicle_company']} ${vehicle['vehicle_name']}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 4),
-          Text(vehicle['vehicle_number']),
-          const SizedBox(height: 18),
+          const SizedBox(height: 6),
+          Text(
+            vehicle['vehicle_number'],
+            style: const TextStyle(color: Colors.black54),
+          ),
+          const Spacer(),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(22),
                 ),
               ),
               onPressed: () {},
-              child: const Text('Request ChargeNow'),
+              child: const Text(
+                'Request ChargeNow',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= ADD VEHICLE CARD =================
+
+  Widget _addVehicleCard() {
+    return Container(
+      width: 330,
+      margin: const EdgeInsets.only(right: 18),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: primaryGreen.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.add, size: 70, color: primaryGreen),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Add Vehicle',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Add Another Car to ChargeNow',
+            style: TextStyle(color: Colors.black54),
           ),
         ],
       ),
@@ -282,9 +331,9 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   Widget _offersRow() {
     return Row(
       children: [
-        _offerCard('Save upto 30%', 'with ChargeNow', Icons.percent),
+        _offerCard('Save Upto 30%', 'With ChargeNow', Icons.percent),
         const SizedBox(width: 16),
-        _offerCard('Fast Charging', 'Nearby operators', Icons.flash_on),
+        _offerCard('Fast Charging', 'Nearby Operators', Icons.flash_on),
       ],
     );
   }
