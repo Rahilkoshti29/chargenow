@@ -187,7 +187,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog
               },
-              child: const Text("No",style: TextStyle(color: Colors.black),),
+              child: const Text("No", style: TextStyle(color: Colors.black)),
             ),
             TextButton(
               onPressed: () {

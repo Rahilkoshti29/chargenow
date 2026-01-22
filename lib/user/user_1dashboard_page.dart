@@ -197,7 +197,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
               onPressed: () async {
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) =>  AddVehiclePage()),
+                  MaterialPageRoute(builder: (_) => AddVehiclePage()),
                 );
 
                 if (result == true) {
@@ -255,7 +255,10 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                 }
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: primaryGreen.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
