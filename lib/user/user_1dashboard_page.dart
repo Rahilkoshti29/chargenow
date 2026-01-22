@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
+import 'package:chargenow/user/add_vehicle_page.dart';
+import 'package:chargenow/user/vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -192,7 +194,16 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                   borderRadius: BorderRadius.circular(22),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) =>  AddVehiclePage()),
+                );
+
+                if (result == true) {
+                  _refreshVehicles(); // 🔄 reload list
+                }
+              },
               child: const Text(
                 'Add a Car',
                 style: TextStyle(
@@ -230,18 +241,33 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
         children: [
           Align(
             alignment: Alignment.topRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: primaryGreen.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                'Details',
-                style: TextStyle(fontWeight: FontWeight.bold),
+            child: GestureDetector(
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => VehicleDetailsPage(vehicle: vehicle),
+                  ),
+                );
+
+                if (result == true) {
+                  _refreshVehicles(); // 🔄 refresh after update
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: primaryGreen.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  'Details',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ),
+
           const SizedBox(height: 18),
           const Icon(Icons.directions_car, size: 90, color: primaryGreen),
           const SizedBox(height: 16),
@@ -285,43 +311,55 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   // ================= ADD VEHICLE CARD =================
 
   Widget _addVehicleCard() {
-    return Container(
-      width: 330,
-      margin: const EdgeInsets.only(right: 18),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              color: primaryGreen.withOpacity(0.15),
-              shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => AddVehiclePage()),
+        );
+
+        if (result == true) {
+          _refreshVehicles(); // 🔄 reload list
+        }
+      },
+      child: Container(
+        width: 330,
+        margin: const EdgeInsets.only(right: 18),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 18,
+              offset: Offset(0, 8),
             ),
-            child: const Icon(Icons.add, size: 70, color: primaryGreen),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Add Vehicle',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Add Another Car to ChargeNow',
-            style: TextStyle(color: Colors.black54),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: primaryGreen.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.add, size: 70, color: primaryGreen),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Add Vehicle',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Add Another Car to ChargeNow',
+              style: TextStyle(color: Colors.black54),
+            ),
+          ],
+        ),
       ),
     );
   }
