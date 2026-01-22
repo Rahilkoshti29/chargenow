@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/user/add_vehicle_page.dart';
-import 'package:chargenow/user/vehicle_detail_page.dart';
+import 'package:chargenow/user/user_2add_vehicle_page.dart';
+import 'package:chargenow/user/user_3vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
