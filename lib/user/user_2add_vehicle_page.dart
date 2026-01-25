@@ -61,7 +61,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
         textColor: Colors.white,
         fontSize: 16,
       );
-      Navigator.pop(context, true); // 🔄 refresh dashboard
+      Navigator.pop(context, true); // refresh dashboard
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(decoded['message'] ?? 'Failed to add vehicle')),
@@ -74,14 +74,11 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF2FFF7),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new_sharp,
-            color: Colors.white,
-          ), // optional if icon is single-color
+          icon: Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
         ),
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
@@ -95,13 +92,13 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Container(
-                padding: const EdgeInsets.all(22),
+                padding: EdgeInsets.all(22),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 18,
@@ -115,19 +112,19 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
                     children: [
                       // ================= ICON =================
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: primaryGreen.withOpacity(0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.directions_car,
                           size: 60,
                           color: primaryGreen,
                         ),
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
 
                       CommonTextFormField(
                         controller: companyCtrl,
@@ -138,7 +135,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
                             : null,
                       ),
 
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
 
                       CommonTextFormField(
                         controller: nameCtrl,
@@ -149,7 +146,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
                             : null,
                       ),
 
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
 
                       CommonTextFormField(
                         controller: modelCtrl,
@@ -160,7 +157,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
                             : null,
                       ),
 
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
 
                       CommonTextFormField(
                         controller: numberCtrl,
@@ -172,8 +169,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
                             : null,
                       ),
 
-                      const SizedBox(height: 28),
-
+                      SizedBox(height: 28),
                       // ================= BUTTON =================
                       SizedBox(
                         width: double.infinity,
@@ -187,10 +183,8 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
                           ),
                           onPressed: isLoading ? null : _addVehicle,
                           child: isLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : const Text(
+                              ? CircularProgressIndicator(color: Colors.white)
+                              : Text(
                                   'Submit',
                                   style: TextStyle(
                                     fontSize: 22,

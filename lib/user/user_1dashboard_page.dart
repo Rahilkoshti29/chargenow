@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/user/user_2add_vehicle_page.dart';
 import 'package:chargenow/user/user_3vehicle_detail_page.dart';
+import 'package:chargenow/user/user_4request_charging_page.dart';
+import 'package:chargenow/user/user_5booking_history_page.dart';
+import 'package:chargenow/user/user_6profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,28 +56,47 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2FFF7),
-
-      // ================= APP BAR =================
+      backgroundColor: Color(0xFFF2FFF7),
       appBar: AppBar(
-        automaticallyImplyActions: false,
-        backgroundColor: const Color(0xFF2ECC71),
+        backgroundColor: primaryGreen, // same page bg
         elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Text(
-            'Hello, $userName 👋',
-            style: const TextStyle(
+        toolbarHeight: 70,
+        automaticallyImplyLeading: false,
+        titleSpacing: 30,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Hello',
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.black,
+                wordSpacing: 150,
+              ),
+            ),
+            Text(
+              '$userName !',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white,
+            child: Icon(
+              Icons.notifications_none,
               color: Colors.black,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+              size: 25,
             ),
           ),
-        ),
-        actions: const [
-          Icon(Icons.notifications_none, color: Colors.black),
           SizedBox(width: 16),
-          Icon(Icons.person_outline, color: Colors.black),
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.person_outline, color: Colors.black, size: 25),
+          ),
           SizedBox(width: 16),
         ],
       ),
@@ -87,7 +109,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           future: vehicleFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(color: primaryGreen),
               );
             }
@@ -95,13 +117,13 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
             final vehicles = snapshot.data ?? [];
 
             return ListView(
-              padding: const EdgeInsets.all(18),
-              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.all(18),
+              physics: AlwaysScrollableScrollPhysics(),
               children: [
                 // ================= EMPTY STATE =================
                 if (vehicles.isEmpty) ...[
                   _emptyCenterCard(),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28),
                   _offersRow(),
                 ]
                 // ================= VEHICLE LIST =================
@@ -120,7 +142,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28),
                   _offersRow(),
                 ],
               ],
@@ -130,28 +152,106 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
       ),
 
       // ================= BOTTOM NAV =================
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: primaryGreen,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.arrow_back), label: ''),
-        ],
+      bottomNavigationBar: Container(
+        height: 78,
+        margin: EdgeInsets.all(16),
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        decoration: BoxDecoration(
+          color: primaryGreen,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 12,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _navItem(
+              icon: Icons.home,
+              label: 'Home',
+              active: true,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => UserDashboardPage()),
+                );
+              },
+            ),
+            _navItem(
+              icon: Icons.flash_on,
+              label: 'Request',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => RequestChargingPage()),
+                );
+              },
+            ),
+            _navItem(
+              icon: Icons.history,
+              label: 'History',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => BookingHistoryPage()),
+                );
+              },
+            ),
+            _navItem(
+              icon: Icons.person,
+              label: 'Profile',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => UserProfilePage()),
+                );
+              },
+            ),
+
+          ],
+        ),
       ),
     );
   }
 
   // ================= EMPTY CENTER CARD =================
+  Widget _navItem({
+    required IconData icon,
+    required String label,
+    bool active = false,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 26, color: active ? Colors.black : Colors.white),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: active ? Colors.black : Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _emptyCenterCard() {
     return Container(
-      padding: const EdgeInsets.all(30),
+      padding: EdgeInsets.all(30),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 18,
@@ -162,34 +262,30 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(22),
+            padding: EdgeInsets.all(22),
             decoration: BoxDecoration(
               color: primaryGreen.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.directions_car,
-              size: 70,
-              color: primaryGreen,
-            ),
+            child: Icon(Icons.directions_car, size: 70, color: primaryGreen),
           ),
-          const SizedBox(height: 18),
-          const Text(
+          SizedBox(height: 18),
+          Text(
             'No Cars to Charge',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 6),
-          const Text(
+          SizedBox(height: 6),
+          Text(
             'Add a Car to Get Started',
             style: TextStyle(color: Colors.black54),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(22),
                 ),
@@ -204,7 +300,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                   _refreshVehicles(); // 🔄 reload list
                 }
               },
-              child: const Text(
+              child: Text(
                 'Add a Car',
                 style: TextStyle(
                   fontSize: 18,
@@ -224,12 +320,12 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   Widget _vehicleCard(dynamic vehicle) {
     return Container(
       width: 330,
-      margin: const EdgeInsets.only(right: 18),
-      padding: const EdgeInsets.all(24),
+      margin: EdgeInsets.only(right: 18),
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 18,
@@ -255,15 +351,12 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                 }
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 6,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: primaryGreen.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text(
+                child: Text(
                   'Details',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
@@ -271,32 +364,32 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
             ),
           ),
 
-          const SizedBox(height: 18),
-          const Icon(Icons.directions_car, size: 90, color: primaryGreen),
-          const SizedBox(height: 16),
+          SizedBox(height: 18),
+          Icon(Icons.directions_car, size: 90, color: primaryGreen),
+          SizedBox(height: 16),
           Text(
             '${vehicle['vehicle_company']} ${vehicle['vehicle_name']}',
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(
             vehicle['vehicle_number'],
-            style: const TextStyle(color: Colors.black54),
+            style: TextStyle(color: Colors.black54),
           ),
-          const Spacer(),
+          Spacer(),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(22),
                 ),
               ),
               onPressed: () {},
-              child: const Text(
+              child: Text(
                 'Request ChargeNow',
                 style: TextStyle(
                   fontSize: 18,
@@ -322,17 +415,17 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
         );
 
         if (result == true) {
-          _refreshVehicles(); // 🔄 reload list
+          _refreshVehicles(); //  reload list
         }
       },
       child: Container(
         width: 330,
-        margin: const EdgeInsets.only(right: 18),
-        padding: const EdgeInsets.all(24),
+        margin: EdgeInsets.only(right: 18),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 18,
@@ -344,20 +437,20 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(22),
+              padding: EdgeInsets.all(22),
               decoration: BoxDecoration(
                 color: primaryGreen.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.add, size: 70, color: primaryGreen),
+              child: Icon(Icons.add, size: 70, color: primaryGreen),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            SizedBox(height: 24),
+            Text(
               'Add Vehicle',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 6),
-            const Text(
+            SizedBox(height: 6),
+            Text(
               'Add Another Car to ChargeNow',
               style: TextStyle(color: Colors.black54),
             ),
@@ -370,38 +463,163 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   // ================= OFFERS =================
 
   Widget _offersRow() {
-    return Row(
+    return Column(
       children: [
-        _offerCard('Save Upto 30%', 'With ChargeNow', Icons.percent),
-        const SizedBox(width: 16),
-        _offerCard('Fast Charging', 'Nearby Operators', Icons.flash_on),
-      ],
-    );
-  }
-
-  Widget _offerCard(String title, String subtitle, IconData icon) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        // ================= ROW 1 =================
+        Row(
           children: [
-            Icon(icon, color: primaryGreen),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Expanded(
+              flex: 3,
+              child: Container(
+                height: 120,
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.celebration, size: 28, color: primaryGreen),
+                        SizedBox(height: 10),
+                        Text(
+                          'First Charge',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Special welcome offer',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 13, color: Colors.black54),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(subtitle, style: const TextStyle(color: Colors.black54)),
+
+            SizedBox(width: 10),
+
+            // REFERRAL CARD (BLACK)
+            Expanded(
+              flex: 2,
+              child: Container(
+                height: 120,
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.ev_station, size: 34, color: primaryGreen),
+                    SizedBox(height: 10),
+                    Text(
+                      'Doorstep',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Charging',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
-      ),
+
+        SizedBox(height: 20),
+
+        // ================= ROW 2 =================
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Container(
+                height: 120,
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.percent, color: primaryGreen, size: 28),
+                    SizedBox(height: 10),
+                    Text(
+                      'Save Upto 30%',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'With ChargeNow',
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              flex: 2,
+              child: Container(
+                height: 120,
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+
+                  children: [
+                    Icon(Icons.flash_on, color: primaryGreen, size: 28),
+                    SizedBox(height: 10),
+                    Text(
+                      'Fast Charging',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Nearby Operators',
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

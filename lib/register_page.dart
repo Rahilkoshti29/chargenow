@@ -58,8 +58,8 @@ class _RegisterPageState extends State<RegisterPage> {
           "user_address": userAddressController.text.trim(),
         }),
       );
-      debugPrint("Status Code: ${response.statusCode}");
-      debugPrint("Response Body: ${response.body}");
+      // debugPrint("Status Code: ${response.statusCode}");
+      // debugPrint("Response Body: ${response.body}");
 
       final Map<String, dynamic> data = jsonDecode(response.body);
 
@@ -73,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
 
-        await Future.delayed(Duration(milliseconds: 800));
+        await Future.delayed(Duration(milliseconds: 200));
 
         Navigator.pop(context);
       } else {
@@ -146,7 +146,7 @@ class _RegisterPageState extends State<RegisterPage> {
           context,
         ).showSnackBar(SnackBar(content: Text(data['message'])));
 
-        await Future.delayed(Duration(milliseconds: 800));
+        await Future.delayed(Duration(milliseconds: 200));
 
         Navigator.pushReplacement(
           context,
@@ -416,13 +416,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         SizedBox(height: 20),
         CommonTextFormField(
-          controller: userAddressController,
-          hintText: "User Address",
-          prefixIcon: Icons.home,
-          validator: (v) => v == null || v.isEmpty ? "Enter Address" : null,
-        ),
-        SizedBox(height: 20),
-        CommonTextFormField(
           controller: userPasswordController,
           hintText: "User Password",
           prefixIcon: Icons.lock,
@@ -462,6 +455,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
             return null;
           },
+        ),
+        SizedBox(height: 20),
+        CommonTextFormField(
+          controller: userAddressController,
+          hintText: "User Address",
+          prefixIcon: Icons.home,
+          validator: (v) => v == null || v.isEmpty ? "Enter Address" : null,
         ),
       ],
     );

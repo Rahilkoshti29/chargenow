@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context,
     ).showSnackBar(SnackBar(content: Text(data['message'])));
 
-    await Future.delayed(Duration(milliseconds: 400));
+    await Future.delayed(Duration(milliseconds: 200));
 
     if (data['user']['role'] == 1) {
       Navigator.pushReplacement(
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
           : SafeArea(
               child: Stack(
                 children: [
-                  // 🔹 MAIN SCROLLABLE CONTENT
+                  //  MAIN SCROLLABLE CONTENT
                   SingleChildScrollView(
                     padding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).viewInsets.bottom + 80,
@@ -273,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                   ),
 
-                  // 🔹 FIXED BOTTOM TEXT
+                  //   BOTTOM TEXT
                   Positioned(
                     bottom: 15,
                     left: 0,

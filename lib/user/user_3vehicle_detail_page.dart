@@ -81,7 +81,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
           fontSize: 16,
         );
 
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(Duration(milliseconds: 800), () {
           Navigator.pop(context, true);
         });
       } else {
@@ -147,7 +147,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
           );
         }
 
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(Duration(milliseconds: 800), () {
           Navigator.pop(context, true);
         });
       } else {
@@ -180,21 +180,21 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white, // White background
-          title: const Text("Delete Vehicle"),
-          content: const Text("Are you sure you want to delete this vehicle?"),
+          title: Text("Delete Vehicle"),
+          content: Text("Are you sure you want to delete this vehicle?"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog
               },
-              child: const Text("No", style: TextStyle(color: Colors.black)),
+              child: Text("No", style: TextStyle(color: Colors.black)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog
                 _deleteVehicle(); // Call delete API
               },
-              child: const Text("Yes", style: TextStyle(color: Colors.black)),
+              child: Text("Yes", style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -206,7 +206,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF2FFF7),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -227,13 +227,13 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator(color: primaryGreen))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Container(
-                padding: const EdgeInsets.all(22),
+                padding: EdgeInsets.all(22),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 18,
@@ -246,19 +246,19 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
                   child: Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(18),
+                        padding: EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           color: primaryGreen.withOpacity(0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.directions_car,
                           size: 60,
                           color: primaryGreen,
                         ),
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
 
                       CommonTextFormField(
                         controller: companyCtrl,
@@ -268,7 +268,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
                         showCursor: isEditing,
                       ),
 
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
 
                       CommonTextFormField(
                         controller: nameCtrl,
@@ -278,7 +278,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
                         showCursor: isEditing,
                       ),
 
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
 
                       CommonTextFormField(
                         controller: modelCtrl,
@@ -288,7 +288,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
                         showCursor: isEditing,
                       ),
 
-                      const SizedBox(height: 14),
+                      SizedBox(height: 14),
 
                       CommonTextFormField(
                         controller: numberCtrl,
@@ -298,7 +298,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
                         showCursor: isEditing,
                       ),
 
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30),
 
                       Column(
                         children: [
@@ -339,7 +339,7 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
                             ),
                           ),
 
-                          const SizedBox(height: 14),
+                          SizedBox(height: 14),
 
                           // ================= DELETE BUTTON =================
                           SizedBox(
@@ -347,13 +347,13 @@ class _VehicleDetailsPageState extends State<VehicleDetailsPage> {
                             height: 52,
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.red),
+                                side: BorderSide(color: Colors.red),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(26),
                                 ),
                               ),
                               onPressed: isLoading ? null : _confirmDelete,
-                              child: const Text(
+                              child: Text(
                                 'Delete Vehicle',
                                 style: TextStyle(
                                   color: Colors.red,
