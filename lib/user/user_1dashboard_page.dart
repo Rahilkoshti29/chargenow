@@ -15,10 +15,10 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = const [
-   HomePage(),
+    HomePage(),
     RequestChargingPage(),
     BookingHistoryPage(),
-   UserProfilePage(),
+    UserProfilePage(),
   ];
 
   static const Color primaryGreen = Color(0xFF2ECC71);
@@ -27,45 +27,52 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF2FFF7),
-      body: _pages[_currentIndex], // Show the selected page
-      bottomNavigationBar: Container(
-        height: 78,
-        margin: EdgeInsets.all(16),
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        decoration: BoxDecoration(
-          color: primaryGreen,
+      body: _pages[_currentIndex],
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(10),
+        child: ClipRRect(
           borderRadius: BorderRadius.circular(28),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _navItem(Icons.home, 'Home', 0),
-            _navItem(Icons.flash_on, 'Request', 1),
-            _navItem(Icons.history, 'History', 2),
-            _navItem(Icons.person, 'Profile', 3),
-          ],
-        ),
-      ),
-    );
-  }
+          child: SizedBox(
+            height: 70,
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() => _currentIndex = index);
+              },
 
-  Widget _navItem(IconData icon, String label, int index) {
-    return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 26, color: _currentIndex == index ? Colors.black : Colors.white),
-          SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: _currentIndex == index ? Colors.black : Colors.white,
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: primaryGreen,
+
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+
+              selectedItemColor: Colors.black,
+              unselectedItemColor: Colors.white,
+
+              selectedFontSize: 12,
+              unselectedFontSize: 11,
+
+              items:  [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home, size: 26),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.flash_on, size: 26),
+                  label: 'Request',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.history, size: 26),
+                  label: 'History',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person, size: 26),
+                  label: 'Profile',
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
