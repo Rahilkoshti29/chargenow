@@ -11,7 +11,7 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2FFF7),
+      backgroundColor: Color(0xFFF2FFF7),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
