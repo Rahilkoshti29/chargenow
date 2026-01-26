@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class BookingHistoryPage extends StatefulWidget {
-  const BookingHistoryPage({super.key});
+  final VoidCallback onBack;
+
+  const BookingHistoryPage({super.key, required this.onBack});
 
   @override
   State<BookingHistoryPage> createState() => _BookingHistoryPageState();
@@ -14,17 +16,17 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
       backgroundColor: Color(0xFFF2FFF7),
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: widget.onBack,
           icon: Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           "Booking History",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Color(0xff2ecc71),
+        backgroundColor: const Color(0xff2ecc71),
       ),
+      body: Center(child: Text("Booking history content")),
     );
   }
 }

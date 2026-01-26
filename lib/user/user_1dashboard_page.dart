@@ -1,3 +1,4 @@
+import 'package:chargenow/user/notification.dart';
 import 'package:chargenow/user/user_2home_page.dart';
 import 'package:chargenow/user/user_3request_charging_page.dart';
 import 'package:chargenow/user/user_4booking_history_page.dart';
@@ -13,13 +14,33 @@ class UserDashboardPage extends StatefulWidget {
 
 class _UserDashboardPageState extends State<UserDashboardPage> {
   int _currentIndex = 0;
+  void goToHome() {
+    setState(() => _currentIndex = 0);
+  }
 
-  final List<Widget> _pages = const [
-    HomePage(),
-    RequestChargingPage(),
-    BookingHistoryPage(),
-    UserProfilePage(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      HomePage(
+        onProfileTap: () {
+          setState(() => _currentIndex = 3); // Profile tab
+        },
+        onNotificationTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => NotificationPage()),
+          );
+        },
+      ),
+
+      RequestChargingPage(onBack: goToHome),
+      BookingHistoryPage(onBack: goToHome),
+      UserProfilePage(onBack: goToHome),
+    ];
+  }
 
   static const Color primaryGreen = Color(0xFF2ECC71);
 
@@ -27,11 +48,11 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF2FFF7),
-      body: _pages[_currentIndex],
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(12),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(25),
           child: SizedBox(
             height: 70,
             child: BottomNavigationBar(
@@ -49,10 +70,10 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
               selectedItemColor: Colors.black,
               unselectedItemColor: Colors.white,
 
-              selectedFontSize: 12,
+              selectedFontSize: 11,
               unselectedFontSize: 11,
 
-              items:  [
+              items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home, size: 26),
                   label: 'Home',

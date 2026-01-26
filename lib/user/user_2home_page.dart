@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
+import 'package:chargenow/user/user_5profile_page.dart';
 import 'package:chargenow/user/user_6add_vehicle_page.dart';
 import 'package:chargenow/user/user_7vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,14 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final VoidCallback onProfileTap;
+  final VoidCallback onNotificationTap;
 
+  const HomePage({
+    super.key,
+    required this.onProfileTap,
+    required this.onNotificationTap,
+  });
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -79,16 +86,27 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.notifications_none, color: Colors.black, size: 25),
+          GestureDetector(
+            onTap: widget.onNotificationTap,
+            child: CircleAvatar(
+              radius: 22,
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.notifications_none,
+                color: Colors.black,
+                size: 25,
+              ),
+            ),
           ),
           SizedBox(width: 16),
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.person_outline, color: Colors.black, size: 25),
+
+          GestureDetector(
+            onTap: widget.onProfileTap,
+            child: CircleAvatar(
+              radius: 22,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person_outline, color: Colors.black, size: 25),
+            ),
           ),
           SizedBox(width: 16),
         ],
@@ -151,7 +169,11 @@ class _HomePageState extends State<HomePage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
         ],
       ),
       child: Column(
@@ -165,9 +187,15 @@ class _HomePageState extends State<HomePage> {
             child: Icon(Icons.directions_car, size: 70, color: primaryGreen),
           ),
           SizedBox(height: 18),
-          Text('No Cars to Charge', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            'No Cars to Charge',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 6),
-          Text('Add a Car to Get Started', style: TextStyle(color: Colors.black54)),
+          Text(
+            'Add a Car to Get Started',
+            style: TextStyle(color: Colors.black54),
+          ),
           SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
@@ -175,7 +203,9 @@ class _HomePageState extends State<HomePage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
                 padding: EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22),
+                ),
               ),
               onPressed: () async {
                 final result = await Navigator.push(
@@ -184,7 +214,14 @@ class _HomePageState extends State<HomePage> {
                 );
                 if (result == true) _refreshVehicles();
               },
-              child: Text('Add a Car', style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Add a Car',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ],
@@ -201,7 +238,13 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -211,7 +254,9 @@ class _HomePageState extends State<HomePage> {
               onTap: () async {
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => VehicleDetailsPage(vehicle: vehicle)),
+                  MaterialPageRoute(
+                    builder: (_) => VehicleDetailsPage(vehicle: vehicle),
+                  ),
                 );
                 if (result == true) _refreshVehicles();
               },
@@ -221,16 +266,26 @@ class _HomePageState extends State<HomePage> {
                   color: primaryGreen.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text('Details', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Details',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ),
           SizedBox(height: 18),
           Icon(Icons.directions_car, size: 90, color: primaryGreen),
           SizedBox(height: 16),
-          Text('${vehicle['vehicle_company']} ${vehicle['vehicle_name']}', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            '${vehicle['vehicle_company']} ${vehicle['vehicle_name']}',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 6),
-          Text(vehicle['vehicle_number'], style: TextStyle(color: Colors.black54)),
+          Text(
+            vehicle['vehicle_number'],
+            style: TextStyle(color: Colors.black54),
+          ),
           Spacer(),
           SizedBox(
             width: double.infinity,
@@ -238,10 +293,19 @@ class _HomePageState extends State<HomePage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
                 padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22),
+                ),
               ),
               onPressed: () {},
-              child: Text('Request ChargeNow', style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Request ChargeNow',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ],
@@ -266,7 +330,13 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8))],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 18,
+              offset: Offset(0, 8),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -280,9 +350,15 @@ class _HomePageState extends State<HomePage> {
               child: Icon(Icons.add, size: 70, color: primaryGreen),
             ),
             SizedBox(height: 24),
-            Text('Add Vehicle', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              'Add Vehicle',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 6),
-            Text('Add Another Car to ChargeNow', style: TextStyle(color: Colors.black54)),
+            Text(
+              'Add Another Car to ChargeNow',
+              style: TextStyle(color: Colors.black54),
+            ),
           ],
         ),
       ),
@@ -311,8 +387,21 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.celebration, size: 28, color: primaryGreen),
                     SizedBox(height: 10),
-                    Text('First Charge', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                    Text('Special welcome offer', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(
+                      'First Charge',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Special welcome offer',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
                   ],
                 ),
               ),
@@ -333,8 +422,21 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.ev_station, size: 34, color: primaryGreen),
                     SizedBox(height: 10),
-                    Text('Doorstep', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                    Text('Charging', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(
+                      'Doorstep',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Charging',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
                   ],
                 ),
               ),
@@ -360,8 +462,17 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.percent, color: primaryGreen, size: 28),
                     SizedBox(height: 10),
-                    Text('Save Upto 30%', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                    Text('With ChargeNow', style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(
+                      'Save Upto 30%',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'With ChargeNow',
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
                   ],
                 ),
               ),
@@ -382,8 +493,17 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.flash_on, color: primaryGreen, size: 28),
                     SizedBox(height: 10),
-                    Text('Fast Charging', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                    Text('Nearby Operators', style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    Text(
+                      'Fast Charging',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Nearby Operators',
+                      style: TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
                   ],
                 ),
               ),

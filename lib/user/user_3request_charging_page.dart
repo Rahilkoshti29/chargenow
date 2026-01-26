@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RequestChargingPage extends StatefulWidget {
-  const RequestChargingPage({super.key});
+  final VoidCallback onBack;
+
+  const RequestChargingPage({super.key, required this.onBack});
 
   @override
   State<RequestChargingPage> createState() => _RequestChargingPageState();
@@ -14,7 +16,7 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
       backgroundColor: Color(0xFFF2FFF7),
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: widget.onBack,
           icon: Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
         ),
         centerTitle: true,
@@ -25,6 +27,7 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
         ),
         backgroundColor: Color(0xff2ecc71),
       ),
+      body: Center(child: Text("Request ChargeNow content")),
     );
   }
 }
