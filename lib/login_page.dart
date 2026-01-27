@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController emailController = TextEditingController();
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (data['user']['role'] == 2) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => VanoperatorDashboard()),
+        MaterialPageRoute(builder: (_) => VanOperatorDashboard()),
       );
     }
   }

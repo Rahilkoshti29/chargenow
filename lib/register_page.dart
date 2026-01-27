@@ -150,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginScreen()),
+          MaterialPageRoute(builder: (_) => LoginPage()),
         );
       } else {
         String errorMsg = 'Registration failed';
@@ -321,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => LoginScreen()),
+                            MaterialPageRoute(builder: (_) => LoginPage()),
                           );
                         },
                         child: Text.rich(

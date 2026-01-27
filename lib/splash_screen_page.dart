@@ -50,14 +50,14 @@ class _SplashScreenState extends State<SplashScreen> {
       } else if (role == 2) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => VanoperatorDashboard()),
+          MaterialPageRoute(builder: (_) => VanOperatorDashboard()),
         );
       }
     } else {
       // 🔹 NOT LOGGED IN
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
+        MaterialPageRoute(builder: (_) => LoginPage()),
       );
     }
   }
