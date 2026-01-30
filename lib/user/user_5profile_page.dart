@@ -1,7 +1,13 @@
+import 'package:chargenow/login_page.dart';
+import 'package:chargenow/user/ContactUsPage.dart';
+import 'package:chargenow/user/privacy_policy.dart';
+import 'package:chargenow/user/terms&conditions.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfilePage extends StatefulWidget {
   final VoidCallback onBack;
+
   const UserProfilePage({super.key, required this.onBack});
 
   @override
@@ -9,24 +15,255 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
+  static const Color primaryGreen = Color(0xFF2ECC71);
+
+  String userName = "User";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('name') ?? "User";
+    });
+  }
+
+  Future<void> logoutUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+          (route) => false,
+    );
+  }
+
+  void showLogoutDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: const Text("Logout"),
+          content: const Text(
+            "Are you sure you want to logout from ChargeNow?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel", style: TextStyle(color: Colors.black)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryGreen,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                logoutUser();
+              },
+              child: const Text("Yes", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF2FFF7),
+      backgroundColor: const Color(0xFFF2FFF7),
+
       appBar: AppBar(
+        backgroundColor: primaryGreen,
+        elevation: 0,
         leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
           onPressed: widget.onBack,
-          icon: Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
         ),
-        centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "My Profile",
+        title: const Text(
+          "Profile",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Color(0xff2ecc71),
+        centerTitle: true,
       ),
-      body: Center(child: Text("My Profile content")),
+
+      body: ListView(
+        padding: const EdgeInsets.all(18),
+        children: [
+          // ================= USER CARD =================
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: primaryGreen.withOpacity(0.25),
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 26,
+                  backgroundColor: Colors.black,
+                  child: Icon(Icons.person, color: Colors.white),
+                ),
+                const SizedBox(width: 14),
+                Text(
+                  userName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 22),
+
+          /// -------- MAIN MENU --------
+          _menuCard([
+            _menuItem(
+              Icons.directions_car,
+              "My Vehicles",
+              // onTap: () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (_) => const UserVehicleDetailPage(),
+              //     ),
+              //   );
+              // },
+            ),
+            _menuItem(
+              Icons.calendar_month,
+              "My Bookings",
+              // onTap: () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (_) => const BookingHistoryPage(),
+              //     ),
+              //   );
+              // },
+            ),
+            _menuItem(
+              Icons.location_on,
+              "Track Van",
+              // onTap: () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (_) => const TrackVanPage(),
+              //     ),
+              //   );
+              // },
+            ),
+            _menuItem(Icons.person_outline, "My Profile"),
+          ]),
+
+          const SizedBox(height: 18),
+
+          /// -------- SUPPORT MENU --------
+          _menuCard([
+            _menuItem(
+              Icons.call,
+              "Contact Us",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ContactSupportPage(),
+                  ),
+                );
+              },
+            ),
+
+            _menuItem(
+              Icons.description,
+              "Terms & Conditions",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TermsConditionsPage(),
+                  ),
+                );
+              },
+            ),
+
+            _menuItem(
+              Icons.privacy_tip,
+              "Privacy Policy",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const PrivacyPolicyPage(),
+                  ),
+                );
+              },
+            ),
+
+            _menuItem(
+              Icons.logout,
+              "Logout",
+              isLogout: true,
+              onTap: showLogoutDialog,
+            ),
+          ]),
+
+        ],
+      ),
+    );
+  }
+
+  // ================== UI WIDGETS ==================
+
+  Widget _menuCard(List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 10)
+        ],
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  Widget _menuItem(
+      IconData icon,
+      String title, {
+        bool isLogout = false,
+        VoidCallback? onTap,
+      }) {
+    return ListTile(
+      onTap: onTap,
+      leading: Icon(
+        icon,
+        color: isLogout ? Colors.red : primaryGreen,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: isLogout ? Colors.red : Colors.black,
+        ),
+      ),
+      trailing: const Icon(Icons.chevron_right),
     );
   }
 }

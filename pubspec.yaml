@@ -41,6 +41,7 @@ dependencies:
   flutter_svg: ^2.2.3
   introduction_screen: ^4.0.0
   google_nav_bar: ^5.0.7
+  font_awesome_flutter: ^10.8.0
 
 
   # The following adds the Cupertino Icons font to your application.
