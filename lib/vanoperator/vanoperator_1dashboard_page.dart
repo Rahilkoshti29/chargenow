@@ -205,6 +205,7 @@ class VanOperatorDashboard extends StatelessWidget {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
+            backgroundColor: Colors.white,
             title: const Text("Logout"),
             content: const Text("Are you sure you want to logout?"),
             actions: [
@@ -212,17 +213,23 @@ class VanOperatorDashboard extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context); // close dialog
                 },
-                child: const Text("No",style: TextStyle(color: Colors.black),),
+                child: const Text("Cancel",style: TextStyle(color: Colors.black),),
               ),
-              TextButton(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGreen,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 onPressed: () {
-                  Navigator.pop(context); // close dialog
+                  Navigator.pop(context);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (_) =>  LoginPage()),
                   );
                 },
-                child: const Text("Yes",style: TextStyle(color: Colors.black),),
+                child: const Text("Yes", style: TextStyle(color: Colors.black)),
               ),
             ],
           ),

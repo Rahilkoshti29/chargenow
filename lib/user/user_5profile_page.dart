@@ -2,6 +2,7 @@ import 'package:chargenow/login_page.dart';
 import 'package:chargenow/user/ContactUsPage.dart';
 import 'package:chargenow/user/privacy_policy.dart';
 import 'package:chargenow/user/terms&conditions.dart';
+import 'package:chargenow/user/user_vehicles.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,16 +33,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
     });
   }
 
-  Future<void> logoutUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginPage()),
-          (route) => false,
-    );
-  }
 
   void showLogoutDialog() {
     showDialog(
@@ -71,7 +62,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
               ),
               onPressed: () {
                 Navigator.pop(context);
-                logoutUser();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) =>  LoginPage()),
+                );
               },
               child: const Text("Yes", style: TextStyle(color: Colors.black)),
             ),
@@ -85,7 +79,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF2FFF7),
-
       appBar: AppBar(
         backgroundColor: primaryGreen,
         elevation: 0,
@@ -136,14 +129,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
             _menuItem(
               Icons.directions_car,
               "My Vehicles",
-              // onTap: () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (_) => const UserVehicleDetailPage(),
-              //     ),
-              //   );
-              // },
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MyVehiclesPage(),
+                  ),
+                );
+              },
             ),
             _menuItem(
               Icons.calendar_month,
