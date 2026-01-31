@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/user/user_5profile_page.dart';
+import 'package:chargenow/user/myprofiledetails.dart';
 import 'package:chargenow/user/user_6add_vehicle_page.dart';
 import 'package:chargenow/user/user_7vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  final VoidCallback onProfileTap;
+
   final VoidCallback onNotificationTap;
 
   const HomePage({
     super.key,
-    required this.onProfileTap,
+
     required this.onNotificationTap,
   });
   @override
@@ -35,8 +35,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
-    userName = prefs.getString('name') ?? 'User';
-    setState(() {});
+    setState(() {
+      userName = prefs.getString('user_name') ?? 'User';
+    });
   }
 
   void _refreshVehicles() {
@@ -101,7 +102,9 @@ class _HomePageState extends State<HomePage> {
           SizedBox(width: 16),
 
           GestureDetector(
-            onTap: widget.onProfileTap,
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_) => UserProfileDetailPage()));
+            },
             child: CircleAvatar(
               radius: 22,
               backgroundColor: Colors.white,

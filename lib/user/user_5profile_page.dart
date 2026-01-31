@@ -1,5 +1,6 @@
 import 'package:chargenow/login_page.dart';
 import 'package:chargenow/user/ContactUsPage.dart';
+import 'package:chargenow/user/myprofiledetails.dart';
 import 'package:chargenow/user/privacy_policy.dart';
 import 'package:chargenow/user/terms&conditions.dart';
 import 'package:chargenow/user/user_vehicles.dart';
@@ -29,10 +30,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      userName = prefs.getString('name') ?? "User";
+      userName = prefs.getString('user_name') ?? "User";
     });
   }
-
 
   void showLogoutDialog() {
     showDialog(
@@ -51,7 +51,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel", style: TextStyle(color: Colors.black)),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -64,7 +67,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) =>  LoginPage()),
+                  MaterialPageRoute(builder: (_) => LoginPage()),
                 );
               },
               child: const Text("Yes", style: TextStyle(color: Colors.black)),
@@ -132,9 +135,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => MyVehiclesPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => MyVehiclesPage()),
                 );
               },
             ),
@@ -162,7 +163,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
               //   );
               // },
             ),
-            _menuItem(Icons.person_outline, "My Profile"),
+            _menuItem(
+              Icons.person_outline,
+              "My Profile",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => UserProfileDetailPage()),
+                );
+              },
+            ),
           ]),
 
           const SizedBox(height: 18),
@@ -175,9 +185,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const ContactSupportPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const ContactSupportPage()),
                 );
               },
             ),
@@ -201,9 +209,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const PrivacyPolicyPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
                 );
               },
             ),
@@ -215,7 +221,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onTap: showLogoutDialog,
             ),
           ]),
-
         ],
       ),
     );
@@ -229,26 +234,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10)
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Column(children: children),
     );
   }
 
   Widget _menuItem(
-      IconData icon,
-      String title, {
-        bool isLogout = false,
-        VoidCallback? onTap,
-      }) {
+    IconData icon,
+    String title, {
+    bool isLogout = false,
+    VoidCallback? onTap,
+  }) {
     return ListTile(
       onTap: onTap,
-      leading: Icon(
-        icon,
-        color: isLogout ? Colors.red : primaryGreen,
-      ),
+      leading: Icon(icon, color: isLogout ? Colors.red : primaryGreen),
       title: Text(
         title,
         style: TextStyle(

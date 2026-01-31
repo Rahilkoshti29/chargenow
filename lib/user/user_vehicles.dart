@@ -105,6 +105,7 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
       ),
 
       floatingActionButton: FloatingActionButton(
+        tooltip: "Add Car",
         onPressed: () {
           Navigator.push(
             context,

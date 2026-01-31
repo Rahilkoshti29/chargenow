@@ -25,9 +25,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
     super.initState();
     _pages = [
       HomePage(
-        onProfileTap: () {
-          setState(() => _currentIndex = 3); // Profile tab
-        },
+
         onNotificationTap: () {
           Navigator.push(
             context,
@@ -87,8 +85,8 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
                   label: 'History',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.person, size: 26),
-                  label: 'Profile',
+                  icon: Icon(Icons.more_horiz_outlined, size: 26),
+                  label: 'More',
                 ),
               ],
             ),
