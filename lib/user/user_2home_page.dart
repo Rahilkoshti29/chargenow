@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  final Function(int) onTabChange;
+  final Function(int index, {int? vehicleId}) onTabChange;
   final VoidCallback onNotificationTap;
 
   const HomePage({
@@ -307,6 +307,8 @@ class _HomePageState extends State<HomePage> {
               ),
               onPressed: () {
                 widget.onTabChange(1);
+                vehicleId: vehicle['vehicle_id'];
+
               },
               child: Text(
                 'Request ChargeNow',

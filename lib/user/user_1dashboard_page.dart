@@ -17,7 +17,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   void goToHome() {
     setState(() => _currentIndex = 0);
   }
-
+  int? selectedVehicleId;
   late final List<Widget> _pages;
 
   @override
@@ -25,8 +25,11 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
     super.initState();
     _pages = [
       HomePage(
-        onTabChange: (index) {
-          setState(() => _currentIndex = index);
+        onTabChange: (int index, {int? vehicleId}) {
+          setState(() {
+            _currentIndex = index;
+            selectedVehicleId = vehicleId; // 👈 store it
+          });
         },
         onNotificationTap: () {
           Navigator.push(
