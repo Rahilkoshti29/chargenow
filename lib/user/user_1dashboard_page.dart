@@ -25,7 +25,9 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
     super.initState();
     _pages = [
       HomePage(
-
+        onTabChange: (index) {
+          setState(() => _currentIndex = index);
+        },
         onNotificationTap: () {
           Navigator.push(
             context,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/user/myprofiledetails.dart';
+import 'package:chargenow/user/user_3request_charging_page.dart';
 import 'package:chargenow/user/user_6add_vehicle_page.dart';
 import 'package:chargenow/user/user_7vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +9,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-
+  final Function(int) onTabChange;
   final VoidCallback onNotificationTap;
 
   const HomePage({
     super.key,
-
     required this.onNotificationTap,
+    required this.onTabChange,
   });
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,6 +32,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadUserName();
     _refreshVehicles();
+  }
+  int _currentIndex = 0;
+  void goToHome() {
+    setState(() => _currentIndex = 0);
   }
 
   Future<void> _loadUserName() async {
@@ -300,7 +305,9 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(22),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                widget.onTabChange(1);
+              },
               child: Text(
                 'Request ChargeNow',
                 style: TextStyle(

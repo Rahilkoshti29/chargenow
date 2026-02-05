@@ -29,9 +29,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userName = prefs.getString('user_name') ?? "User";
-    });
+    userName = prefs.getString('name') ?? 'User';
+    setState(() {});
   }
 
   void showLogoutDialog() {
