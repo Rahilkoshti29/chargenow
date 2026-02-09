@@ -137,7 +137,7 @@ class VanOperatorDashboard extends StatelessWidget {
       childAspectRatio: 1.1,
       children: [
         _card(context, Icons.wifi_tethering, "Available",
-            const OperatorAvailablePage()),
+            const OperatorAvailabilityPage()),
         _card(context, Icons.mail_outline, "Requests",
             const OperatorRequestPage()),
         _card(context, Icons.calendar_today, "Bookings",
