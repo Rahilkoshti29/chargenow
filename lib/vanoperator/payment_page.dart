@@ -8,12 +8,10 @@ class OperatorPaymentsPage extends StatefulWidget {
   const OperatorPaymentsPage({super.key});
 
   @override
-  State<OperatorPaymentsPage> createState() =>
-      _OperatorPaymentsPageState();
+  State<OperatorPaymentsPage> createState() => _OperatorPaymentsPageState();
 }
 
-class _OperatorPaymentsPageState
-    extends State<OperatorPaymentsPage> {
+class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
   static const Color primaryGreen = Color(0xFF2ECC71);
   static const Color bgColor = Color(0xFFF2FFF7);
 
@@ -52,9 +50,11 @@ class _OperatorPaymentsPageState
 
       // 🔥 Latest payment on top
       data.sort((a, b) {
-        final aTime = DateTime.tryParse(a['payment_time'] ?? '') ??
+        final aTime =
+            DateTime.tryParse(a['payment_time'] ?? '') ??
             DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime = DateTime.tryParse(b['payment_time'] ?? '') ??
+        final bTime =
+            DateTime.tryParse(b['payment_time'] ?? '') ??
             DateTime.fromMillisecondsSinceEpoch(0);
         return bTime.compareTo(aTime);
       });
@@ -124,18 +124,14 @@ class _OperatorPaymentsPageState
         children: [
           Text(
             "Payment #$paymentId",
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 8),
 
           Row(
             children: [
-              const Icon(Icons.bookmark,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.bookmark, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text("Booking ID : $bookingId"),
             ],
@@ -145,13 +141,14 @@ class _OperatorPaymentsPageState
 
           Row(
             children: [
-              const Icon(Icons.currency_rupee,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.currency_rupee, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text(
                 "₹ ${amount.toStringAsFixed(2)}",
                 style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w600),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -160,8 +157,7 @@ class _OperatorPaymentsPageState
 
           Row(
             children: [
-              const Icon(Icons.payment,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.payment, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text(
                 paymentMethodText(method),
@@ -174,8 +170,7 @@ class _OperatorPaymentsPageState
 
           Row(
             children: [
-              const Icon(Icons.info_outline,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.info_outline, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text(
                 paymentStatusText(status),
@@ -191,10 +186,7 @@ class _OperatorPaymentsPageState
 
           Text(
             payment['payment_time'] ?? '',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
           ),
         ],
       ),
@@ -208,35 +200,30 @@ class _OperatorPaymentsPageState
       backgroundColor: bgColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
         title: const Text(
           "My Payments",
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: primaryGreen,
       ),
       body: isLoading
-          ? const Center(
-        child:
-        CircularProgressIndicator(color: primaryGreen),
-      )
+          ? const Center(child: CircularProgressIndicator(color: primaryGreen))
           : RefreshIndicator(
-        color: primaryGreen,
-        onRefresh: fetchPayments,
-        child: payments.isEmpty
-            ? const Center(child: Text("No Payments Found"))
-            : ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: payments.length,
-          itemBuilder: (context, index) =>
-              paymentCard(payments[index]),
-        ),
-      ),
+              color: primaryGreen,
+              onRefresh: fetchPayments,
+              child: payments.isEmpty
+                  ? const Center(child: Text("No Payments Found"))
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: payments.length,
+                      itemBuilder: (context, index) =>
+                          paymentCard(payments[index]),
+                    ),
+            ),
     );
   }
 }

@@ -18,7 +18,6 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
   bool isLoading = true;
   List<dynamic> requests = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -75,13 +74,11 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
 
   // ================= REQUEST CARD =================
   Widget requestCard(dynamic req) {
-    final int requestId = int.tryParse(
-      (req['request_id'] ?? req['id'] ?? '').toString(),
-    ) ?? 0;
+    final int requestId =
+        int.tryParse((req['request_id'] ?? req['id'] ?? '').toString()) ?? 0;
 
-    final int status = int.tryParse(
-      (req['request_status'] ?? '0').toString(),
-    ) ?? 0;
+    final int status =
+        int.tryParse((req['request_status'] ?? '0').toString()) ?? 0;
 
     if (requestId == 0) return const SizedBox();
 
@@ -125,10 +122,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
               const SizedBox(width: 8),
               Text(
                 "Vehicle ID : ${req['vehicle_id']}",
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
               ),
             ],
           ),
@@ -151,9 +145,11 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    onPressed: () =>
-                        updateRequest(requestId, "accept"),
-                    child: const Text("Accept",style: TextStyle(color: Colors.white),),
+                    onPressed: () => updateRequest(requestId, "accept"),
+                    child: const Text(
+                      "Accept",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -167,8 +163,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    onPressed: () =>
-                        updateRequest(requestId, "reject"),
+                    onPressed: () => updateRequest(requestId, "reject"),
                     child: const Text("Reject"),
                   ),
                 ),
@@ -176,20 +171,14 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
             ),
 
           if (status == 1)
-            const Text("Accepted",
-                style: TextStyle(color: Colors.green)),
+            const Text("Accepted", style: TextStyle(color: Colors.green)),
 
           if (status == 2)
-            const Text("Rejected",
-                style: TextStyle(color: Colors.red)),
+            const Text("Rejected", style: TextStyle(color: Colors.red)),
         ],
       ),
     );
   }
-
-
-
-
 
   // ================= UI =================
   @override
@@ -198,7 +187,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
       backgroundColor: bgColor,
       appBar: AppBar(
         leading: IconButton(
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
           icon: Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
@@ -212,21 +201,19 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
         backgroundColor: Color(0xff2ecc71),
       ),
       body: isLoading
-          ? const Center(
-        child: CircularProgressIndicator(color: primaryGreen),
-      )
+          ? const Center(child: CircularProgressIndicator(color: primaryGreen))
           : RefreshIndicator(
-        color: primaryGreen,
-        onRefresh: fetchRequests,
-        child: requests.isEmpty
-            ? const Center(child: Text("No Requests Found"))
-            : ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: requests.length,
-          itemBuilder: (context, index) =>
-              requestCard(requests[index]),
-        ),
-      ),
+              color: primaryGreen,
+              onRefresh: fetchRequests,
+              child: requests.isEmpty
+                  ? const Center(child: Text("No Requests Found"))
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: requests.length,
+                      itemBuilder: (context, index) =>
+                          requestCard(requests[index]),
+                    ),
+            ),
     );
   }
 }

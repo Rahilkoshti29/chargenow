@@ -9,7 +9,6 @@ import 'package:chargenow/vanoperator/vanoperator_van_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-
 class VanOperatorDashboard extends StatelessWidget {
   const VanOperatorDashboard({super.key});
 
@@ -70,8 +69,7 @@ class VanOperatorDashboard extends StatelessWidget {
             child: const CircleAvatar(
               radius: 22,
               backgroundColor: Colors.white,
-              child:
-              Icon(Icons.person_outline, color: Colors.black, size: 25),
+              child: Icon(Icons.person_outline, color: Colors.black, size: 25),
             ),
           ),
           const SizedBox(width: 16),
@@ -136,16 +134,36 @@ class VanOperatorDashboard extends StatelessWidget {
       mainAxisSpacing: 14,
       childAspectRatio: 1.1,
       children: [
-        _card(context, Icons.wifi_tethering, "Available",
-            const OperatorAvailabilityPage()),
-        _card(context, Icons.mail_outline, "Requests",
-            const OperatorRequestPage()),
-        _card(context, Icons.calendar_today, "Bookings",
-            const OperatorBooking()),
-        _card(context, Icons.credit_card, "Payments",
-            const OperatorPaymentsPage()),
-        _card(context, Icons.chat_bubble_outline, "Feedback",
-            const OperatorFeedbackPage()),
+        _card(
+          context,
+          Icons.wifi_tethering,
+          "Available",
+          const OperatorAvailabilityPage(),
+        ),
+        _card(
+          context,
+          Icons.mail_outline,
+          "Requests",
+          const OperatorRequestPage(),
+        ),
+        _card(
+          context,
+          Icons.calendar_today,
+          "Bookings",
+          const OperatorBooking(),
+        ),
+        _card(
+          context,
+          Icons.credit_card,
+          "Payments",
+          const OperatorPaymentsPage(),
+        ),
+        _card(
+          context,
+          Icons.chat_bubble_outline,
+          "Feedback",
+          const OperatorFeedbackPage(),
+        ),
         _logoutCard(context),
       ],
     );
@@ -158,10 +176,7 @@ class VanOperatorDashboard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => page),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => page));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -186,10 +201,7 @@ class VanOperatorDashboard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -213,7 +225,10 @@ class VanOperatorDashboard extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context); // close dialog
                 },
-                child: const Text("Cancel",style: TextStyle(color: Colors.black),),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -226,7 +241,7 @@ class VanOperatorDashboard extends StatelessWidget {
                   Navigator.pop(context);
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) =>  LoginPage()),
+                    MaterialPageRoute(builder: (_) => LoginPage()),
                   );
                 },
                 child: const Text("Yes", style: TextStyle(color: Colors.black)),
@@ -249,7 +264,7 @@ class VanOperatorDashboard extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children:  [
+          children: [
             CircleAvatar(
               radius: 26,
               backgroundColor: primaryGreen.withOpacity(0.15),
@@ -258,10 +273,7 @@ class VanOperatorDashboard extends StatelessWidget {
             SizedBox(height: 12),
             Text(
               "Logout",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ],
         ),

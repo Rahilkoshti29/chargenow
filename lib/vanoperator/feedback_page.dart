@@ -8,11 +8,10 @@ class OperatorFeedbackPage extends StatefulWidget {
   const OperatorFeedbackPage({super.key});
 
   @override
-  State<OperatorFeedbackPage> createState() =>
-      _OperatorFeedbackPageState();
+  State<OperatorFeedbackPage> createState() => _OperatorFeedbackPageState();
 }
 
-class  _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
+class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
   static const Color primaryGreen = Color(0xFF2ECC71);
   static const Color bgColor = Color(0xFFF2FFF7);
 

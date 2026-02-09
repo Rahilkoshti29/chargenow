@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 class OperatorProfilePage extends StatefulWidget {
   const OperatorProfilePage({super.key});
 
@@ -88,7 +89,6 @@ class _OperatorProfilePageState extends State<OperatorProfilePage> {
         "operator_name": nameCtrl.text.trim(),
         "operator_email": emailCtrl.text.trim(),
         "operator_phone": phoneCtrl.text.trim(),
-
       }),
     );
 
@@ -105,7 +105,7 @@ class _OperatorProfilePageState extends State<OperatorProfilePage> {
         textColor: Colors.white,
         fontSize: 16,
       );
-      Navigator.pop(context,true);
+      Navigator.pop(context, true);
       setState(() => isEditing = false);
     } else {
       Fluttertoast.showToast(
@@ -134,116 +134,111 @@ class _OperatorProfilePageState extends State<OperatorProfilePage> {
         backgroundColor: primaryGreen,
       ),
       body: isLoading
-          ? const Center(
-        child: CircularProgressIndicator(color: primaryGreen),
-      )
+          ? const Center(child: CircularProgressIndicator(color: primaryGreen))
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Container(
-          padding: const EdgeInsets.all(22),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 18,
-                offset: Offset(0, 8),
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 18,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // ===== ICON =====
+                      Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: primaryGreen.withOpacity(0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.person,
+                          size: 60,
+                          color: primaryGreen,
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      CommonTextFormField(
+                        controller: nameCtrl,
+                        hintText: 'Full Name',
+                        prefixIcon: Icons.person_outline,
+                        readOnly: !isEditing,
+                        showCursor: isEditing,
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      CommonTextFormField(
+                        controller: emailCtrl,
+                        hintText: 'Email',
+                        prefixIcon: Icons.email_rounded,
+                        readOnly: !isEditing,
+                        showCursor: isEditing,
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      CommonTextFormField(
+                        controller: phoneCtrl,
+                        hintText: 'Phone Number',
+                        prefixIcon: Icons.phone,
+                        readOnly: !isEditing,
+                        showCursor: isEditing,
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // ===== BUTTON =====
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryGreen,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(26),
+                            ),
+                          ),
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  if (!isEditing) {
+                                    setState(() => isEditing = true);
+                                  } else {
+                                    _updateProfile();
+                                  }
+                                },
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                  isEditing ? "Submit Changes" : "Edit Profile",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                // ===== ICON =====
-                Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: primaryGreen.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    size: 60,
-                    color: primaryGreen,
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                CommonTextFormField(
-                  controller: nameCtrl,
-                  hintText: 'Full Name',
-                  prefixIcon: Icons.person_outline,
-                  readOnly: !isEditing,
-                  showCursor: isEditing,
-                ),
-
-                const SizedBox(height: 14),
-
-                CommonTextFormField(
-                  controller: emailCtrl,
-                  hintText: 'Email',
-                  prefixIcon: Icons.email_rounded,
-                  readOnly: !isEditing,
-                  showCursor: isEditing,
-                ),
-
-                const SizedBox(height: 14),
-
-                CommonTextFormField(
-                  controller: phoneCtrl,
-                  hintText: 'Phone Number',
-                  prefixIcon: Icons.phone,
-                  readOnly: !isEditing,
-                  showCursor: isEditing,
-                ),
-
-                const SizedBox(height: 14),
-
-
-                // ===== BUTTON =====
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryGreen,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(26),
-                      ),
-                    ),
-                    onPressed: isLoading
-                        ? null
-                        : () {
-                      if (!isEditing) {
-                        setState(() => isEditing = true);
-                      } else {
-                        _updateProfile();
-                      }
-                    },
-                    child: isLoading
-                        ? const CircularProgressIndicator(
-                      color: Colors.white,
-                    )
-                        : Text(
-                      isEditing
-                          ? "Submit Changes"
-                          : "Edit Profile",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
             ),
-          ),
-        ),
-      ),
     );
   }
 }
