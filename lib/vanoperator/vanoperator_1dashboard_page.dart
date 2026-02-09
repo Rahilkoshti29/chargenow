@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/login_page.dart';
 import 'package:chargenow/vanoperator/avaibility_page.dart';
 import 'package:chargenow/vanoperator/booking_page.dart';
@@ -7,12 +9,47 @@ import 'package:chargenow/vanoperator/request_page.dart';
 import 'package:chargenow/vanoperator/vanoperator_profile_page.dart';
 import 'package:chargenow/vanoperator/vanoperator_van_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VanOperatorDashboard extends StatelessWidget {
   const VanOperatorDashboard({super.key});
 
   static const Color primaryGreen = Color(0xFF2ECC71);
+
+  // ================= LOGOUT HANDLER =================
+  Future<void> _handleLogout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final isAvailable = prefs.getBool('operator_available') ?? false;
+
+    // 🔴 If operator is available → turn OFF before logout
+    if (isAvailable && token != null) {
+      try {
+        await http.put(
+          Uri.parse('${Apiconst.base_url}operator/status/'),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({'status': 0}),
+        );
+        await prefs.setBool('operator_available', false);
+      } catch (_) {
+        // even if API fails, proceed with logout
+      }
+    }
+
+    // 🔥 Clear everything
+    await prefs.clear();
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => LoginPage()),
+          (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +66,10 @@ class VanOperatorDashboard extends StatelessWidget {
             CircleAvatar(
               radius: 18,
               backgroundColor: Colors.white,
-              child: SvgPicture.asset("assets/images/logo.svg", height: 350),
+              child: SvgPicture.asset(
+                "assets/images/logo.svg",
+                height: 32,
+              ),
             ),
             const SizedBox(width: 8),
             const Text(
@@ -42,7 +82,6 @@ class VanOperatorDashboard extends StatelessWidget {
           ],
         ),
         actions: [
-          // My Van Page
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -53,12 +92,10 @@ class VanOperatorDashboard extends StatelessWidget {
             child: const CircleAvatar(
               radius: 22,
               backgroundColor: Colors.white,
-              child: Icon(Icons.electric_car, color: Colors.black, size: 25),
+              child: Icon(Icons.electric_car, color: Colors.black),
             ),
           ),
           const SizedBox(width: 16),
-
-          // Profile Page
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -69,7 +106,7 @@ class VanOperatorDashboard extends StatelessWidget {
             child: const CircleAvatar(
               radius: 22,
               backgroundColor: Colors.white,
-              child: Icon(Icons.person_outline, color: Colors.black, size: 25),
+              child: Icon(Icons.person_outline, color: Colors.black),
             ),
           ),
           const SizedBox(width: 16),
@@ -134,45 +171,23 @@ class VanOperatorDashboard extends StatelessWidget {
       mainAxisSpacing: 14,
       childAspectRatio: 1.1,
       children: [
-        _card(
-          context,
-          Icons.wifi_tethering,
-          "Available",
-          const OperatorAvailabilityPage(),
-        ),
-        _card(
-          context,
-          Icons.mail_outline,
-          "Requests",
-          const OperatorRequestPage(),
-        ),
-        _card(
-          context,
-          Icons.calendar_today,
-          "Bookings",
-          const OperatorBooking(),
-        ),
-        _card(
-          context,
-          Icons.credit_card,
-          "Payments",
-          const OperatorPaymentsPage(),
-        ),
-        _card(
-          context,
-          Icons.chat_bubble_outline,
-          "Feedback",
-          const OperatorFeedbackPage(),
-        ),
+        _card(context, Icons.wifi_tethering, "Available",
+            const OperatorAvailabilityPage()),
+        _card(context, Icons.mail_outline, "Requests",
+            const OperatorRequestPage()),
+        _card(context, Icons.calendar_today, "Bookings",
+            const OperatorBooking()),
+        _card(context, Icons.credit_card, "Payments",
+            const OperatorPaymentsPage()),
+        _card(context, Icons.chat_bubble_outline, "Feedback",
+            const OperatorFeedbackPage()),
         _logoutCard(context),
       ],
     );
   }
 
-  // ================= CARD WIDGET =================
+  // ================= CARD =================
   Widget _card(BuildContext context, IconData icon, String title, Widget page) {
-    const Color iconColor = primaryGreen;
-
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () {
@@ -195,13 +210,16 @@ class VanOperatorDashboard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: iconColor.withOpacity(0.15),
-              child: Icon(icon, color: iconColor, size: 26),
+              backgroundColor: primaryGreen.withOpacity(0.15),
+              child: Icon(icon, color: primaryGreen),
             ),
             const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -213,22 +231,23 @@ class VanOperatorDashboard extends StatelessWidget {
   Widget _logoutCard(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(18),
-      onTap: () {
+      onTap: () async {
+        final prefs = await SharedPreferences.getInstance();
+        final isAvailable = prefs.getBool('operator_available') ?? false;
+
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            backgroundColor: Colors.white,
             title: const Text("Logout"),
-            content: const Text("Are you sure you want to logout?"),
+            content: Text(
+              isAvailable
+                  ? "You are currently available. Logging out will turn OFF availability. Continue?"
+                  : "Are you sure you want to logout?",
+            ),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // close dialog
-                },
-                child: const Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.black),
-                ),
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel",style: TextStyle(color: Colors.black),),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -239,12 +258,10 @@ class VanOperatorDashboard extends StatelessWidget {
                 ),
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => LoginPage()),
-                  );
+                  _handleLogout(context);
                 },
-                child: const Text("Yes", style: TextStyle(color: Colors.black)),
+                child:
+                const Text("Yes", style: TextStyle(color: Colors.black)),
               ),
             ],
           ),
@@ -268,10 +285,10 @@ class VanOperatorDashboard extends StatelessWidget {
             CircleAvatar(
               radius: 26,
               backgroundColor: primaryGreen.withOpacity(0.15),
-              child: Icon(Icons.logout, color: primaryGreen, size: 26),
+              child: const Icon(Icons.logout, color: primaryGreen),
             ),
-            SizedBox(height: 12),
-            Text(
+            const SizedBox(height: 12),
+            const Text(
               "Logout",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),

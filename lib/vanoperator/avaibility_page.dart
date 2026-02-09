@@ -30,13 +30,20 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
   Future<void> loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+
+    // ✅ LOAD AVAILABILITY
+    setState(() {
+      isAvailable = prefs.getBool('operator_available') ?? false;
+    });
   }
+
 
   /// 🔄 Update availability status
   Future<void> updateStatus(bool value) async {
     if (token == null) return;
 
     setState(() => isLoading = true);
+    final prefs = await SharedPreferences.getInstance();
 
     final int statusValue = value ? 1 : 0;
 
@@ -53,14 +60,17 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
+        // ✅ SAVE LOCALLY
+        await prefs.setBool('operator_available', value);
+
         setState(() {
           isAvailable = value;
           isLoading = false;
         });
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(data['message'])));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'])),
+        );
       } else {
         _showError(data['message'] ?? 'Failed to update status');
       }
@@ -68,6 +78,7 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
       _showError("Something went wrong. Try again.");
     }
   }
+
 
   void _showError(String msg) {
     setState(() => isLoading = false);
