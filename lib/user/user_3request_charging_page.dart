@@ -19,90 +19,83 @@ class RequestChargingPage extends StatefulWidget {
 }
 
 class _RequestChargingPageState extends State<RequestChargingPage> {
-  static const Color cnGreen = Color(0xFF1DB954);
-  static const Color cnLightGreen = Color(0xFFE8F7EE);
+  static const Color primaryGreen = Color(0xFF2ECC71);
+  static const Color bgColor = Color(0xFFF2FFF7);
+
+  List<Map<String, dynamic>> vehicles = [];
+  bool isLoading = true;
+
+  int? selectedVehicleId;
 
   double currentLevel = 10;
   double requiredLevel = 90;
 
-  int? selectedVehicleId;
-  List<Map<String, dynamic>> vehicles = [];
+  final double ratePerPercent = 12;
+  final double gstRate = 0.18;
 
   @override
   void initState() {
     super.initState();
-    fetchVehicles();
+    _loadVehicles();
   }
 
-  // ---------------- API CALL ----------------
-  Future<List<Map<String, dynamic>>> fetchVehicles() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
+  // ---------------- LOAD VEHICLES ----------------
+  Future<void> _loadVehicles() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-      debugPrint("TOKEN: $token");
+    final response = await http.get(
+      Uri.parse('${Apiconst.base_url}user/vehicles/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
 
-      if (token == null || token.isEmpty) {
-        debugPrint("❌ Token missing");
-        return [];
-      }
+    final decoded = jsonDecode(response.body);
+    vehicles = List<Map<String, dynamic>>.from(decoded['data']);
 
-      final response = await http.get(
-        Uri.parse('${Apiconst.base_url}user/vehicles/'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
+    // ✅ AUTO-SELECT VEHICLE HERE (ONCE)
+    if (widget.preselectedVehicleId != null) {
+      final exists = vehicles.any(
+            (v) => v['vehicle_id'] == widget.preselectedVehicleId,
       );
 
-      debugPrint("STATUS CODE: ${response.statusCode}");
-      debugPrint("RAW BODY: ${response.body}");
-
-      if (response.statusCode != 200) {
-        debugPrint("❌ API failed");
-        return [];
+      if (exists) {
+        selectedVehicleId = widget.preselectedVehicleId;
       }
-
-      final decoded = jsonDecode(response.body);
-
-      // 🔴 IMPORTANT CHECK
-      if (decoded is! Map) {
-        debugPrint("❌ Response is not a Map");
-        return [];
-      }
-
-      if (decoded['success'] == true && decoded['data'] is List) {
-        return List<Map<String, dynamic>>.from(decoded['data']);
-      }
-
-      debugPrint("❌ No vehicle data found");
-      return [];
-    } catch (e, stack) {
-      debugPrint("❌ fetchVehicles ERROR: $e");
-      debugPrint(stack.toString());
-      return [];
     }
+
+    setState(() => isLoading = false);
   }
 
+  // ---------------- PRICE ----------------
+  double get batteryNeeded =>
+      (requiredLevel - currentLevel).clamp(0, 100);
+
+  double get baseAmount => batteryNeeded * ratePerPercent;
+  double get gstAmount => baseAmount * gstRate;
+  double get totalAmount => baseAmount + gstAmount;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: cnLightGreen,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: cnGreen,
+        centerTitle: true,
+        backgroundColor: primaryGreen,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: widget.onBack,
         ),
-        title: const Text(
-          "Request ChargeNow",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-        ),
+        title:  Text("Request ChargeNow",
+            style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
       ),
-      body: Column(
+      body: isLoading
+          ? const Center(
+        child: CircularProgressIndicator(color: primaryGreen),
+      )
+          : Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
@@ -115,88 +108,42 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
                   const SizedBox(height: 16),
                   _label("Charging Location"),
                   _locationField(),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   _label("Battery Level"),
                   _batteryCard(),
+                  const SizedBox(height: 16),
+                  _label("Price Details"),
+                  _priceCard(),
                 ],
               ),
             ),
           ),
-          _bottomBar(),
+          _requestButton(),
         ],
       ),
     );
   }
 
-  // ---------------- VEHICLE DROPDOWN ----------------
+  // ---------------- DROPDOWN ----------------
   Widget _vehicleDropdown() {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: fetchVehicles(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Padding(
-            padding: EdgeInsets.all(12),
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return _emptyBox("No vehicles found");
-        }
-
-        final vehicles = snapshot.data!;
-
-        // ✅ AUTO-SELECT FROM PREVIOUS PAGE
-        if (selectedVehicleId == null && widget.preselectedVehicleId != null) {
-          final match = vehicles.any(
-                (v) => v['vehicle_id'] == widget.preselectedVehicleId,
-          );
-
-          if (match) {
-            selectedVehicleId = widget.preselectedVehicleId;
-          }
-        }
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: _boxDecoration(),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              hint: const Text("Select Vehicle"),
-              isExpanded: true,
-              value: selectedVehicleId,
-              items: vehicles.map((v) {
-                return DropdownMenuItem<int>(
-                  value: v['vehicle_id'], // ✅ ONLY ID
-                  child: Text(
-                    "${v['vehicle_company']} ${v['vehicle_name']} (${v['vehicle_number']})",
-                  ),
-                );
-              }).toList(),
-              onChanged: (val) {
-                setState(() {
-                  selectedVehicleId = val;
-                });
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-
-  // ---------------- LOCATION ----------------
-  Widget _locationField() {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: _boxDecoration(),
-      child: Row(
-        children: const [
-          Icon(Icons.location_on, color: cnGreen),
-          SizedBox(width: 8),
-          Text("Select a Location"),
-        ],
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int>(
+          isExpanded: true,
+          hint: const Text("Select Vehicle"),
+          value: selectedVehicleId,
+          items: vehicles.map((v) {
+            return DropdownMenuItem<int>(
+              value: v['vehicle_id'],
+              child: Text(
+                "${v['vehicle_company']} ${v['vehicle_name']}",
+              ),
+            );
+          }).toList(),
+          onChanged: (v) => setState(() => selectedVehicleId = v),
+        ),
       ),
     );
   }
@@ -208,70 +155,112 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
       decoration: _boxDecoration(),
       child: Column(
         children: [
-          _sliderRow("Current Level", currentLevel),
-          Slider(
-            value: currentLevel,
-            min: 0,
-            max: 100,
-            activeColor: cnGreen,
-            onChanged: (v) => setState(() => currentLevel = v),
-          ),
-          _sliderRow("Required Level", requiredLevel),
-          Slider(
-            value: requiredLevel,
-            min: 0,
-            max: 100,
-            activeColor: cnGreen,
-            onChanged: (v) => setState(() => requiredLevel = v),
+          _slider("Current Level", currentLevel,
+                  (v) => setState(() => currentLevel = v)),
+          _slider("Required Level", requiredLevel,
+                  (v) => setState(() => requiredLevel = v)),
+        ],
+      ),
+    );
+  }
+
+  Widget _slider(String label, double value, ValueChanged<double> onChanged) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label),
+            Text("${value.toInt()}%"),
+          ],
+        ),
+        Slider(
+          value: value,
+          min: 0,
+          max: 100,
+          activeColor: primaryGreen,
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
+  // ---------------- PRICE ----------------
+  Widget _priceCard() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: _boxDecoration(),
+      child: Column(
+        children: [
+          _priceRow("Battery Needed", "${batteryNeeded.toInt()}%"),
+          _priceRow("Base Amount", "₹ ${baseAmount.toStringAsFixed(2)}"),
+          _priceRow("GST (18%)", "₹ ${gstAmount.toStringAsFixed(2)}"),
+          const Divider(),
+          _priceRow(
+            "Total Amount",
+            "₹ ${totalAmount.toStringAsFixed(2)}",
+            bold: true,
           ),
         ],
       ),
     );
   }
 
-  Widget _sliderRow(String title, double value) {
+  Widget _priceRow(String label, String value, {bool bold = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title),
-        Text("${value.toInt()}%"),
+        Text(label,
+            style: TextStyle(fontWeight: bold ? FontWeight.bold : null)),
+        Text(value,
+            style: TextStyle(fontWeight: bold ? FontWeight.bold : null)),
       ],
     );
   }
 
-  // ---------------- BOTTOM ----------------
-  Widget _bottomBar() {
+  // ---------------- REQUEST ----------------
+  Widget _requestButton() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text("₹ 923 Approx",
-              style: TextStyle(fontWeight: FontWeight.w600)),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: cnGreen),
-            onPressed: () {
-              if (selectedVehicleId == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Please select a vehicle")),
-                );
-                return;
-              }
-              // proceed booking
-            },
-            child: const Text("Book"),
-          ),
-        ],
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryGreen,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+        ),
+        onPressed: () {
+          if (selectedVehicleId == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Select a vehicle")),
+            );
+            return;
+          }
+        },
+        child: const Text(
+          "Request Operator",
+          style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
 
   // ---------------- HELPERS ----------------
-  Widget _label(String text) => Padding(
-    padding: const EdgeInsets.only(bottom: 6),
-    child: Text(text,
-        style: const TextStyle(fontWeight: FontWeight.w600)),
+  Widget _label(String t) =>
+      Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(t));
+
+  Widget _locationField() => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: _boxDecoration(),
+    child: const Row(
+      children: [
+        Icon(Icons.location_on, color: primaryGreen),
+        SizedBox(width: 8),
+        Text("Select a Location"),
+      ],
+    ),
   );
 
   BoxDecoration _boxDecoration() => BoxDecoration(
@@ -279,15 +268,7 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
     borderRadius: BorderRadius.circular(14),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.05),
-        blurRadius: 6,
-      )
+          color: Colors.black.withOpacity(0.05), blurRadius: 6),
     ],
-  );
-
-  Widget _emptyBox(String text) => Container(
-    padding: const EdgeInsets.all(14),
-    decoration: _boxDecoration(),
-    child: Text(text),
   );
 }

@@ -3,6 +3,7 @@ import 'package:chargenow/user/ContactUsPage.dart';
 import 'package:chargenow/user/myprofiledetails.dart';
 import 'package:chargenow/user/privacy_policy.dart';
 import 'package:chargenow/user/terms&conditions.dart';
+import 'package:chargenow/user/user_booking_history.dart';
 import 'package:chargenow/user/user_vehicles.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -141,18 +142,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
             _menuItem(
               Icons.calendar_month,
               "My Bookings",
-              // onTap: () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (_) => const BookingHistoryPage(),
-              //     ),
-              //   );
-              // },
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>  BookingHistoryPage(),
+                  ),
+                );
+              },
             ),
             _menuItem(
-              Icons.location_on,
-              "Track Van",
+              Icons.payment_rounded,
+              "My Payments",
               // onTap: () {
               //   Navigator.push(
               //     context,

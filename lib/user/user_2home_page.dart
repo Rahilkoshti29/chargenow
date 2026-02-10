@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/user/myprofiledetails.dart';
-import 'package:chargenow/user/user_3request_charging_page.dart';
 import 'package:chargenow/user/user_6add_vehicle_page.dart';
 import 'package:chargenow/user/user_7vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +16,7 @@ class HomePage extends StatefulWidget {
     required this.onNotificationTap,
     required this.onTabChange,
   });
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -33,16 +33,11 @@ class _HomePageState extends State<HomePage> {
     _loadUserName();
     _refreshVehicles();
   }
-  int _currentIndex = 0;
-  void goToHome() {
-    setState(() => _currentIndex = 0);
-  }
 
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userName = prefs.getString('user_name') ?? 'User';
-    });
+    userName = prefs.getString('name') ?? 'User';
+    setState(() {});
   }
 
   void _refreshVehicles() {
@@ -56,7 +51,10 @@ class _HomePageState extends State<HomePage> {
 
     final response = await http.get(
       Uri.parse('${Apiconst.base_url}user/vehicles/'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
     );
 
     final decoded = jsonDecode(response.body);
@@ -66,7 +64,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF2FFF7),
+      backgroundColor: const Color(0xFFF2FFF7),
       appBar: AppBar(
         backgroundColor: primaryGreen,
         elevation: 0,
@@ -75,48 +73,48 @@ class _HomePageState extends State<HomePage> {
         titleSpacing: 30,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Hello',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-                wordSpacing: 150,
-              ),
+              style: TextStyle(fontSize: 22, color: Colors.black),
             ),
             Text(
               '$userName !',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
         actions: [
           GestureDetector(
             onTap: widget.onNotificationTap,
-            child: CircleAvatar(
+            child: const CircleAvatar(
               radius: 22,
               backgroundColor: Colors.white,
-              child: Icon(
-                Icons.notifications_none,
-                color: Colors.black,
-                size: 25,
-              ),
+              child: Icon(Icons.notifications_none,
+                  color: Colors.black, size: 25),
             ),
           ),
-          SizedBox(width: 16),
-
+          const SizedBox(width: 16),
           GestureDetector(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_) => UserProfileDetailPage()));
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const UserProfileDetailPage(),
+                ),
+              );
             },
-            child: CircleAvatar(
+            child: const CircleAvatar(
               radius: 22,
               backgroundColor: Colors.white,
-              child: Icon(Icons.person_outline, color: Colors.black, size: 25),
+              child: Icon(Icons.person_outline,
+                  color: Colors.black, size: 25),
             ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
         ],
       ),
 
@@ -128,7 +126,7 @@ class _HomePageState extends State<HomePage> {
           future: vehicleFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(color: primaryGreen),
               );
             }
@@ -136,12 +134,12 @@ class _HomePageState extends State<HomePage> {
             final vehicles = snapshot.data ?? [];
 
             return ListView(
-              padding: EdgeInsets.all(18),
-              physics: AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(18),
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 if (vehicles.isEmpty) ...[
                   _emptyCenterCard(),
-                  SizedBox(height: 28),
+                  const SizedBox(height: 28),
                   _offersRow(),
                 ] else ...[
                   SizedBox(
@@ -158,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 28),
+                  const SizedBox(height: 28),
                   _offersRow(),
                 ],
               ],
@@ -169,89 +167,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ================= EMPTY CENTER CARD =================
-  Widget _emptyCenterCard() {
-    return Container(
-      padding: EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              color: primaryGreen.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.directions_car, size: 70, color: primaryGreen),
-          ),
-          SizedBox(height: 18),
-          Text(
-            'No Cars to Charge',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 6),
-          Text(
-            'Add a Car to Get Started',
-            style: TextStyle(color: Colors.black54),
-          ),
-          SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryGreen,
-                padding: EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22),
-                ),
-              ),
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => AddVehiclePage()),
-                );
-                if (result == true) _refreshVehicles();
-              },
-              child: Text(
-                'Add a Car',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // ================= VEHICLE CARD =================
   Widget _vehicleCard(dynamic vehicle) {
     return Container(
       width: 330,
-      margin: EdgeInsets.only(right: 18),
-      padding: EdgeInsets.all(24),
+      margin: const EdgeInsets.only(right: 18),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8)),
         ],
       ),
       child: Column(
@@ -269,49 +195,121 @@ class _HomePageState extends State<HomePage> {
                 if (result == true) _refreshVehicles();
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: primaryGreen.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
+                child: const Text(
                   'Details',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
           ),
-          SizedBox(height: 18),
-          Icon(Icons.directions_car, size: 90, color: primaryGreen),
-          SizedBox(height: 16),
+          const SizedBox(height: 18),
+          const Icon(Icons.directions_car,
+              size: 90, color: primaryGreen),
+          const SizedBox(height: 16),
           Text(
             '${vehicle['vehicle_company']} ${vehicle['vehicle_name']}',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style:
+            const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             vehicle['vehicle_number'],
-            style: TextStyle(color: Colors.black54),
+            style: const TextStyle(color: Colors.black54),
           ),
-          Spacer(),
+          const Spacer(),
+
+          // 🔥 FIXED BUTTON
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryGreen,
-                padding: EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(22),
                 ),
               ),
               onPressed: () {
-                widget.onTabChange(1);
-                vehicleId: vehicle['vehicle_id'];
-
+                // ✅ ONLY switch tab & pass vehicleId
+                widget.onTabChange(
+                  1,
+                  vehicleId: vehicle['vehicle_id'],
+                );
               },
-              child: Text(
+              child: const Text(
                 'Request ChargeNow',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= EMPTY CARD =================
+  Widget _emptyCenterCard() {
+    return Container(
+      padding: const EdgeInsets.all(30),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8)),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: primaryGreen.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.directions_car,
+                size: 70, color: primaryGreen),
+          ),
+          const SizedBox(height: 18),
+          const Text(
+            'No Cars to Charge',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Add a Car to Get Started',
+            style: TextStyle(color: Colors.black54),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryGreen,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22),
+                ),
+              ),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AddVehiclePage()),
+                );
+                if (result == true) _refreshVehicles();
+              },
+              child: const Text(
+                'Add a Car',
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.white,
@@ -337,37 +335,34 @@ class _HomePageState extends State<HomePage> {
       },
       child: Container(
         width: 330,
-        margin: EdgeInsets.only(right: 18),
-        padding: EdgeInsets.all(24),
+        margin: const EdgeInsets.only(right: 18),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 18,
-              offset: Offset(0, 8),
-            ),
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 18, offset: Offset(0, 8)),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(22),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                 color: primaryGreen.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.add, size: 70, color: primaryGreen),
+              child: const Icon(Icons.add,
+                  size: 70, color: primaryGreen),
             ),
-            SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 24),
+            const Text(
               'Add Vehicle',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 6),
-            Text(
+            const SizedBox(height: 6),
+            const Text(
               'Add Another Car to ChargeNow',
               style: TextStyle(color: Colors.black54),
             ),
@@ -377,152 +372,49 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ================= OFFERS ROW =================
+  // ================= OFFERS =================
   Widget _offersRow() {
     return Column(
       children: [
         Row(
           children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                height: 120,
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.celebration, size: 28, color: primaryGreen),
-                    SizedBox(height: 10),
-                    Text(
-                      'First Charge',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Special welcome offer',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 13, color: Colors.black54),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              flex: 2,
-              child: Container(
-                height: 120,
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.ev_station, size: 34, color: primaryGreen),
-                    SizedBox(height: 10),
-                    Text(
-                      'Doorstep',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Charging',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 13, color: Colors.black54),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            Expanded(child: _offerBox(Icons.celebration, 'First Charge', 'Special welcome offer')),
+            const SizedBox(width: 10),
+            Expanded(child: _offerBox(Icons.ev_station, 'Doorstep', 'Charging')),
           ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Row(
           children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                height: 120,
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.percent, color: primaryGreen, size: 28),
-                    SizedBox(height: 10),
-                    Text(
-                      'Save Upto 30%',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'With ChargeNow',
-                      style: TextStyle(fontSize: 13, color: Colors.black54),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              flex: 2,
-              child: Container(
-                height: 120,
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.flash_on, color: primaryGreen, size: 28),
-                    SizedBox(height: 10),
-                    Text(
-                      'Fast Charging',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Nearby Operators',
-                      style: TextStyle(fontSize: 13, color: Colors.black54),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            Expanded(child: _offerBox(Icons.percent, 'Save Upto 30%', 'With ChargeNow')),
+            const SizedBox(width: 10),
+            Expanded(child: _offerBox(Icons.flash_on, 'Fast Charging', 'Nearby Operators')),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _offerBox(IconData icon, String title, String subtitle) {
+    return Container(
+      height: 120,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: primaryGreen, size: 28),
+          const SizedBox(height: 10),
+          Text(title,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          Text(subtitle,
+              style: const TextStyle(fontSize: 13, color: Colors.black54)),
+        ],
+      ),
     );
   }
 }

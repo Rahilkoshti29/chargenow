@@ -14,35 +14,10 @@ class UserDashboardPage extends StatefulWidget {
 
 class _UserDashboardPageState extends State<UserDashboardPage> {
   int _currentIndex = 0;
+  int? selectedVehicleId;
+
   void goToHome() {
     setState(() => _currentIndex = 0);
-  }
-  int? selectedVehicleId;
-  late final List<Widget> _pages;
-
-  @override
-  void initState() {
-    super.initState();
-    _pages = [
-      HomePage(
-        onTabChange: (int index, {int? vehicleId}) {
-          setState(() {
-            _currentIndex = index;
-            selectedVehicleId = vehicleId; // 👈 store it
-          });
-        },
-        onNotificationTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => NotificationPage()),
-          );
-        },
-      ),
-
-      RequestChargingPage(onBack: goToHome),
-      BookingHistoryPage(onBack: goToHome),
-      UserProfilePage(onBack: goToHome),
-    ];
   }
 
   static const Color primaryGreen = Color(0xFF2ECC71);
@@ -50,10 +25,39 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF2FFF7),
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      backgroundColor: const Color(0xFFF2FFF7),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          // -------- HOME --------
+          HomePage(
+            onTabChange: (int index, {int? vehicleId}) {
+              setState(() {
+                _currentIndex = index;
+                selectedVehicleId = vehicleId;
+              });
+            },
+            onNotificationTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => NotificationPage()),
+              );
+            },
+          ),
+
+          // -------- REQUEST (REBUILT WITH ID) --------
+          RequestChargingPage(
+            key: ValueKey(selectedVehicleId), // 🔥 VERY IMPORTANT
+            onBack: goToHome,
+            preselectedVehicleId: selectedVehicleId,
+          ),
+
+          RequestHistoryPage(onBack: goToHome),
+          UserProfilePage(onBack: goToHome),
+        ],
+      ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(25),
           child: SizedBox(
@@ -63,20 +67,11 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
               onTap: (index) {
                 setState(() => _currentIndex = index);
               },
-
               type: BottomNavigationBarType.fixed,
               backgroundColor: primaryGreen,
-
-              showSelectedLabels: true,
-              showUnselectedLabels: true,
-
               selectedItemColor: Colors.black,
               unselectedItemColor: Colors.white,
-
-              selectedFontSize: 11,
-              unselectedFontSize: 11,
-
-              items: [
+              items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home, size: 26),
                   label: 'Home',
