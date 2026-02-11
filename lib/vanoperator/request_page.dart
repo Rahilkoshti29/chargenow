@@ -75,7 +75,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
   // ================= REQUEST CARD =================
   Widget requestCard(dynamic req) {
     final int requestId =
-        int.tryParse((req['request_id'] ?? req['id'] ?? '').toString()) ?? 0;
+        int.tryParse((req['request_id'] ?? '').toString()) ?? 0;
 
     final int status =
         int.tryParse((req['request_status'] ?? '0').toString()) ?? 0;
@@ -99,13 +99,20 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Request ID: $requestId"),
+          Text(
+            "Request ID: $requestId",
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          // 👤 USER NAME
           Row(
             children: [
               const Icon(Icons.person, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text(
-                "User ID : ${req['user_id']}",
+                "User : ${req['user_name'] ?? 'N/A'}",
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -116,13 +123,20 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
 
           const SizedBox(height: 8),
 
+          // 🚗 VEHICLE NAME
           Row(
             children: [
               const Icon(Icons.electric_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              Text(
-                "Vehicle ID : ${req['vehicle_id']}",
-                style: const TextStyle(fontSize: 14, color: Colors.black54),
+              Expanded(
+                child: Text(
+                  "Vehicle : ${req['vehicle_name'] ?? 'N/A'} "
+                      "(${req['vehicle_number'] ?? ''})",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
               ),
             ],
           ),
@@ -131,6 +145,17 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
 
           Text("Latitude : ${req['user_latitude']}"),
           Text("Longitude : ${req['user_longitude']}"),
+
+          const SizedBox(height: 8),
+
+          Text(
+            "Amount : ₹${req['amount']}",
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              color: primaryGreen,
+            ),
+          ),
+
           const SizedBox(height: 14),
 
           if (status == 0)
@@ -179,6 +204,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
       ),
     );
   }
+
 
   // ================= UI =================
   @override

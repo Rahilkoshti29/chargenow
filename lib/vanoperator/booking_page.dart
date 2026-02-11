@@ -116,16 +116,50 @@ class _OperatorBookingState extends State<OperatorBooking> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
+          /// ================= BOOKING ID =================
           Text(
             "Booking #$bookingId",
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
 
+          /// ================= USER NAME =================
           Row(
             children: [
-              const Icon(Icons.receipt_long, size: 18, color: primaryGreen),
+              const Icon(Icons.person, size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              Text(
+                booking['user_name'] ?? "Unknown User",
+                style: const TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          /// ================= VEHICLE =================
+          Row(
+            children: [
+              const Icon(Icons.directions_car,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              Text(
+                "${booking['vehicle_name'] ?? 'Unknown Vehicle'} "
+                    "(${booking['vehicle_number'] ?? ''})",
+                style: const TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          /// ================= REQUEST ID =================
+          Row(
+            children: [
+              const Icon(Icons.receipt_long,
+                  size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text(
                 "Request ID : $requestId",
@@ -136,20 +170,23 @@ class _OperatorBookingState extends State<OperatorBooking> {
 
           const SizedBox(height: 8),
 
+          /// ================= DATE =================
           Row(
             children: [
-              const Icon(Icons.access_time, size: 18, color: primaryGreen),
+              const Icon(Icons.access_time,
+                  size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text(
                 booking['created_at'] ?? '',
-                style: const TextStyle(fontSize: 13, color: Colors.black54),
+                style: const TextStyle(
+                    fontSize: 13, color: Colors.black54),
               ),
             ],
           ),
 
           const SizedBox(height: 16),
 
-          // ================= ACTIONS =================
+          /// ================= ACTION BUTTONS (UNCHANGED) =================
           if (status == 0)
             SizedBox(
               width: double.infinity,
@@ -159,9 +196,11 @@ class _OperatorBookingState extends State<OperatorBooking> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () => updateCharging(bookingId, "start"),
+                onPressed: () =>
+                    updateCharging(bookingId, "start"),
                 child: const Text(
                   "Start Charging",
                   style: TextStyle(color: Colors.white),
@@ -178,9 +217,11 @@ class _OperatorBookingState extends State<OperatorBooking> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () => updateCharging(bookingId, "complete"),
+                onPressed: () =>
+                    updateCharging(bookingId, "complete"),
                 child: const Text(
                   "Complete Charging",
                   style: TextStyle(color: Colors.white),
@@ -202,6 +243,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
       ),
     );
   }
+
 
   // ================= UI =================
   @override

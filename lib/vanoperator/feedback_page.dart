@@ -85,12 +85,19 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
   Widget feedbackCard(dynamic feedback) {
     final int feedbackId =
         int.tryParse((feedback['feedback_id'] ?? '').toString()) ?? 0;
-    final int userId =
-        int.tryParse((feedback['user_id'] ?? '').toString()) ?? 0;
+
     final int rating =
         int.tryParse((feedback['rating'] ?? '0').toString()) ?? 0;
+
     final String comment = feedback['comments'] ?? '';
+
     final String date = feedback['created_at'] ?? '';
+
+    final String userName =
+        feedback['user_name'] ?? "Unknown User";
+
+    final String operatorName =
+        feedback['operator_name'] ?? "Unknown Operator";
 
     if (feedbackId == 0) return const SizedBox();
 
@@ -111,46 +118,74 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
+          /// FEEDBACK ID
           Text(
             "Feedback #$feedbackId",
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                fontSize: 17, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 8),
 
+          /// USER NAME (instead of user_id)
           Row(
             children: [
-              const Icon(Icons.person, size: 18, color: primaryGreen),
+              const Icon(Icons.person,
+                  size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               Text(
-                "User ID : $userId",
-                style: const TextStyle(fontWeight: FontWeight.w500),
+                userName,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          /// OPERATOR NAME
+          Row(
+            children: [
+              const Icon(Icons.local_shipping,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              Text(
+                operatorName,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w500),
               ),
             ],
           ),
 
           const SizedBox(height: 10),
 
+          /// STAR RATING
           buildStars(rating),
 
           const SizedBox(height: 10),
 
+          /// COMMENT
           if (comment.isNotEmpty)
             Text(
               comment,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              style: const TextStyle(
+                  fontSize: 14, color: Colors.black87),
             ),
 
           const SizedBox(height: 10),
 
+          /// DATE
           Text(
             date,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
+            style: const TextStyle(
+                fontSize: 12, color: Colors.black54),
           ),
         ],
       ),
     );
   }
+
 
   // ================= UI =================
   @override
