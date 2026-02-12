@@ -5,12 +5,19 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
-
+    <!-- ✅ GOOGLE MAPS PERMISSIONS -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
-        android:label="chargenow"
+
+
+    android:label="chargenow"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAUn8tQ9LrW2zcVTZTuxZr9hJ4utRj4JiA"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

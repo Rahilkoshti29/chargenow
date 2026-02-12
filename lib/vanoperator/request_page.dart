@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
+import 'package:chargenow/vanoperator/gmap_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,11 +57,11 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
   }
 
   // ================= ACCEPT / REJECT =================
-  Future<void> updateRequest(int requestId, String action) async {
+  Future<bool> updateRequest(int requestId, String action) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    await http.put(
+    final response = await http.put(
       Uri.parse('${Apiconst.base_url}operator/requests/$requestId/'),
       headers: {
         "Authorization": "Bearer $token",
@@ -69,8 +70,13 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
       body: jsonEncode({"action": action}),
     );
 
-    fetchRequests();
+    if (response.statusCode == 200) {
+      fetchRequests();
+      return true;
+    }
+    return false;
   }
+
 
   // ================= REQUEST CARD =================
   Widget requestCard(dynamic req) {
@@ -170,7 +176,32 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    onPressed: () => updateRequest(requestId, "accept"),
+                    onPressed: () async {
+                      bool success = await updateRequest(requestId, "accept");
+
+                      if (success) {
+                        double lat = double.tryParse(
+                            req['user_latitude']?.toString() ?? '') ??
+                            0.0;
+
+                        double lng = double.tryParse(
+                            req['user_longitude']?.toString() ?? '') ??
+                            0.0;
+
+                        if (lat != 0.0 && lng != 0.0) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => GoogleMapScreen(
+                                latitude: lat,
+                                longitude: lng,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+
                     child: const Text(
                       "Accept",
                       style: TextStyle(color: Colors.white),
