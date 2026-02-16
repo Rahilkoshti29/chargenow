@@ -253,6 +253,7 @@ class VanOperatorDashboard extends StatelessWidget {
           context: context,
           builder: (_) => AlertDialog(
             title: const Text("Logout"),
+            backgroundColor: Colors.white,
             content: Text(
               isAvailable
                   ? "You are currently available. Logging out will turn OFF availability. Continue?"

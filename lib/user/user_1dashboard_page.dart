@@ -56,43 +56,50 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           UserProfilePage(onBack: goToHome),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(12),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(25),
-          child: SizedBox(
-            height: 70,
-            child: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() => _currentIndex = index);
-              },
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: primaryGreen,
-              selectedItemColor: Colors.black,
-              unselectedItemColor: Colors.white,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home, size: 26),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.flash_on, size: 26),
-                  label: 'Request',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.history, size: 26),
-                  label: 'History',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.more_horiz_outlined, size: 26),
-                  label: 'More',
-                ),
-              ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(25),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.08,
+              child: BottomNavigationBar(
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  setState(() => _currentIndex = index);
+                },
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: primaryGreen,
+                selectedItemColor: Colors.black,
+                unselectedItemColor: Colors.white,
+                iconSize: 27,
+                selectedFontSize: 13,
+                unselectedFontSize: 12,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.flash_on),
+                    label: 'Request',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.history),
+                    label: 'History',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.more_horiz_outlined),
+                    label: 'More',
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+
+
     );
   }
 }
