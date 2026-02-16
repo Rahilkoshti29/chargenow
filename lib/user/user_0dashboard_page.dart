@@ -1,8 +1,8 @@
-import 'package:chargenow/user/notification.dart';
-import 'package:chargenow/user/user_2home_page.dart';
-import 'package:chargenow/user/user_3request_charging_page.dart';
-import 'package:chargenow/user/user_4booking_history_page.dart';
-import 'package:chargenow/user/user_5profile_page.dart';
+import 'package:chargenow/user/user_notification_page.dart';
+import 'package:chargenow/user/user_1home_page.dart';
+import 'package:chargenow/user/user_2request_charging_page.dart';
+import 'package:chargenow/user/user_3request_history_page.dart';
+import 'package:chargenow/user/user_4profile_page.dart';
 import 'package:flutter/material.dart';
 
 class UserDashboardPage extends StatefulWidget {

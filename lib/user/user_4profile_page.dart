@@ -1,10 +1,10 @@
 import 'package:chargenow/login_page.dart';
-import 'package:chargenow/user/ContactUsPage.dart';
-import 'package:chargenow/user/myprofiledetails.dart';
-import 'package:chargenow/user/privacy_policy.dart';
-import 'package:chargenow/user/terms&conditions.dart';
-import 'package:chargenow/user/user_booking_history.dart';
-import 'package:chargenow/user/user_vehicles.dart';
+import 'package:chargenow/user/user_profile_5contactus_page.dart';
+import 'package:chargenow/user/user_profile_4myprofile_page.dart';
+import 'package:chargenow/user/user_profile_7privacy_policy_pafe.dart';
+import 'package:chargenow/user/user_profile_6terms&conditions_page.dart';
+import 'package:chargenow/user/user_profile_2my_bookings_page.dart';
+import 'package:chargenow/user/user_profile_1my_vehicles_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
