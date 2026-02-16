@@ -178,6 +178,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
             ],
           ),
           const SizedBox(height: 8),
+
           /// AMOUNT
           Row(
             children: [
@@ -199,24 +200,37 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
           ),
 
           const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(Icons.access_time, size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
 
-          /// PAYMENT METHOD
+              const Text(
+                "Request Time : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
 
+              Text(
+                payment['created_at'] != null
+                    ? DateFormat(
+                        'dd MMM yyyy, hh:mm a',
+                      ).format(DateTime.parse(payment['created_at']).toLocal())
+                    : 'N/A',
+              ),
+            ],
+          ),
 
-
-
-          /// DATE (Formatted)
+          const SizedBox(height: 8),
           Row(
             children: const [
-              Icon(
-                Icons.info_outline,
-                size: 18,
-                color: primaryGreen,
-              ),
+              Icon(Icons.info_outline, size: 18, color: primaryGreen),
               SizedBox(width: 8),
-              Text("Status : ",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),),
               Text(
-                "Completed",   // or "Pending" if you want dynamic text
+                "Status : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                "Completed", // or "Pending" if you want dynamic text
                 style: TextStyle(
                   color: primaryGreen,
                   fontWeight: FontWeight.bold,
@@ -225,11 +239,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
             ],
           ),
 
-
           const SizedBox(height: 12),
-
-          /// STATUS BADGE
-
         ],
       ),
     );

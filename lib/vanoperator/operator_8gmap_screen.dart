@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/vanoperator/booking_page.dart';
+import 'package:chargenow/vanoperator/operator_3booking_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,7 +26,6 @@ class GoogleMapScreen extends StatefulWidget {
 }
 
 class _GoogleMapScreenState extends State<GoogleMapScreen> {
-
   static const Color primaryGreen = Color(0xFF2ECC71);
   static const Color bgColor = Color(0xFFF2FFF7);
 
@@ -58,7 +57,6 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
 
   // ================= GET OPERATOR LOCATION =================
   Future<void> getOperatorLocation() async {
-
     await Geolocator.requestPermission();
 
     Position position = await Geolocator.getCurrentPosition(
@@ -80,7 +78,6 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
           markerId: const MarkerId("user"),
           position: userLocation,
           infoWindow: const InfoWindow(title: "User Location"),
-
         ),
 
         Marker(
@@ -88,7 +85,8 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
           position: operatorLocation!,
           infoWindow: const InfoWindow(title: "Your Location"),
           icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueGreen),
+            BitmapDescriptor.hueGreen,
+          ),
         ),
       };
 
@@ -105,7 +103,6 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
 
   // ================= ACCEPT / REJECT =================
   Future<void> updateRequest(String action) async {
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -127,7 +124,6 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
 
   // ================= 10 SECOND SMOOTH MOVEMENT =================
   void startMovingToUser() {
-
     if (operatorLocation == null) return;
 
     setState(() {
@@ -141,51 +137,47 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     final startLat = operatorLocation!.latitude;
     final startLng = operatorLocation!.longitude;
 
-    final latStep =
-        (userLocation.latitude - startLat) / totalSteps;
-    final lngStep =
-        (userLocation.longitude - startLng) / totalSteps;
+    final latStep = (userLocation.latitude - startLat) / totalSteps;
+    final lngStep = (userLocation.longitude - startLng) / totalSteps;
 
     int currentStep = 0;
 
-    movementTimer =
-        Timer.periodic(const Duration(milliseconds: intervalMs), (timer) {
+    movementTimer = Timer.periodic(const Duration(milliseconds: intervalMs), (
+      timer,
+    ) {
+      currentStep++;
 
-          currentStep++;
+      if (currentStep >= totalSteps) {
+        timer.cancel();
 
-          if (currentStep >= totalSteps) {
-
-            timer.cancel();
-
-            setState(() {
-              operatorLocation = userLocation;
-              hasArrived = true;
-            });
-
-            updateMap();
-
-            Future.delayed(const Duration(seconds: 2), () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => OperatorBooking()),
-              );
-            });
-
-            return;
-          }
-
-          operatorLocation = LatLng(
-            operatorLocation!.latitude + latStep,
-            operatorLocation!.longitude + lngStep,
-          );
-
-          updateMap();
+        setState(() {
+          operatorLocation = userLocation;
+          hasArrived = true;
         });
+
+        updateMap();
+
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => OperatorBooking()),
+          );
+        });
+
+        return;
+      }
+
+      operatorLocation = LatLng(
+        operatorLocation!.latitude + latStep,
+        operatorLocation!.longitude + lngStep,
+      );
+
+      updateMap();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -202,7 +194,6 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       ),
       body: Stack(
         children: [
-
           GoogleMap(
             initialCameraPosition: CameraPosition(
               target: userLocation,
@@ -213,10 +204,9 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
             onMapCreated: (controller) {
               mapController = controller;
             },
-            myLocationEnabled: false,      // 🔥 IMPORTANT
+            myLocationEnabled: false, // 🔥 IMPORTANT
             myLocationButtonEnabled: false, // 🔥 IMPORTANT
           ),
-
 
           Positioned(
             bottom: 20,
@@ -224,87 +214,83 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
             right: 16,
             child: isTravelling
                 ? Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!hasArrived) ...[
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 12),
-                    const Text(
-                      "On the way to user...",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black12, blurRadius: 10),
+                      ],
                     ),
-                    const SizedBox(height: 6),
-                    const Text("Estimated arrival: 10 seconds"),
-                  ] else ...[
-                    const Icon(Icons.check_circle,
-                        color: Colors.green,
-                        size: 40),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Arrived at location!",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!hasArrived) ...[
+                          const CircularProgressIndicator(),
+                          const SizedBox(height: 12),
+                          const Text(
+                            "On the way to user...",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text("Estimated arrival: 10 seconds"),
+                        ] else ...[
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 40,
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            "Arrived at location!",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ]
-                ],
-              ),
-            )
+                  )
                 : Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryGreen,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryGreen,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: () => updateRequest("accept"),
+                          child: const Text(
+                            "Accept",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
-                      padding:
-                      const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onPressed: () => updateRequest("accept"),
-                    child: const Text(
-                      "Accept",
-                      style:
-                      TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            side: const BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: () => updateRequest("reject"),
+                          child: const Text("Reject"),
+                        ),
                       ),
-                      padding:
-                      const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onPressed: () => updateRequest("reject"),
-                    child: const Text("Reject"),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          )
+          ),
         ],
       ),
     );

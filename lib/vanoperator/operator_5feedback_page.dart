@@ -113,7 +113,6 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// USER
           Row(
             children: [
@@ -154,7 +153,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
           Row(
             children: List.generate(
               5,
-                  (index) => Icon(
+              (index) => Icon(
                 index < rating ? Icons.star : Icons.star_border,
                 color: Colors.amber,
                 size: 20,
@@ -176,15 +175,16 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
                     Text(
                       "Comment : ",
                       style: TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Text(
                   comment,
-                  style: const TextStyle(
-                      fontSize: 14, color: Colors.black87),
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
                 ),
               ],
             ),
@@ -194,19 +194,17 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
           /// DATE (Formatted)
           Row(
             children: [
-              const Icon(Icons.access_time,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.access_time, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               const Text(
                 "Feedback Time : ",
-                style: TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Text(
                 feedback['created_at'] != null
-                    ? DateFormat('dd MMM yyyy, hh:mm a')
-                    .format(DateTime.parse(
-                    feedback['created_at']).toLocal())
+                    ? DateFormat(
+                        'dd MMM yyyy, hh:mm a',
+                      ).format(DateTime.parse(feedback['created_at']).toLocal())
                     : 'N/A',
               ),
             ],
@@ -215,8 +213,6 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
       ),
     );
   }
-
-
 
   // ================= UI =================
   @override

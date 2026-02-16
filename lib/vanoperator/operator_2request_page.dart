@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/vanoperator/gmap_screen.dart';
+import 'package:chargenow/vanoperator/operator_8gmap_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-
 
 class OperatorRequestPage extends StatefulWidget {
   const OperatorRequestPage({super.key});
@@ -79,7 +78,6 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
     return false;
   }
 
-
   // ================= REQUEST CARD =================
   Widget requestCard(dynamic req) {
     final int requestId =
@@ -121,15 +119,9 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
               const SizedBox(width: 8),
               Text(
                 "User : ",
-                style:  TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
-              Text(
-                "${req['user_name'] ?? 'N/A'}",
-
-              ),
+              Text("${req['user_name'] ?? 'N/A'}"),
             ],
           ),
 
@@ -141,19 +133,14 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
               const Icon(Icons.electric_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
 
-                 Text(
-                  "Vehicle : ",
-                  style:  TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
+              Text(
+                "Vehicle : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
 
               Text(
                 "${req['vehicle_name'] ?? 'N/A'} "
-                    "(${req['vehicle_number'] ?? ''})",
-
+                "(${req['vehicle_number'] ?? ''})",
               ),
             ],
           ),
@@ -166,10 +153,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
               const SizedBox(width: 8),
               Text(
                 "Amount : ",
-                style:  TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Text(
                 "₹${req['amount']}",
@@ -188,29 +172,24 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
               const Icon(Icons.access_time, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
 
-                 const Text(
-                  "Request Time : ",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+              const Text(
+                "Request Time : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
 
               Text(
                 req['created_at'] != null
-                    ? DateFormat('dd MMM yyyy, hh:mm a')
-                    .format(DateTime.parse(req['created_at']).toLocal())
+                    ? DateFormat(
+                        'dd MMM yyyy, hh:mm a',
+                      ).format(DateTime.parse(req['created_at']).toLocal())
                     : 'N/A',
               ),
-
             ],
           ),
           const SizedBox(height: 8),
 
           if (status == 0)
-
             SizedBox(
-
               width: double.infinity,
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
@@ -221,12 +200,14 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () {
-                  double lat = double.tryParse(
-                      req['user_latitude']?.toString() ?? '') ??
+                  double lat =
+                      double.tryParse(req['user_latitude']?.toString() ?? '') ??
                       0.0;
 
-                  double lng = double.tryParse(
-                      req['user_longitude']?.toString() ?? '') ??
+                  double lng =
+                      double.tryParse(
+                        req['user_longitude']?.toString() ?? '',
+                      ) ??
                       0.0;
 
                   if (lat != 0.0 && lng != 0.0) {
@@ -253,7 +234,6 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
               ),
             ),
 
-
           if (status == 1)
             Row(
               children: const [
@@ -261,9 +241,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                 SizedBox(width: 6),
                 Text(
                   "Status : ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 Text(
                   "Accepted",
@@ -275,7 +253,6 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
               ],
             ),
 
-
           if (status == 2)
             Row(
               children: const [
@@ -283,16 +260,9 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                 SizedBox(width: 6),
                 Text(
                   "Status : ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                Text(
-                  "Rejected",
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
+                Text("Rejected", style: TextStyle(color: Colors.red)),
               ],
             ),
           if (status == 3)
@@ -302,24 +272,15 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                 SizedBox(width: 6),
                 Text(
                   "Status : ",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                Text(
-                  "Completed",
-                  style: TextStyle(
-                    color: Colors.orange,
-                  ),
-                ),
+                Text("Completed", style: TextStyle(color: Colors.orange)),
               ],
             ),
-
         ],
       ),
     );
   }
-
 
   // ================= UI =================
   @override

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:chargenow/forgot_password_page.dart';
 import 'package:chargenow/user/user_1dashboard_page.dart';
-import 'package:chargenow/vanoperator/vanoperator_1dashboard_page.dart';
+import 'package:chargenow/vanoperator/operator_0dashboard_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/CommonWidget/textfomfield.dart';

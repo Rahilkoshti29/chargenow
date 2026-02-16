@@ -3,7 +3,7 @@ import 'package:chargenow/onboardingscreen_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chargenow/user/user_1dashboard_page.dart';
-import 'package:chargenow/vanoperator/vanoperator_1dashboard_page.dart';
+import 'package:chargenow/vanoperator/operator_0dashboard_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatefulWidget {

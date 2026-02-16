@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/vanoperator/vanoperator_1dashboard_page.dart';
+import 'package:chargenow/vanoperator/operator_0dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-
 
 class OperatorBooking extends StatefulWidget {
   const OperatorBooking({super.key});
@@ -134,10 +133,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
               const SizedBox(width: 8),
               Text(
                 "User : ",
-                style:  TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Text(
                 booking['user_name'] ?? "Unknown User",
@@ -155,10 +151,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
               const SizedBox(width: 8),
               Text(
                 "Vehicle : ",
-                style:  TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Text(
                 "${booking['vehicle_name'] ?? 'Unknown Vehicle'} "
@@ -181,7 +174,6 @@ class _OperatorBookingState extends State<OperatorBooking> {
           //     ),
           //   ],
           // ),
-
           const SizedBox(height: 8),
 
           /// ================= DATE =================
@@ -192,19 +184,16 @@ class _OperatorBookingState extends State<OperatorBooking> {
 
               const Text(
                 "Request Time : ",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
 
               Text(
                 booking['created_at'] != null
-                    ? DateFormat('dd MMM yyyy, hh:mm a')
-                    .format(DateTime.parse(booking['created_at']).toLocal())
+                    ? DateFormat(
+                        'dd MMM yyyy, hh:mm a',
+                      ).format(DateTime.parse(booking['created_at']).toLocal())
                     : 'N/A',
               ),
-
             ],
           ),
 

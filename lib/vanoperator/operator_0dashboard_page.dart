@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/login_page.dart';
-import 'package:chargenow/vanoperator/avaibility_page.dart';
-import 'package:chargenow/vanoperator/booking_page.dart';
-import 'package:chargenow/vanoperator/feedback_page.dart';
-import 'package:chargenow/vanoperator/payment_page.dart';
-import 'package:chargenow/vanoperator/request_page.dart';
-import 'package:chargenow/vanoperator/vanoperator_profile_page.dart';
-import 'package:chargenow/vanoperator/vanoperator_van_page.dart';
+import 'package:chargenow/vanoperator/operator_1avaibility_page.dart';
+import 'package:chargenow/vanoperator/operator_3booking_page.dart';
+import 'package:chargenow/vanoperator/operator_5feedback_page.dart';
+import 'package:chargenow/vanoperator/operator_4payment_page.dart';
+import 'package:chargenow/vanoperator/operator_2request_page.dart';
+import 'package:chargenow/vanoperator/operator_7profile_page.dart';
+import 'package:chargenow/vanoperator/operator_6van_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
@@ -47,7 +47,7 @@ class VanOperatorDashboard extends StatelessWidget {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => LoginPage()),
-          (route) => false,
+      (route) => false,
     );
   }
 
@@ -66,10 +66,7 @@ class VanOperatorDashboard extends StatelessWidget {
             CircleAvatar(
               radius: 18,
               backgroundColor: Colors.white,
-              child: SvgPicture.asset(
-                "assets/images/logo.svg",
-                height: 32,
-              ),
+              child: SvgPicture.asset("assets/images/logo.svg", height: 32),
             ),
             const SizedBox(width: 8),
             const Text(
@@ -171,16 +168,36 @@ class VanOperatorDashboard extends StatelessWidget {
       mainAxisSpacing: 14,
       childAspectRatio: 1.1,
       children: [
-        _card(context, Icons.wifi_tethering, "Available",
-            const OperatorAvailabilityPage()),
-        _card(context, Icons.mail_outline, "Requests",
-            const OperatorRequestPage()),
-        _card(context, Icons.calendar_today, "Bookings",
-            const OperatorBooking()),
-        _card(context, Icons.credit_card, "Payments",
-            const OperatorPaymentsPage()),
-        _card(context, Icons.chat_bubble_outline, "Feedback",
-            const OperatorFeedbackPage()),
+        _card(
+          context,
+          Icons.wifi_tethering,
+          "Available",
+          const OperatorAvailabilityPage(),
+        ),
+        _card(
+          context,
+          Icons.mail_outline,
+          "Requests",
+          const OperatorRequestPage(),
+        ),
+        _card(
+          context,
+          Icons.calendar_today,
+          "Bookings",
+          const OperatorBooking(),
+        ),
+        _card(
+          context,
+          Icons.credit_card,
+          "Payments",
+          const OperatorPaymentsPage(),
+        ),
+        _card(
+          context,
+          Icons.chat_bubble_outline,
+          "Feedback",
+          const OperatorFeedbackPage(),
+        ),
         _logoutCard(context),
       ],
     );
@@ -216,10 +233,7 @@ class VanOperatorDashboard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -247,7 +261,10 @@ class VanOperatorDashboard extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Cancel",style: TextStyle(color: Colors.black),),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -260,8 +277,7 @@ class VanOperatorDashboard extends StatelessWidget {
                   Navigator.pop(context);
                   _handleLogout(context);
                 },
-                child:
-                const Text("Yes", style: TextStyle(color: Colors.black)),
+                child: const Text("Yes", style: TextStyle(color: Colors.black)),
               ),
             ],
           ),
