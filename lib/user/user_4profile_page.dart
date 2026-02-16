@@ -1,4 +1,5 @@
 import 'package:chargenow/login_page.dart';
+import 'package:chargenow/user/user_profile_3my_payments_page.dart';
 import 'package:chargenow/user/user_profile_5contactus_page.dart';
 import 'package:chargenow/user/user_profile_4myprofile_page.dart';
 import 'package:chargenow/user/user_profile_7privacy_policy_pafe.dart';
@@ -145,23 +146,19 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) =>  BookingHistoryPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => BookingHistoryPage()),
                 );
               },
             ),
             _menuItem(
               Icons.payment_rounded,
               "My Payments",
-              // onTap: () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (_) => const TrackVanPage(),
-              //     ),
-              //   );
-              // },
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => UserPaymentsPage()),
+                );
+              },
             ),
             _menuItem(
               Icons.person_outline,
