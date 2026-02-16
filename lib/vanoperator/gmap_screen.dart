@@ -189,12 +189,16 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: primaryGreen,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+        ),
+        centerTitle: true,
         title: const Text(
           "User Location",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: primaryGreen,
       ),
       body: Stack(
         children: [
