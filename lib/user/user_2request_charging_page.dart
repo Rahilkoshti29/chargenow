@@ -70,7 +70,6 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
   }
 
   double get batteryNeeded => (requiredLevel - currentLevel).clamp(0, 100);
-
   double get baseAmount => batteryNeeded * ratePerPercent;
   double get gstAmount => baseAmount * gstRate;
   double get totalAmount => baseAmount + gstAmount;
