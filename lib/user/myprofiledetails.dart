@@ -190,8 +190,8 @@ class _UserProfileDetailPageState extends State<UserProfileDetailPage> {
                   controller: emailCtrl,
                   hintText: 'Email',
                   prefixIcon: Icons.email_rounded,
-                  readOnly: true,
-                  showCursor: false,
+                  readOnly: !isEditing,
+                  showCursor: isEditing,
                 ),
 
                 const SizedBox(height: 14),

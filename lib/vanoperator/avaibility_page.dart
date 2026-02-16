@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
 
 class OperatorAvailabilityPage extends StatefulWidget {
   const OperatorAvailabilityPage({super.key});
@@ -12,7 +14,8 @@ class OperatorAvailabilityPage extends StatefulWidget {
       _OperatorAvailabilityPageState();
 }
 
-class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
+class _OperatorAvailabilityPageState
+    extends State<OperatorAvailabilityPage> {
   static const Color primaryGreen = Color(0xFF2ECC71);
   static const Color bgColor = Color(0xFFF2FFF7);
 
@@ -20,10 +23,18 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
   bool isLoading = false;
   String? token;
 
+  StreamSubscription<Position>? positionStream;
+
   @override
   void initState() {
     super.initState();
     loadToken();
+  }
+
+  @override
+  void dispose() {
+    positionStream?.cancel();
+    super.dispose();
   }
 
   /// 🔑 Load token
@@ -31,10 +42,63 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
 
-    // ✅ LOAD AVAILABILITY
     setState(() {
       isAvailable = prefs.getBool('operator_available') ?? false;
     });
+
+    if (isAvailable) {
+      startLocationTracking();
+    }
+  }
+
+  /// 🚀 Start location tracking
+  Future<void> startLocationTracking() async {
+    LocationPermission permission = await Geolocator.requestPermission();
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
+    ).listen((Position position) {
+      updateOperatorLocation(position.latitude, position.longitude);
+    });
+  }
+
+  /// 🛑 Stop location tracking
+  void stopLocationTracking() {
+    positionStream?.cancel();
+    positionStream = null;
+  }
+
+  /// 📡 Call Update Location API
+  Future<void> updateOperatorLocation(double lat, double lng) async {
+    if (token == null) return;
+
+    try {
+      final response = await http.put(
+        Uri.parse('${Apiconst.base_url}operator/van/update-location/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'latitude': lat,
+          'longitude': lng,
+        }),
+      );
+
+      print("Location API Status: ${response.statusCode}");
+      print("Location API Body: ${response.body}");
+
+    } catch (e) {
+      print("Location update failed: $e");
+    }
   }
 
 
@@ -60,13 +124,18 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
-        // ✅ SAVE LOCALLY
         await prefs.setBool('operator_available', value);
 
         setState(() {
           isAvailable = value;
           isLoading = false;
         });
+
+        if (value) {
+          startLocationTracking(); // ✅ START TRACKING
+        } else {
+          stopLocationTracking(); // ❌ STOP TRACKING
+        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
@@ -79,12 +148,11 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
     }
   }
 
-
   void _showError(String msg) {
     setState(() => isLoading = false);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+    );
   }
 
   @override
@@ -96,18 +164,21 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
+          icon:
+          const Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Availability",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          padding:
+          const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(18),
@@ -120,26 +191,30 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
             ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 "Turn On Availability",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
               ),
               isLoading
                   ? const SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: primaryGreen,
-                      ),
-                    )
+                height: 24,
+                width: 24,
+                child:
+                CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: primaryGreen,
+                ),
+              )
                   : Switch(
-                      value: isAvailable,
-                      activeColor: primaryGreen,
-                      onChanged: updateStatus,
-                    ),
+                value: isAvailable,
+                activeColor: primaryGreen,
+                onChanged: updateStatus,
+              ),
             ],
           ),
         ),

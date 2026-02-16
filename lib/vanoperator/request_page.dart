@@ -149,11 +149,6 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
 
           const SizedBox(height: 8),
 
-          Text("Latitude : ${req['user_latitude']}"),
-          Text("Longitude : ${req['user_longitude']}"),
-
-          const SizedBox(height: 8),
-
           Text(
             "Amount : ₹${req['amount']}",
             style: const TextStyle(
@@ -165,69 +160,52 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
           const SizedBox(height: 14),
 
           if (status == 0)
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryGreen,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    onPressed: () async {
-                      bool success = await updateRequest(requestId, "accept");
-
-                      if (success) {
-                        double lat = double.tryParse(
-                            req['user_latitude']?.toString() ?? '') ??
-                            0.0;
-
-                        double lng = double.tryParse(
-                            req['user_longitude']?.toString() ?? '') ??
-                            0.0;
-
-                        if (lat != 0.0 && lng != 0.0) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => GoogleMapScreen(
-                                latitude: lat,
-                                longitude: lng,
-                              ),
-                            ),
-                          );
-                        }
-                      }
-                    },
-
-                    child: const Text(
-                      "Accept",
-                      style: TextStyle(color: Colors.white),
-                    ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGreen,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                onPressed: () {
+                  double lat = double.tryParse(
+                      req['user_latitude']?.toString() ?? '') ??
+                      0.0;
+
+                  double lng = double.tryParse(
+                      req['user_longitude']?.toString() ?? '') ??
+                      0.0;
+
+                  if (lat != 0.0 && lng != 0.0) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => GoogleMapScreen(
+                          latitude: lat,
+                          longitude: lng,
+                          requestId: requestId,
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    onPressed: () => updateRequest(requestId, "reject"),
-                    child: const Text("Reject"),
-                  ),
+                    ).then((_) {
+                      // 🔥 REFRESH AFTER RETURNING FROM MAP
+                      fetchRequests();
+                    });
+                  }
+                },
+                icon: const Icon(Icons.map, color: Colors.white),
+                label: const Text(
+                  "View User Location",
+                  style: TextStyle(color: Colors.white),
                 ),
-              ],
+              ),
             ),
 
+
           if (status == 1)
-            const Text("Accepted", style: TextStyle(color: Colors.green)),
+            const Text("Accepted", style: TextStyle(color: primaryGreen)),
 
           if (status == 2)
             const Text("Rejected", style: TextStyle(color: Colors.red)),
