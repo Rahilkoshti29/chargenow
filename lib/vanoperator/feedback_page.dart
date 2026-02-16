@@ -3,6 +3,7 @@ import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class OperatorFeedbackPage extends StatefulWidget {
   const OperatorFeedbackPage({super.key});
@@ -91,13 +92,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
 
     final String comment = feedback['comments'] ?? '';
 
-    final String date = feedback['created_at'] ?? '';
-
-    final String userName =
-        feedback['user_name'] ?? "Unknown User";
-
-    final String operatorName =
-        feedback['operator_name'] ?? "Unknown Operator";
+    final String userName = feedback['user_name'] ?? "Unknown User";
 
     if (feedbackId == 0) return const SizedBox();
 
@@ -119,72 +114,108 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          /// FEEDBACK ID
-          Text(
-            "Feedback #$feedbackId",
-            style: const TextStyle(
-                fontSize: 17, fontWeight: FontWeight.bold),
+          /// USER
+          Row(
+            children: [
+              const Icon(Icons.person, size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text(
+                "User : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              Text(userName),
+            ],
           ),
 
           const SizedBox(height: 8),
 
-          /// USER NAME (instead of user_id)
+          /// RATING
           Row(
             children: [
-              const Icon(Icons.person,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.star, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
+              const Text(
+                "Rating : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
               Text(
-                userName,
+                "$rating / 5",
                 style: const TextStyle(
-                    fontWeight: FontWeight.w500),
+                  fontWeight: FontWeight.bold,
+                  color: primaryGreen,
+                ),
               ),
             ],
           ),
 
           const SizedBox(height: 8),
 
-          /// OPERATOR NAME
+          /// STARS UI
           Row(
-            children: [
-              const Icon(Icons.local_shipping,
-                  size: 18, color: primaryGreen),
-              const SizedBox(width: 8),
-              Text(
-                operatorName,
-                style: const TextStyle(
-                    fontWeight: FontWeight.w500),
+            children: List.generate(
+              5,
+                  (index) => Icon(
+                index < rating ? Icons.star : Icons.star_border,
+                color: Colors.amber,
+                size: 20,
               ),
-            ],
+            ),
           ),
-
-          const SizedBox(height: 10),
-
-          /// STAR RATING
-          buildStars(rating),
 
           const SizedBox(height: 10),
 
           /// COMMENT
           if (comment.isNotEmpty)
-            Text(
-              comment,
-              style: const TextStyle(
-                  fontSize: 14, color: Colors.black87),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.comment, size: 18, color: primaryGreen),
+                    SizedBox(width: 8),
+                    Text(
+                      "Comment : ",
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  comment,
+                  style: const TextStyle(
+                      fontSize: 14, color: Colors.black87),
+                ),
+              ],
             ),
 
           const SizedBox(height: 10),
 
-          /// DATE
-          Text(
-            date,
-            style: const TextStyle(
-                fontSize: 12, color: Colors.black54),
+          /// DATE (Formatted)
+          Row(
+            children: [
+              const Icon(Icons.access_time,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text(
+                "Feedback Time : ",
+                style: TextStyle(
+                    fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                feedback['created_at'] != null
+                    ? DateFormat('dd MMM yyyy, hh:mm a')
+                    .format(DateTime.parse(
+                    feedback['created_at']).toLocal())
+                    : 'N/A',
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+
 
 
   // ================= UI =================

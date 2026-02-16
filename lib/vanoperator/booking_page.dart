@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
+import 'package:chargenow/vanoperator/vanoperator_1dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
+
 
 class OperatorBooking extends StatefulWidget {
   const OperatorBooking({super.key});
@@ -116,20 +119,26 @@ class _OperatorBookingState extends State<OperatorBooking> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// ================= BOOKING ID =================
-          Text(
-            "Booking #$bookingId",
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
+          // Text(
+          //   "Booking #$bookingId",
+          //   style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          // ),
+          //
+          // const SizedBox(height: 10),
 
           /// ================= USER NAME =================
           Row(
             children: [
               const Icon(Icons.person, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
+              Text(
+                "User : ",
+                style:  TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               Text(
                 booking['user_name'] ?? "Unknown User",
                 style: const TextStyle(fontSize: 14),
@@ -142,45 +151,60 @@ class _OperatorBookingState extends State<OperatorBooking> {
           /// ================= VEHICLE =================
           Row(
             children: [
-              const Icon(Icons.directions_car,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.directions_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
+              Text(
+                "Vehicle : ",
+                style:  TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               Text(
                 "${booking['vehicle_name'] ?? 'Unknown Vehicle'} "
-                    "(${booking['vehicle_number'] ?? ''})",
+                "(${booking['vehicle_number'] ?? ''})",
                 style: const TextStyle(fontSize: 14),
               ),
             ],
           ),
 
-          const SizedBox(height: 8),
-
-          /// ================= REQUEST ID =================
-          Row(
-            children: [
-              const Icon(Icons.receipt_long,
-                  size: 18, color: primaryGreen),
-              const SizedBox(width: 8),
-              Text(
-                "Request ID : $requestId",
-                style: const TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
+          // const SizedBox(height: 8),
+          //
+          // /// ================= REQUEST ID =================
+          // Row(
+          //   children: [
+          //     const Icon(Icons.receipt_long, size: 18, color: primaryGreen),
+          //     const SizedBox(width: 8),
+          //     Text(
+          //       "Request ID : $requestId",
+          //       style: const TextStyle(fontSize: 14),
+          //     ),
+          //   ],
+          // ),
 
           const SizedBox(height: 8),
 
           /// ================= DATE =================
           Row(
             children: [
-              const Icon(Icons.access_time,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.access_time, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              Text(
-                booking['created_at'] ?? '',
-                style: const TextStyle(
-                    fontSize: 13, color: Colors.black54),
+
+              const Text(
+                "Request Time : ",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
+
+              Text(
+                booking['created_at'] != null
+                    ? DateFormat('dd MMM yyyy, hh:mm a')
+                    .format(DateTime.parse(booking['created_at']).toLocal())
+                    : 'N/A',
+              ),
+
             ],
           ),
 
@@ -196,11 +220,9 @@ class _OperatorBookingState extends State<OperatorBooking> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () =>
-                    updateCharging(bookingId, "start"),
+                onPressed: () => updateCharging(bookingId, "start"),
                 child: const Text(
                   "Start Charging",
                   style: TextStyle(color: Colors.white),
@@ -217,11 +239,9 @@ class _OperatorBookingState extends State<OperatorBooking> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () =>
-                    updateCharging(bookingId, "complete"),
+                onPressed: () => updateCharging(bookingId, "complete"),
                 child: const Text(
                   "Complete Charging",
                   style: TextStyle(color: Colors.white),
@@ -244,7 +264,6 @@ class _OperatorBookingState extends State<OperatorBooking> {
     );
   }
 
-
   // ================= UI =================
   @override
   Widget build(BuildContext context) {
@@ -253,8 +272,15 @@ class _OperatorBookingState extends State<OperatorBooking> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => VanOperatorDashboard()),
+              (route) => false,
+            );
+          },
         ),
+
         centerTitle: true,
         title: const Text(
           "My Bookings",

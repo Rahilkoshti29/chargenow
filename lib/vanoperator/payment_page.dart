@@ -3,6 +3,7 @@ import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class OperatorPaymentsPage extends StatefulWidget {
   const OperatorPaymentsPage({super.key});
@@ -107,11 +108,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
     final int status =
         int.tryParse((payment['payment_status'] ?? '0').toString()) ?? 0;
 
-    final String userName =
-        payment['user_name'] ?? "Unknown User";
-
-    final String operatorName =
-        payment['operator_name'] ?? "Unknown Operator";
+    final String userName = payment['user_name'] ?? "Unknown User";
 
     if (paymentId == 0) return const SizedBox();
 
@@ -132,35 +129,16 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          /// PAYMENT ID
-          Text(
-            "Payment #$paymentId",
-            style: const TextStyle(
-                fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 8),
-
-          /// USER NAME
+          /// USER
           Row(
             children: [
-              const Icon(Icons.person,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.person, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
+              const Text(
+                "User : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
               Text(userName),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          /// OPERATOR NAME
-          Row(
-            children: [
-              const Icon(Icons.local_shipping,
-                  size: 18, color: primaryGreen),
-              const SizedBox(width: 8),
-              Text(operatorName),
             ],
           ),
 
@@ -169,38 +147,25 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
           /// BOOKING ID
           Row(
             children: [
-              const Icon(Icons.bookmark,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.receipt_long, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              Text("Booking ID : $bookingId"),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          /// AMOUNT
-          Row(
-            children: [
-              const Icon(Icons.currency_rupee,
-                  size: 18, color: primaryGreen),
-              const SizedBox(width: 8),
-              Text(
-                "₹ ${amount.toStringAsFixed(2)}",
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600),
+              const Text(
+                "Booking ID : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
+              Text("#$bookingId"),
             ],
           ),
 
           const SizedBox(height: 8),
-
-          /// PAYMENT METHOD (convert int to text)
           Row(
             children: [
-              const Icon(Icons.payment,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.payment, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
+              const Text(
+                "Method : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
               Text(
                 method == 0
                     ? "Cash"
@@ -212,22 +177,22 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-
-          /// PAYMENT STATUS (convert int to text)
+          /// AMOUNT
           Row(
             children: [
-              const Icon(Icons.info_outline,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.currency_rupee, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
+              const Text(
+                "Amount : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
               Text(
-                status == 1 ? "Completed" : "Pending",
-                style: TextStyle(
-                  color: status == 1
-                      ? Colors.green
-                      : Colors.orange,
+                "₹ ${amount.toStringAsFixed(2)}",
+                style: const TextStyle(
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
+                  color: primaryGreen,
                 ),
               ),
             ],
@@ -235,17 +200,40 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
 
           const SizedBox(height: 8),
 
-          /// DATE
-          Text(
-            payment['created_at'] ?? '',
-            style: const TextStyle(
-                fontSize: 12, color: Colors.black54),
+          /// PAYMENT METHOD
+
+
+
+
+          /// DATE (Formatted)
+          Row(
+            children: const [
+              Icon(
+                Icons.info_outline,
+                size: 18,
+                color: primaryGreen,
+              ),
+              SizedBox(width: 8),
+              Text("Status : ",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),),
+              Text(
+                "Completed",   // or "Pending" if you want dynamic text
+                style: TextStyle(
+                  color: primaryGreen,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
+
+
+          const SizedBox(height: 12),
+
+          /// STATUS BADGE
+
         ],
       ),
     );
   }
-
 
   // ================= UI =================
   @override
