@@ -49,7 +49,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
       final decoded = jsonDecode(response.body);
       List<dynamic> data = decoded['data'] ?? [];
 
-      // 🔥 Latest payment on top
+      //  Latest payment on top
       data.sort((a, b) {
         final aTime =
             DateTime.tryParse(a['payment_time'] ?? '') ??
@@ -129,7 +129,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// USER
+          // USER
           Row(
             children: [
               const Icon(Icons.person, size: 18, color: primaryGreen),
@@ -144,7 +144,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
 
           const SizedBox(height: 8),
 
-          /// BOOKING ID
+          // BOOKING ID
           Row(
             children: [
               const Icon(Icons.receipt_long, size: 18, color: primaryGreen),
@@ -179,7 +179,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
           ),
           const SizedBox(height: 8),
 
-          /// AMOUNT
+          // AMOUNT
           Row(
             children: [
               const Icon(Icons.currency_rupee, size: 18, color: primaryGreen),

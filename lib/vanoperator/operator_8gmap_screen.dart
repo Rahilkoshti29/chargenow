@@ -204,8 +204,8 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
             onMapCreated: (controller) {
               mapController = controller;
             },
-            myLocationEnabled: false, // 🔥 IMPORTANT
-            myLocationButtonEnabled: false, // 🔥 IMPORTANT
+            myLocationEnabled: false,
+            myLocationButtonEnabled: false,
           ),
 
           Positioned(

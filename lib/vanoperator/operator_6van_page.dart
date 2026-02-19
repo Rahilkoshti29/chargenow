@@ -28,7 +28,7 @@ class _MyVanPageState extends State<MyVanPage> {
     loadTokenAndFetchVan();
   }
 
-  /// 🔑 Load token
+  // Load token
   Future<void> loadTokenAndFetchVan() async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
@@ -44,7 +44,7 @@ class _MyVanPageState extends State<MyVanPage> {
     await fetchAssignedVan();
   }
 
-  /// 🚐 Fetch van
+  // Fetch van
   Future<void> fetchAssignedVan() async {
     try {
       final response = await http.get(

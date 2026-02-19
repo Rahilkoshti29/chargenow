@@ -51,7 +51,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
 
       List<dynamic> data = decoded['data'] ?? [];
 
-      // 🔥 Latest booking on top
+      //  Latest booking on top
       data.sort((a, b) {
         final aTime =
             DateTime.tryParse(a['created_at'] ?? '') ??
@@ -118,7 +118,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// ================= BOOKING ID =================
+          // ================= BOOKING ID =================
           // Text(
           //   "Booking #$bookingId",
           //   style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
@@ -126,7 +126,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
           //
           // const SizedBox(height: 10),
 
-          /// ================= USER NAME =================
+          // ================= USER NAME =================
           Row(
             children: [
               const Icon(Icons.person, size: 18, color: primaryGreen),
@@ -144,7 +144,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
 
           const SizedBox(height: 8),
 
-          /// ================= VEHICLE =================
+          // ================= VEHICLE =================
           Row(
             children: [
               const Icon(Icons.directions_car, size: 18, color: primaryGreen),
@@ -176,7 +176,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
           // ),
           const SizedBox(height: 8),
 
-          /// ================= DATE =================
+          // ================= DATE =================
           Row(
             children: [
               const Icon(Icons.access_time, size: 18, color: primaryGreen),
@@ -199,7 +199,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
 
           const SizedBox(height: 16),
 
-          /// ================= ACTION BUTTONS (UNCHANGED) =================
+          // ================= ACTION BUTTONS =================
           if (status == 0)
             SizedBox(
               width: double.infinity,

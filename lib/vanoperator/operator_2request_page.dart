@@ -112,7 +112,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
 
           // const SizedBox(height: 10),
 
-          // 👤 USER NAME
+          //  USER NAME
           Row(
             children: [
               const Icon(Icons.person, size: 18, color: primaryGreen),
@@ -127,7 +127,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
 
           const SizedBox(height: 8),
 
-          // 🚗 VEHICLE NAME
+          // VEHICLE NAME
           Row(
             children: [
               const Icon(Icons.electric_car, size: 18, color: primaryGreen),
@@ -221,7 +221,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                         ),
                       ),
                     ).then((_) {
-                      // 🔥 REFRESH AFTER RETURNING FROM MAP
+                      //  REFRESH AFTER RETURNING FROM MAP
                       fetchRequests();
                     });
                   }

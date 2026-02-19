@@ -36,7 +36,7 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
     super.dispose();
   }
 
-  /// 🔑 Load token
+  // Load token
   Future<void> loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
@@ -50,7 +50,7 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
     }
   }
 
-  /// 🚀 Start location tracking
+  // Start location tracking
   Future<void> startLocationTracking() async {
     LocationPermission permission = await Geolocator.requestPermission();
 
@@ -70,13 +70,13 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
         });
   }
 
-  /// 🛑 Stop location tracking
+  // Stop location tracking
   void stopLocationTracking() {
     positionStream?.cancel();
     positionStream = null;
   }
 
-  /// 📡 Call Update Location API
+  // Call Update Location API
   Future<void> updateOperatorLocation(double lat, double lng) async {
     if (token == null) return;
 
@@ -90,14 +90,14 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
         body: jsonEncode({'latitude': lat, 'longitude': lng}),
       );
 
-      print("Location API Status: ${response.statusCode}");
-      print("Location API Body: ${response.body}");
+      //print("Location API Status: ${response.statusCode}");
+      //print("Location API Body: ${response.body}");
     } catch (e) {
       print("Location update failed: $e");
     }
   }
 
-  /// 🔄 Update availability status
+  // Update availability status
   Future<void> updateStatus(bool value) async {
     if (token == null) return;
 
@@ -127,9 +127,9 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
         });
 
         if (value) {
-          startLocationTracking(); // ✅ START TRACKING
+          startLocationTracking(); //  START TRACKING
         } else {
-          stopLocationTracking(); // ❌ STOP TRACKING
+          stopLocationTracking(); //  STOP TRACKING
         }
 
         ScaffoldMessenger.of(

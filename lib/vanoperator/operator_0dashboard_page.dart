@@ -24,7 +24,7 @@ class VanOperatorDashboard extends StatelessWidget {
     final token = prefs.getString('token');
     final isAvailable = prefs.getBool('operator_available') ?? false;
 
-    // 🔴 If operator is available → turn OFF before logout
+    // If operator is available → turn OFF before logout
     if (isAvailable && token != null) {
       try {
         await http.put(
@@ -41,7 +41,7 @@ class VanOperatorDashboard extends StatelessWidget {
       }
     }
 
-    // 🔥 Clear everything
+    // Clear everything
     await prefs.clear();
 
     Navigator.pushAndRemoveUntil(

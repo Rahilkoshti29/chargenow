@@ -49,7 +49,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
       final decoded = jsonDecode(response.body);
       List<dynamic> data = decoded['data'] ?? [];
 
-      // 🔥 Latest feedback first
+      //  Latest feedback first
       data.sort((a, b) {
         final aTime =
             DateTime.tryParse(a['created_at'] ?? '') ??
@@ -113,7 +113,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// USER
+          // USER
           Row(
             children: [
               const Icon(Icons.person, size: 18, color: primaryGreen),
@@ -128,7 +128,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
 
           const SizedBox(height: 8),
 
-          /// RATING
+          // RATING
           Row(
             children: [
               const Icon(Icons.star, size: 18, color: primaryGreen),
@@ -149,7 +149,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
 
           const SizedBox(height: 8),
 
-          /// STARS UI
+          // STARS
           Row(
             children: List.generate(
               5,
@@ -163,7 +163,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
 
           const SizedBox(height: 10),
 
-          /// COMMENT
+          // COMMENT
           if (comment.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +191,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
 
           const SizedBox(height: 10),
 
-          /// DATE (Formatted)
+          // DATE (Formatted)
           Row(
             children: [
               const Icon(Icons.access_time, size: 18, color: primaryGreen),
