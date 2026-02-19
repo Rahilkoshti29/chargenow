@@ -58,8 +58,8 @@ class _RegisterPageState extends State<RegisterPage> {
           "user_address": userAddressController.text.trim(),
         }),
       );
-      debugPrint("Status Code: ${response.statusCode}");
-      debugPrint("Response Body: ${response.body}");
+      // debugPrint("Status Code: ${response.statusCode}");
+      // debugPrint("Response Body: ${response.body}");
 
       final Map<String, dynamic> data = jsonDecode(response.body);
 
@@ -73,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
 
-        await Future.delayed(Duration(milliseconds: 800));
+        await Future.delayed(Duration(milliseconds: 200));
 
         Navigator.pop(context);
       } else {
@@ -146,11 +146,11 @@ class _RegisterPageState extends State<RegisterPage> {
           context,
         ).showSnackBar(SnackBar(content: Text(data['message'])));
 
-        await Future.delayed(Duration(milliseconds: 800));
+        await Future.delayed(Duration(milliseconds: 200));
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginScreen()),
+          MaterialPageRoute(builder: (_) => LoginPage()),
         );
       } else {
         String errorMsg = 'Registration failed';
@@ -321,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => LoginScreen()),
+                            MaterialPageRoute(builder: (_) => LoginPage()),
                           );
                         },
                         child: Text.rich(
@@ -333,6 +333,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xff2ecc71),
+                                  decoration: TextDecoration.underline,
+                                  decorationThickness: 1.5,
+                                  decorationColor: Color(0xff2ecc71),
                                 ),
                               ),
                             ],
@@ -413,13 +416,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         SizedBox(height: 20),
         CommonTextFormField(
-          controller: userAddressController,
-          hintText: "User Address",
-          prefixIcon: Icons.home,
-          validator: (v) => v == null || v.isEmpty ? "Enter Address" : null,
-        ),
-        SizedBox(height: 20),
-        CommonTextFormField(
           controller: userPasswordController,
           hintText: "User Password",
           prefixIcon: Icons.lock,
@@ -432,12 +428,40 @@ class _RegisterPageState extends State<RegisterPage> {
               });
             },
           ),
-          // validator: (v) {
-          //   if (v == null || v.isEmpty) return "Enter Password";
-          //   final regex = RegExp(
-          //       r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$');
-          //   return regex.hasMatch(v) ? null : "Weak Password";
-          // },
+          validator: (v) {
+            if (v == null || v.isEmpty) {
+              return "Password is required";
+            }
+
+            // if (v.length < 8) {
+            //   return "Must be at least 8 characters";
+            // }
+            //
+            // if (!RegExp(r'[A-Z]').hasMatch(v)) {
+            //   return "Must contain at least 1 uppercase letter";
+            // }
+            //
+            // if (!RegExp(r'[a-z]').hasMatch(v)) {
+            //   return "Must contain at least 1 lowercase letter";
+            // }
+            //
+            // if (!RegExp(r'[0-9]').hasMatch(v)) {
+            //   return "Must contain at least 1 number";
+            // }
+            //
+            // if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+            //   return "Must contain at least 1 special character (!@#\$&*~)";
+            // }
+
+            return null;
+          },
+        ),
+        SizedBox(height: 20),
+        CommonTextFormField(
+          controller: userAddressController,
+          hintText: "User Address",
+          prefixIcon: Icons.home,
+          validator: (v) => v == null || v.isEmpty ? "Enter Address" : null,
         ),
       ],
     );
@@ -493,13 +517,33 @@ class _RegisterPageState extends State<RegisterPage> {
               });
             },
           ),
-          // validator: (v) {
-          //   if (v == null || v.isEmpty) return "Enter Password";
-          //   final regex = RegExp(
-          //     r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$',
-          //   );
-          //   return regex.hasMatch(v) ? null : "Weak Password";
-          // },
+          validator: (v) {
+            if (v == null || v.isEmpty) {
+              return "Password is required";
+            }
+
+            // if (v.length < 8) {
+            //   return "Must be at least 8 characters";
+            // }
+            //
+            // if (!RegExp(r'[A-Z]').hasMatch(v)) {
+            //   return "Must contain at least 1 uppercase letter";
+            // }
+            //
+            // if (!RegExp(r'[a-z]').hasMatch(v)) {
+            //   return "Must contain at least 1 lowercase letter";
+            // }
+            //
+            // if (!RegExp(r'[0-9]').hasMatch(v)) {
+            //   return "Must contain at least 1 number";
+            // }
+            //
+            // if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+            //   return "Must contain at least 1 special character (!@#\$&*~)";
+            // }
+
+            return null;
+          },
         ),
         SizedBox(height: 20),
         CommonTextFormField(

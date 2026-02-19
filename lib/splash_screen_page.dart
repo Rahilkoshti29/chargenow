@@ -2,10 +2,9 @@ import 'package:chargenow/login_page.dart';
 import 'package:chargenow/onboardingscreen_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:chargenow/user/user_1dashboard_page.dart';
-import 'package:chargenow/vanoperator/vanoperator_1dashboard_page.dart';
+import 'package:chargenow/user/user_0dashboard_page.dart';
+import 'package:chargenow/vanoperator/operator_0dashboard_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -26,8 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final prefs = await SharedPreferences.getInstance();
 
-    final bool seenOnboarding =
-        prefs.getBool('seen_onboarding') ?? false;
+    final bool seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
     final String? token = prefs.getString('token');
     final int? role = prefs.getInt('role');
 
@@ -37,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!seenOnboarding) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const OnBoardingPage()),
+        MaterialPageRoute(builder: (_) => OnBoardingPage()),
       );
       return;
     }
@@ -47,19 +45,19 @@ class _SplashScreenState extends State<SplashScreen> {
       if (role == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const UserDashboard()),
+          MaterialPageRoute(builder: (_) => UserDashboardPage()),
         );
       } else if (role == 2) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const VanoperatorDashboard()),
+          MaterialPageRoute(builder: (_) => VanOperatorDashboard()),
         );
       }
     } else {
       // 🔹 NOT LOGGED IN
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => LoginPage()),
       );
     }
   }
@@ -72,14 +70,9 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              "assets/images/logo.svg",
-              height: 220,
-            ),
-            const SizedBox(height: 25),
-            const CircularProgressIndicator(
-              color: Color(0xff2ecc71),
-            ),
+            SvgPicture.asset("assets/images/logo.svg", height: 220),
+            SizedBox(height: 25),
+            CircularProgressIndicator(color: Color(0xff2ecc71)),
           ],
         ),
       ),

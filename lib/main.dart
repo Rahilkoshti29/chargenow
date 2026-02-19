@@ -8,7 +8,7 @@ void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
     _,
   ) {
-    runApp(const MyApp());
+    runApp(MyApp());
   });
 }
 
@@ -18,10 +18,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const SplashScreen(),
+      theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          selectionHandleColor:Colors.white30,
+          selectionColor: Color(0x22000000),
+        ),
+      ),
+      home: SplashScreen(),
     );
   }
 }

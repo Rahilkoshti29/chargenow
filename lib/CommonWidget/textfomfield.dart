@@ -33,6 +33,7 @@ class CommonTextFormField extends StatelessWidget {
       validator: validator,
       keyboardType: keyboardType,
       readOnly: readOnly,
+
       showCursor: showCursor,
       decoration: InputDecoration(
         hintText: hintText,
