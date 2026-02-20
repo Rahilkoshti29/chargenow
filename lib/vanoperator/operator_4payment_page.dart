@@ -222,16 +222,16 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
 
           const SizedBox(height: 8),
           Row(
-            children: const [
-              Icon(Icons.info_outline, size: 18, color: primaryGreen),
-              SizedBox(width: 8),
-              Text(
+            children: [
+              const Icon(Icons.info_outline, size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text(
                 "Status : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Text(
-                "Completed", // or "Pending" if you want dynamic text
-                style: TextStyle(
+                status == 1 ? "Completed" : "Pending",
+                style: const TextStyle(
                   color: primaryGreen,
                   fontWeight: FontWeight.bold,
                 ),
