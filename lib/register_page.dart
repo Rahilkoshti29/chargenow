@@ -125,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
       request.files.add(
         await http.MultipartFile.fromPath(
-          'operator_license_doc',
+          'operator_license',
           pickedFile!.path!,
         ),
       );
@@ -156,8 +156,8 @@ class _RegisterPageState extends State<RegisterPage> {
         String errorMsg = 'Registration failed';
 
         //  FILE ERROR (PDF / SIZE / TYPE)
-        if (data.containsKey('operator_license_doc')) {
-          errorMsg = data['operator_license_doc'][0];
+        if (data.containsKey('operator_license')) {
+          errorMsg = data['operator_license'][0];
         }
         //  EMAIL ALREADY EXISTS
         else if (data.containsKey('operator_email')) {
@@ -298,7 +298,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               if (selectedType == RegisterType.user) {
-                                registerUser(context); // 👤 User API
+                                registerUser(context); //  User API
                               } else {
                                 registerOperator(context);
                               }
