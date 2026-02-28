@@ -101,10 +101,6 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
             mainAxisAlignment:
             MainAxisAlignment.spaceBetween,
             children: [
-              Text("Request #${req['request_id']}",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17)),
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 6),

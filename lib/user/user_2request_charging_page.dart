@@ -216,6 +216,7 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
       decoration: _boxDecoration(),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<int>(
+          dropdownColor: Colors.white,
           isExpanded: true,
           hint: const Text("Select Vehicle"),
           value: selectedVehicleId,

@@ -47,21 +47,8 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
-      List<dynamic> data = decoded['data'] ?? [];
-
-      //  Latest payment on top
-      data.sort((a, b) {
-        final aTime =
-            DateTime.tryParse(a['payment_time'] ?? '') ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime =
-            DateTime.tryParse(b['payment_time'] ?? '') ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-        return bTime.compareTo(aTime);
-      });
-
       setState(() {
-        payments = data;
+        payments = List.from(decoded['data'] ?? []).reversed.toList();
         isLoading = false;
       });
     } else {
@@ -141,22 +128,6 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
               Text(userName),
             ],
           ),
-
-          const SizedBox(height: 8),
-
-          // BOOKING ID
-          Row(
-            children: [
-              const Icon(Icons.receipt_long, size: 18, color: primaryGreen),
-              const SizedBox(width: 8),
-              const Text(
-                "Booking ID : ",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-              ),
-              Text("#$bookingId"),
-            ],
-          ),
-
           const SizedBox(height: 8),
           Row(
             children: [

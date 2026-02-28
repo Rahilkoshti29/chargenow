@@ -48,22 +48,8 @@ class _OperatorBookingState extends State<OperatorBooking> {
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
-
-      List<dynamic> data = decoded['data'] ?? [];
-
-      //  Latest booking on top
-      data.sort((a, b) {
-        final aTime =
-            DateTime.tryParse(a['created_at'] ?? '') ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime =
-            DateTime.tryParse(b['created_at'] ?? '') ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-        return bTime.compareTo(aTime);
-      });
-
       setState(() {
-        bookings = data;
+        bookings = List.from(decoded['data'] ?? []).reversed.toList();
         isLoading = false;
       });
     } else {

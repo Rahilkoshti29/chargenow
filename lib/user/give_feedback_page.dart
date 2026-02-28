@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:chargenow/user/user_0dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:http/http.dart' as http;
@@ -21,45 +22,45 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
   bool isSubmitting = false;
 
   // ---------------- SUBMIT FEEDBACK ----------------
-  Future<void> submitFeedback() async {
-    if (rating == 0) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please select rating")));
-      return;
-    }
-
-    setState(() => isSubmitting = true);
-
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
-    final response = await http.post(
-      Uri.parse('${Apiconst.base_url}user/feedback/'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-      // body: {
-      //   'operator_id':
-      //   widget.operatorId.toString(),
-      //   'rating': rating.toString(),
-      //   'comments': commentController.text,
-      // },
-    );
-
-    final decoded = jsonDecode(response.body);
-
-    setState(() => isSubmitting = false);
-
-    if (decoded['success'] == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Feedback Submitted Successfully")),
-      );
-      Navigator.pop(context);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to submit feedback")),
-      );
-    }
-  }
+  // Future<void> submitFeedback() async {
+  //   if (rating == 0) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(const SnackBar(content: Text("Please select rating")));
+  //     return;
+  //   }
+  //
+  //   setState(() => isSubmitting = true);
+  //
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //
+  //   final response = await http.post(
+  //     Uri.parse('${Apiconst.base_url}user/feedback/'),
+  //     headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+  //     // body: {
+  //     //   'operator_id':
+  //     //   widget.operatorId.toString(),
+  //     //   'rating': rating.toString(),
+  //     //   'comments': commentController.text,
+  //     // },
+  //   );
+  //
+  //   final decoded = jsonDecode(response.body);
+  //
+  //   setState(() => isSubmitting = false);
+  //
+  //   if (decoded['success'] == true) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Feedback Submitted Successfully")),
+  //     );
+  //     Navigator.pop(context);
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Failed to submit feedback")),
+  //     );
+  //   }
+  // }
 
   // ---------------- STAR WIDGET ----------------
   Widget buildStar(int index) {
@@ -139,12 +140,28 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: isSubmitting ? null : submitFeedback,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Feedback Submitted Successfully"),
+                    ),
+                  );
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UserDashboardPage(initialIndex: 0),
+                    ),
+                    (route) => false,
+                  );
+                },
                 child: isSubmitting
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(
                         "Submit Feedback",
-                        style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
               ),
             ),
