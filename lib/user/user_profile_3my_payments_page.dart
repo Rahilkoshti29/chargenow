@@ -1,3 +1,4 @@
+import 'package:chargenow/user/give_feedback_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
@@ -106,90 +107,134 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
     final method = payment['payment_method'];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-          ),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 10)
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row
+
+          // Header Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Booking #${payment['booking_id'] ?? ''}",
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17),
               ),
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: getStatusColor(status).withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
+                  color: getStatusColor(status)
+                      .withOpacity(0.15),
+                  borderRadius:
+                  BorderRadius.circular(20),
                 ),
                 child: Text(
                   getStatus(status),
                   style: TextStyle(
-                    color: getStatusColor(status),
-                    fontWeight: FontWeight.bold,
-                  ),
+                      color: getStatusColor(status),
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
+              )
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          Row(
+            children: [
+              const Icon(Icons.electric_car,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text("Operator : ",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600)),
+              Text(payment['operator_name'] ?? ''),
             ],
           ),
 
           const SizedBox(height: 8),
 
-          Text(
-            "Operator: ${payment['operator_name'] ?? ''}",
-            style: const TextStyle(color: Colors.black54),
+          Row(
+            children: [
+              const Icon(Icons.payment,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text("Method : ",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600)),
+              Text(getMethod(method)),
+            ],
           ),
 
-          const SizedBox(height: 4),
-
-          Text(
-            "Method: ${getMethod(method)}",
-            style: const TextStyle(color: Colors.black54),
-          ),
-
-          const SizedBox(height: 8),
-
+          const SizedBox(height: 12),
           const Divider(),
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "₹ ${payment['amount'] ?? 0}",
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold),
               ),
               Text(
                 formatDate(payment['created_at']),
                 style: const TextStyle(
-                  color: Colors.grey,
-                ),
+                    color: Colors.grey),
               ),
             ],
           ),
+
+          const SizedBox(height: 15),
+
+          // ================= GIVE FEEDBACK BUTTON =================
+          if (status == 1)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGreen,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          GiveFeedbackPage(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Give Feedback",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,color: Colors.white),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
+
 
   // ---------------- UI ----------------
   @override

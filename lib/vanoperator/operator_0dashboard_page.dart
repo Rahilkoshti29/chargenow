@@ -24,9 +24,9 @@ class VanOperatorDashboard extends StatelessWidget {
     final token = prefs.getString('token');
     final isAvailable = prefs.getBool('operator_available') ?? false;
 
-    // If operator is available → turn OFF before logout
-    if (isAvailable && token != null) {
+    if (token != null) {
       try {
+        //  Turn OFF status
         await http.put(
           Uri.parse('${Apiconst.base_url}operator/status/'),
           headers: {
@@ -35,19 +35,34 @@ class VanOperatorDashboard extends StatelessWidget {
           },
           body: jsonEncode({'status': 0}),
         );
+
+        //  Set latitude & longitude to 0
+        await http.put(
+          Uri.parse('${Apiconst.base_url}operator/van/update-location/'),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'latitude': 0.0,
+            'longitude': 0.0,
+          }),
+        );
+
         await prefs.setBool('operator_available', false);
-      } catch (_) {
-        // even if API fails, proceed with logout
+      } catch (e) {
+        // Even if API fails, proceed with logout
       }
     }
 
-    // Clear everything
+    // Clear all local data
     await prefs.clear();
 
+    // Navigate to Login
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => LoginPage()),
-      (route) => false,
+          (route) => false,
     );
   }
 

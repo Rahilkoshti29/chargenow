@@ -10,6 +10,7 @@ class CommonTextFormField extends StatelessWidget {
   final bool readOnly;
   final bool showCursor;
   final TextInputType keyboardType;
+  final int maxLines;
 
   const CommonTextFormField({
     super.key,
@@ -22,6 +23,7 @@ class CommonTextFormField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.readOnly = false,
     this.showCursor = true,
+    this.maxLines = 1,
   });
 
   @override
@@ -33,8 +35,8 @@ class CommonTextFormField extends StatelessWidget {
       validator: validator,
       keyboardType: keyboardType,
       readOnly: readOnly,
-
       showCursor: showCursor,
+      maxLines: maxLines,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: Icon(prefixIcon),

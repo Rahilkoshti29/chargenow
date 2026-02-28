@@ -3,10 +3,11 @@ import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class RequestHistoryPage extends StatefulWidget {
   final VoidCallback onBack;
-  const RequestHistoryPage({super.key, required this.onBack,});
+  const RequestHistoryPage({super.key, required this.onBack});
 
   @override
   State<RequestHistoryPage> createState() => _RequestHistoryPageState();
@@ -25,56 +26,36 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
     fetchRequests();
   }
 
-  // ================= FETCH REQUESTS =================
   Future<void> fetchRequests() async {
     setState(() => isLoading = true);
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-      if (token == null) {
-        debugPrint("❌ Token missing");
-        setState(() => isLoading = false);
-        return;
-      }
+    final response = await http.get(
+      Uri.parse('${Apiconst.base_url}user/requests/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
 
-      final response = await http.get(
-        Uri.parse('${Apiconst.base_url}user/requests/'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/json',
-        },
-      );
+    final decoded = jsonDecode(response.body);
 
-      debugPrint("STATUS: ${response.statusCode}");
-      debugPrint("BODY: ${response.body}");
+    if (response.statusCode == 200 && decoded['success'] == true) {
+      List<Map<String, dynamic>> list =
+      List<Map<String, dynamic>>.from(decoded['data']);
 
-      if (response.statusCode == 200) {
-        final decoded = jsonDecode(response.body);
+      list.sort((a, b) =>
+          (b['request_id'] ?? 0).compareTo(a['request_id'] ?? 0));
 
-        if (decoded['success'] == true && decoded['data'] is List) {
-          List<Map<String, dynamic>> list =
-          List<Map<String, dynamic>>.from(decoded['data']);
-
-          // 🔥 Latest request_id first
-          list.sort((a, b) =>
-              (b['request_id'] ?? 0).compareTo(a['request_id'] ?? 0));
-
-          setState(() {
-            requests = list;
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint("❌ fetchRequests error: $e");
+      setState(() => requests = list);
     }
 
     setState(() => isLoading = false);
   }
 
-  // ================= STATUS HELPERS =================
-  String requestStatusText(int status) {
+  String statusText(int status) {
     switch (status) {
       case 1:
         return 'Accepted';
@@ -87,7 +68,7 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
     }
   }
 
-  Color requestStatusColor(int status) {
+  Color statusColor(int status) {
     switch (status) {
       case 1:
         return Colors.blue;
@@ -100,124 +81,133 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
     }
   }
 
-  IconData requestStatusIcon(int status) {
-    switch (status) {
-      case 1:
-        return Icons.check_circle_outline;
-      case 2:
-        return Icons.cancel_outlined;
-      case 3:
-        return Icons.done_all;
-      default:
-        return Icons.hourglass_bottom;
-    }
+  Widget requestCard(Map<String, dynamic> req) {
+    final int status = req['request_status'] ?? 0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 10)
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Request #${req['request_id']}",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17)),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color:
+                  statusColor(status).withOpacity(0.15),
+                  borderRadius:
+                  BorderRadius.circular(20),
+                ),
+                child: Text(
+                  statusText(status),
+                  style: TextStyle(
+                      color: statusColor(status),
+                      fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(Icons.directions_car, size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              Text(
+                "Vehicle : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                req['vehicle_name'] ?? "Unknown vehicle_name",
+                style: const TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(Icons.electric_car, size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              Text(
+                "Operator : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                req['operator_name'] ?? "Unknown Operator",
+                style: const TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(Icons.access_time, size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+
+              const Text(
+                "Request Time : ",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+
+              Text(
+                req['created_at'] != null
+                    ? DateFormat(
+                  'dd MMM yyyy, hh:mm a',
+                ).format(DateTime.parse(req['created_at']).toLocal())
+                    : 'N/A',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
-  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
           onPressed: widget.onBack,
+          icon: const Icon(Icons.arrow_back_ios_new,
+              color: Colors.white),
         ),
-        title: Text(
-          "My Requests",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Color(0xff2ecc71),
+        centerTitle: true,
+        title: const Text("My Requests",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold)),
+        backgroundColor: primaryGreen,
       ),
       body: isLoading
           ? const Center(
-        child: CircularProgressIndicator(color: primaryGreen),
-      )
+          child: CircularProgressIndicator())
           : RefreshIndicator(
-        color: primaryGreen,
         onRefresh: fetchRequests,
         child: requests.isEmpty
-            ? ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: const [
-            SizedBox(height: 250),
-            Center(
-              child: Text(
-                'No requests found',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ],
-        )
+            ? const Center(
+            child: Text("No Requests Found"))
             : ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           itemCount: requests.length,
-          itemBuilder: (context, index) {
-            final req = requests[index];
-            final int status = req['request_status'] ?? 0;
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Request #${req['request_id']}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      const Icon(Icons.directions_car,
-                          color: primaryGreen),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Vehicle ID : ${req['vehicle_id']}',
-                        style:
-                        const TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Icon(
-                        requestStatusIcon(status),
-                        color: requestStatusColor(status),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        requestStatusText(status),
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color:
-                          requestStatusColor(status),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
+          itemBuilder: (_, i) =>
+              requestCard(requests[i]),
         ),
       ),
     );

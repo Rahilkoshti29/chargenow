@@ -109,7 +109,7 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
           builder: (_) => OperatorMapPage(
             userLat: selectedLat!,
             userLng: selectedLng!,
-            operators: operators,   // ✅ now correct
+            operators: operators,
             vehicleId: selectedVehicleId!,
             batteryNeeded: batteryNeeded,
             totalAmount: totalAmount,

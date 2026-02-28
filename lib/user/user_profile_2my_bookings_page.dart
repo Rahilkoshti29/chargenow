@@ -3,6 +3,7 @@ import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class BookingHistoryPage extends StatefulWidget {
   const BookingHistoryPage({super.key});
@@ -16,7 +17,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   static const Color bgColor = Color(0xFFF2FFF7);
 
   bool isLoading = true;
-  List bookings = [];
+  List<Map<String, dynamic>> bookings = [];
 
   @override
   void initState() {
@@ -26,45 +27,190 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
 
   // ================= FETCH BOOKINGS =================
   Future<void> fetchBookings() async {
+    setState(() => isLoading = true);
+
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    try {
-      final response = await http.get(
-        Uri.parse('${Apiconst.base_url}user/bookings/'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+    final response = await http.get(
+      Uri.parse('${Apiconst.base_url}user/bookings/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
 
-      final data = jsonDecode(response.body);
+    final decoded = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && data['success']) {
-        List list = data['data'] ?? [];
-        list.sort((a, b) {
-          final int aId = a['booking_id'] ?? 0;
-          final int bId = b['booking_id'] ?? 0;
-          return bId.compareTo(aId); // DESC
-        });
-        setState(() {
-          bookings = list;
-        });
-      }
-    } catch (e) {
-      // silent fail, refresh indicator will stop
+    if (response.statusCode == 200 && decoded['success'] == true) {
+      List<Map<String, dynamic>> list =
+      List<Map<String, dynamic>>.from(decoded['data']);
+
+      list.sort((a, b) =>
+          (b['booking_id'] ?? 0).compareTo(a['booking_id'] ?? 0));
+
+      setState(() => bookings = list);
     }
 
     setState(() => isLoading = false);
   }
 
-  // ================= STATUS HELPERS =================
-  String bookingStatusText(int status) {
-    return status == 1 ? 'Completed' : 'In Progress';
+  // ================= STATUS TEXT =================
+  String statusText(int status) {
+    switch (status) {
+      case 1:
+        return 'Started';
+      case 2:
+        return 'Completed';
+      default:
+        return 'In Progress';
+    }
   }
 
-  Color bookingStatusColor(int status) {
-    return status == 1 ? Colors.green : Colors.orange;
+  // ================= STATUS COLOR =================
+  Color statusColor(int status) {
+    switch (status) {
+      case 1:
+        return Colors.blue;
+      case 2:
+        return Colors.green;
+      default:
+        return Colors.orange;
+    }
+  }
+
+  // ================= BOOKING CARD =================
+  Widget bookingCard(Map<String, dynamic> booking) {
+    final int status = booking['booking_status'] ?? 0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 10)
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          // Header Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Booking #${booking['booking_id']}",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17)),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: statusColor(status).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  statusText(status),
+                  style: TextStyle(
+                      color: statusColor(status),
+                      fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          ),
+
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(Icons.directions_car,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text(
+                "Vehicle Name : ",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600),
+              ),
+              Text("${booking['vehicle_name'] ?? 'N/A'}"),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          Row(
+            children: [
+              const Icon(Icons.electric_car,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text(
+                "Operator Name : ",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600),
+              ),
+              Text("${booking['operator_name'] ?? 'N/A'}"),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // Created Date
+          Row(
+            children: [
+              const Icon(Icons.access_time,
+                  size: 18, color: primaryGreen),
+              const SizedBox(width: 8),
+              const Text(
+                "Booking Time : ",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600),
+              ),
+              Text(
+                booking['created_at'] != null
+                    ? DateFormat(
+                  'dd MMM yyyy, hh:mm a',
+                ).format(
+                  DateTime.parse(
+                    booking['created_at'],
+                  ).toLocal(),
+                )
+                    : 'N/A',
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 15),
+
+          // ================= PAY NOW BUTTON =================
+          if (status == 2) // Completed
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGreen,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  print("Pay Now clicked");
+                },
+                child: const Text(
+                  "Pay Now",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,color: Colors.white),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   // ================= UI =================
@@ -75,115 +221,32 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new_sharp,
-            color: Colors.white,
-          ), // optional if icon is single-color
+          icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "My Bookings",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Color(0xff2ecc71),
+        title: const Text("My Bookings",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold)),
+        backgroundColor: primaryGreen,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+          child: CircularProgressIndicator(color: primaryGreen,))
           : RefreshIndicator(
-        color: primaryGreen,
         onRefresh: fetchBookings,
         child: bookings.isEmpty
-            ? ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: const [
-            SizedBox(height: 250),
-            Center(
-              child: Text(
-                'No bookings found',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ],
-        )
+            ? const Center(
+            child:
+            Text("No Bookings Found"))
             : ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
+          padding:
+          const EdgeInsets.all(16),
           itemCount: bookings.length,
-          itemBuilder: (context, index) {
-            final booking = bookings[index];
-
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Booking #${booking['booking_id']}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.confirmation_number,
-                          color: primaryGreen),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Request ID : ${booking['request_id']}',
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.info_outline,
-                          color: primaryGreen),
-                      const SizedBox(width: 8),
-                      Text(
-                        bookingStatusText(
-                            booking['booking_status']),
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: bookingStatusColor(
-                              booking['booking_status']),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    booking['created_at'],
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+          itemBuilder: (_, i) =>
+              bookingCard(bookings[i]),
         ),
       ),
     );
