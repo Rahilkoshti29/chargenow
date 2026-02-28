@@ -127,14 +127,17 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
         });
 
         if (value) {
-          startLocationTracking(); //  START TRACKING
+          startLocationTracking(); // START TRACKING
         } else {
-          stopLocationTracking(); //  STOP TRACKING
+          stopLocationTracking(); // STOP TRACKING
+
+          //  SET LOCATION TO ZERO WHEN OFFLINE
+          await updateOperatorLocation(0.0, 0.0);
         }
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(data['message'])));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'])),
+        );
       } else {
         _showError(data['message'] ?? 'Failed to update status');
       }

@@ -6,7 +6,8 @@ import 'package:chargenow/user/user_4profile_page.dart';
 import 'package:flutter/material.dart';
 
 class UserDashboardPage extends StatefulWidget {
-  const UserDashboardPage({super.key});
+  final int initialIndex;
+  const UserDashboardPage({super.key,this.initialIndex=0});
 
   @override
   State<UserDashboardPage> createState() => _UserDashboardPageState();
@@ -15,6 +16,11 @@ class UserDashboardPage extends StatefulWidget {
 class _UserDashboardPageState extends State<UserDashboardPage> {
   int _currentIndex = 0;
   int? selectedVehicleId;
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex; // 🔥 important
+  }
 
   void goToHome() {
     setState(() => _currentIndex = 0);

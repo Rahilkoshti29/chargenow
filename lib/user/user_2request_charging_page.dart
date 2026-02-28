@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
+import 'package:chargenow/user/OperatorMapPage.dart';
 import 'package:chargenow/user/user_select_location_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -67,6 +68,57 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
     }
 
     setState(() => isLoading = false);
+  }
+
+  Future<void> _findNearbyOperators() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse(
+        "${Apiconst.base_url}user/nearby-operators/?lat=$selectedLat&lng=$selectedLng",
+      ),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
+
+    print("STATUS: ${response.statusCode}");
+    print("BODY: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+
+      if (decoded['success'] != true ||
+          decoded['data'] == null ||
+          decoded['data'].isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("No operators found")),
+        );
+        return;
+      }
+
+      final List operators = decoded['data'];   // ✅ THIS WAS MISSING
+
+      print("Operators List: $operators");
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OperatorMapPage(
+            userLat: selectedLat!,
+            userLng: selectedLng!,
+            operators: operators,   // ✅ now correct
+            vehicleId: selectedVehicleId!,
+            batteryNeeded: batteryNeeded,
+            totalAmount: totalAmount,
+          ),
+        ),
+      );
+    } else {
+      print("SERVER ERROR");
+    }
   }
 
   double get batteryNeeded => (requiredLevel - currentLevel).clamp(0, 100);
@@ -263,7 +315,23 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
           backgroundColor: primaryGreen,
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
-        onPressed: () {},
+        onPressed: () async {
+          if (selectedVehicleId == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Please select vehicle")),
+            );
+            return;
+          }
+
+          if (selectedLat == null || selectedLng == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Please select location")),
+            );
+            return;
+          }
+
+          await _findNearbyOperators();
+        },
         child: const Text(
           "Find Near by Operator",
           style: TextStyle(
