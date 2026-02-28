@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/user/user_5add_vehicle_page.dart';
-import 'package:chargenow/user/user_6vehicle_detail_page.dart';
+import 'package:chargenow/user/user_1home_page_add_vehicle_page.dart';
+import 'package:chargenow/user/user_1home_page_vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,7 +58,6 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,47 +79,45 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
         ),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: primaryGreen,))
+          ? const Center(child: CircularProgressIndicator(color: primaryGreen))
           : vehicles.isEmpty
           ? _emptyView()
           : Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Expanded(
-              child: RefreshIndicator(
-                color: primaryGreen,
-                onRefresh: fetchVehicles,
-                child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: vehicles.length,
-                  itemBuilder: (context, index) {
-                    return _bigVehicleCard(vehicles[index]);
-                  },
-                ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: RefreshIndicator(
+                      color: primaryGreen,
+                      onRefresh: fetchVehicles,
+                      child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: vehicles.length,
+                        itemBuilder: (context, index) {
+                          return _bigVehicleCard(vehicles[index]);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
 
       floatingActionButton: FloatingActionButton(
         tooltip: "Add Car",
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => AddVehiclePage(),
-            ),
+            MaterialPageRoute(builder: (_) => AddVehiclePage()),
           );
         },
         backgroundColor: primaryGreen,
-        child: Icon(Icons.add,color: Colors.white,),
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  /// BIG VEHICLE CARD
+  // VEHICLE CARD
   Widget _bigVehicleCard(dynamic vehicle) {
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
@@ -159,7 +156,10 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
                 ),
                 child: Text(
                   'Details',
-                  style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -167,7 +167,6 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
 
           const SizedBox(height: 8),
 
-          /// Car Icon
           Center(
             child: Icon(
               Icons.directions_car_filled,
@@ -178,7 +177,6 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
 
           const SizedBox(height: 16),
 
-          /// Vehicle Name
           Center(
             child: Text(
               "${vehicle['vehicle_company']} ${vehicle['vehicle_name']}",
@@ -188,7 +186,6 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
 
           const SizedBox(height: 6),
 
-          /// Vehicle Number
           Center(
             child: Text(
               vehicle['vehicle_number'],

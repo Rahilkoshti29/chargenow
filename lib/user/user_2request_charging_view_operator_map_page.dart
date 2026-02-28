@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'package:chargenow/user/user_0dashboard_page.dart';
-import 'package:chargenow/user/user_3request_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../CommonWidget/apiconst.dart';
-
 
 class OperatorMapPage extends StatefulWidget {
   final double userLat;
@@ -49,9 +47,7 @@ class _OperatorMapPageState extends State<OperatorMapPage> {
         markerId: const MarkerId("user"),
         position: LatLng(widget.userLat, widget.userLng),
         infoWindow: const InfoWindow(title: "Your Location"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-          BitmapDescriptor.hueBlue,
-        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
       ),
     );
 
@@ -127,7 +123,7 @@ class _OperatorMapPageState extends State<OperatorMapPage> {
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         );
@@ -149,27 +145,21 @@ class _OperatorMapPageState extends State<OperatorMapPage> {
         "vehicle": widget.vehicleId,
         "operator": operator['operator_id'],
         "amount": widget.totalAmount.toInt(),
-        "user_latitude":
-        double.parse(widget.userLat.toStringAsFixed(6)),
-        "user_longitude":
-        double.parse(widget.userLng.toStringAsFixed(6)),
+        "user_latitude": double.parse(widget.userLat.toStringAsFixed(6)),
+        "user_longitude": double.parse(widget.userLng.toStringAsFixed(6)),
       }),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Request Sent Successfully"),
-        ),
+        const SnackBar(content: Text("Request Sent Successfully")),
       );
 
       //  Redirect to Request History Page
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (_) =>  UserDashboardPage(initialIndex: 2),
-        ),
-            (route) => false,
+        MaterialPageRoute(builder: (_) => UserDashboardPage(initialIndex: 2)),
+        (route) => false,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -189,7 +179,9 @@ class _OperatorMapPageState extends State<OperatorMapPage> {
         iconTheme: IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_sharp, color: Colors.white),
-          onPressed:(){Navigator.pop(context);}
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         title: Text(
           "Near by Operators",

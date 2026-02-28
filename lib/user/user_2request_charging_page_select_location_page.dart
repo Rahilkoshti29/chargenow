@@ -43,7 +43,9 @@ class _SelectLocationPageState extends State<SelectLocationPage> {
   @override
   Widget build(BuildContext context) {
     if (selectedLatLng == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator(color: primaryGreen,)));
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: primaryGreen)),
+      );
     }
 
     return Scaffold(

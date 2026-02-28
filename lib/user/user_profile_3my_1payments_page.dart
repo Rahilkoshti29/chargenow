@@ -1,4 +1,4 @@
-import 'package:chargenow/user/give_feedback_page.dart';
+import 'package:chargenow/user/user_profile_3my_payments_2give_feedback_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
@@ -38,10 +38,7 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
 
     final response = await http.get(
       Uri.parse('${Apiconst.base_url}user/payments/'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
     final decoded = jsonDecode(response.body);
@@ -112,14 +109,11 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10)
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           // Header Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,25 +121,27 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
               Text(
                 "Booking #${payment['booking_id'] ?? ''}",
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 6),
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: getStatusColor(status)
-                      .withOpacity(0.15),
-                  borderRadius:
-                  BorderRadius.circular(20),
+                  color: getStatusColor(status).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   getStatus(status),
                   style: TextStyle(
-                      color: getStatusColor(status),
-                      fontWeight: FontWeight.bold),
+                    color: getStatusColor(status),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )
+              ),
             ],
           ),
 
@@ -153,12 +149,12 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
 
           Row(
             children: [
-              const Icon(Icons.electric_car,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.electric_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              const Text("Operator : ",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600)),
+              const Text(
+                "Operator : ",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               Text(payment['operator_name'] ?? ''),
             ],
           ),
@@ -167,12 +163,12 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
 
           Row(
             children: [
-              const Icon(Icons.payment,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.payment, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              const Text("Method : ",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600)),
+              const Text(
+                "Method : ",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               Text(getMethod(method)),
             ],
           ),
@@ -181,19 +177,18 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
           const Divider(),
 
           Row(
-            mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "₹ ${payment['amount'] ?? 0}",
                 style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold),
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 formatDate(payment['created_at']),
-                style: const TextStyle(
-                    color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
               ),
             ],
           ),
@@ -207,26 +202,23 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryGreen,
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          GiveFeedbackPage(),
-                    ),
+                    MaterialPageRoute(builder: (_) => GiveFeedbackPage()),
                   );
                 },
                 child: const Text(
                   "Give Feedback",
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,color: Colors.white),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -234,7 +226,6 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
       ),
     );
   }
-
 
   // ---------------- UI ----------------
   @override
@@ -266,9 +257,7 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
             }
 
             if (snapshot.hasError) {
-              return const Center(
-                child: Text("Something went wrong"),
-              );
+              return const Center(child: Text("Something went wrong"));
             }
 
             final payments = snapshot.data ?? [];

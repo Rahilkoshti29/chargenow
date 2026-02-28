@@ -1,4 +1,4 @@
-import 'package:chargenow/user/user_notification_page.dart';
+import 'package:chargenow/user/user_0dashboard_page_notification_page.dart';
 import 'package:chargenow/user/user_1home_page.dart';
 import 'package:chargenow/user/user_2request_charging_page.dart';
 import 'package:chargenow/user/user_3request_history_page.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class UserDashboardPage extends StatefulWidget {
   final int initialIndex;
-  const UserDashboardPage({super.key,this.initialIndex=0});
+  const UserDashboardPage({super.key, this.initialIndex = 0});
 
   @override
   State<UserDashboardPage> createState() => _UserDashboardPageState();
@@ -19,7 +19,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex; // 🔥 important
+    _currentIndex = widget.initialIndex;
   }
 
   void goToHome() {
@@ -104,8 +104,6 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
           ),
         ),
       ),
-
-
     );
   }
 }

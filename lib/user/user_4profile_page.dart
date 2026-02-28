@@ -1,5 +1,5 @@
 import 'package:chargenow/login_page.dart';
-import 'package:chargenow/user/user_profile_3my_payments_page.dart';
+import 'package:chargenow/user/user_profile_3my_1payments_page.dart';
 import 'package:chargenow/user/user_profile_5contactus_page.dart';
 import 'package:chargenow/user/user_profile_4myprofile_page.dart';
 import 'package:chargenow/user/user_profile_7privacy_policy_pafe.dart';
@@ -128,7 +128,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
           const SizedBox(height: 22),
 
-          /// -------- MAIN MENU --------
+          // -------- MAIN MENU --------
           _menuCard([
             _menuItem(
               Icons.directions_car,
@@ -174,7 +174,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
           const SizedBox(height: 18),
 
-          /// -------- SUPPORT MENU --------
+          // -------- SUPPORT MENU --------
           _menuCard([
             _menuItem(
               Icons.call,

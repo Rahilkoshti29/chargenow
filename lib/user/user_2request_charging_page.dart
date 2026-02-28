@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/user/OperatorMapPage.dart';
-import 'package:chargenow/user/user_select_location_page.dart';
+import 'package:chargenow/user/user_2request_charging_view_operator_map_page.dart';
+import 'package:chargenow/user/user_2request_charging_page_select_location_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,6 +39,10 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
   String? selectedAddress;
   double? selectedLat;
   double? selectedLng;
+  double get batteryNeeded => (requiredLevel - currentLevel).clamp(0, 100);
+  double get baseAmount => batteryNeeded * ratePerPercent;
+  double get gstAmount => baseAmount * gstRate;
+  double get totalAmount => baseAmount + gstAmount;
 
   @override
   void initState() {
@@ -66,7 +70,6 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
         selectedVehicleId = widget.preselectedVehicleId;
       }
     }
-
     setState(() => isLoading = false);
   }
 
@@ -78,14 +81,11 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
       Uri.parse(
         "${Apiconst.base_url}user/nearby-operators/?lat=$selectedLat&lng=$selectedLng",
       ),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
-    print("STATUS: ${response.statusCode}");
-    print("BODY: ${response.body}");
+    // print("STATUS: ${response.statusCode}");
+    // print("BODY: ${response.body}");
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
@@ -93,15 +93,15 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
       if (decoded['success'] != true ||
           decoded['data'] == null ||
           decoded['data'].isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("No operators found")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("No operators found")));
         return;
       }
 
-      final List operators = decoded['data'];   // ✅ THIS WAS MISSING
+      final List operators = decoded['data'];
 
-      print("Operators List: $operators");
+      // print("Operators List: $operators");
 
       Navigator.push(
         context,
@@ -120,11 +120,6 @@ class _RequestChargingPageState extends State<RequestChargingPage> {
       print("SERVER ERROR");
     }
   }
-
-  double get batteryNeeded => (requiredLevel - currentLevel).clamp(0, 100);
-  double get baseAmount => batteryNeeded * ratePerPercent;
-  double get gstAmount => baseAmount * gstRate;
-  double get totalAmount => baseAmount + gstAmount;
 
   Widget _locationField() => GestureDetector(
     onTap: () async {

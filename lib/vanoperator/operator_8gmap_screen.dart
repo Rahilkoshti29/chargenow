@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/vanoperator/operator_3booking_page.dart';
 import 'package:flutter/material.dart';

@@ -135,9 +135,9 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
           await updateOperatorLocation(0.0, 0.0);
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'])),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(data['message'])));
       } else {
         _showError(data['message'] ?? 'Failed to update status');
       }

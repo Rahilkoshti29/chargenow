@@ -43,10 +43,7 @@ class VanOperatorDashboard extends StatelessWidget {
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
-          body: jsonEncode({
-            'latitude': 0.0,
-            'longitude': 0.0,
-          }),
+          body: jsonEncode({'latitude': 0.0, 'longitude': 0.0}),
         );
 
         await prefs.setBool('operator_available', false);
@@ -62,7 +59,7 @@ class VanOperatorDashboard extends StatelessWidget {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => LoginPage()),
-          (route) => false,
+      (route) => false,
     );
   }
 

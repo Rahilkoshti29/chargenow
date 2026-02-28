@@ -34,20 +34,19 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
 
     final response = await http.get(
       Uri.parse('${Apiconst.base_url}user/requests/'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
     final decoded = jsonDecode(response.body);
 
     if (response.statusCode == 200 && decoded['success'] == true) {
-      List<Map<String, dynamic>> list =
-      List<Map<String, dynamic>>.from(decoded['data']);
+      List<Map<String, dynamic>> list = List<Map<String, dynamic>>.from(
+        decoded['data'],
+      );
 
-      list.sort((a, b) =>
-          (b['request_id'] ?? 0).compareTo(a['request_id'] ?? 0));
+      list.sort(
+        (a, b) => (b['request_id'] ?? 0).compareTo(a['request_id'] ?? 0),
+      );
 
       setState(() => requests = list);
     }
@@ -90,33 +89,31 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10)
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 6),
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color:
-                  statusColor(status).withOpacity(0.15),
-                  borderRadius:
-                  BorderRadius.circular(20),
+                  color: statusColor(status).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   statusText(status),
                   style: TextStyle(
-                      color: statusColor(status),
-                      fontWeight: FontWeight.bold),
+                    color: statusColor(status),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -163,8 +160,8 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
               Text(
                 req['created_at'] != null
                     ? DateFormat(
-                  'dd MMM yyyy, hh:mm a',
-                ).format(DateTime.parse(req['created_at']).toLocal())
+                        'dd MMM yyyy, hh:mm a',
+                      ).format(DateTime.parse(req['created_at']).toLocal())
                     : 'N/A',
               ),
             ],
@@ -181,31 +178,27 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: widget.onBack,
-          icon: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
         ),
         centerTitle: true,
-        title: const Text("My Requests",
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
+        title: const Text(
+          "My Requests",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: primaryGreen,
       ),
       body: isLoading
-          ? const Center(
-          child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-        onRefresh: fetchRequests,
-        child: requests.isEmpty
-            ? const Center(
-            child: Text("No Requests Found"))
-            : ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: requests.length,
-          itemBuilder: (_, i) =>
-              requestCard(requests[i]),
-        ),
-      ),
+              onRefresh: fetchRequests,
+              child: requests.isEmpty
+                  ? const Center(child: Text("No Requests Found"))
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: requests.length,
+                      itemBuilder: (_, i) => requestCard(requests[i]),
+                    ),
+            ),
     );
   }
 }
