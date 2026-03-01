@@ -1,4 +1,3 @@
-import 'package:chargenow/login_page.dart';
 import 'package:chargenow/splash_screen_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

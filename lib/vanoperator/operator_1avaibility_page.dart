@@ -203,7 +203,7 @@ class _OperatorAvailabilityPageState extends State<OperatorAvailabilityPage> {
                     )
                   : Switch(
                       value: isAvailable,
-                      activeColor: primaryGreen,
+                      activeThumbColor: primaryGreen,
                       onChanged: updateStatus,
                     ),
             ],
