@@ -438,11 +438,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 10),
           Text(
             title,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
           ),
           Text(
             subtitle,
-            style: const TextStyle(fontSize: 13, color: Colors.black54),
+            style: const TextStyle(fontSize: 11, color: Colors.black54),
           ),
         ],
       ),

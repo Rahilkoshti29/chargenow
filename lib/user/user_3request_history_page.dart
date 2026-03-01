@@ -89,14 +89,25 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 10),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
+          // ================= HEADER ROW (Like Booking Page) =================
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Text(
+                "Request #${req['request_id'] ?? 'N/A'}",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -116,52 +127,52 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
               ),
             ],
           ),
+
           const SizedBox(height: 12),
+
+          // ================= VEHICLE =================
           Row(
             children: [
               const Icon(Icons.directions_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              Text(
-                "Vehicle : ",
+              const Text(
+                "Vehicle Name : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
-              Text(
-                req['vehicle_name'] ?? "Unknown vehicle_name",
-                style: const TextStyle(fontSize: 14),
-              ),
+              Text("${req['vehicle_name'] ?? 'N/A'}"),
             ],
           ),
+
           const SizedBox(height: 8),
+
+          // ================= OPERATOR =================
           Row(
             children: [
               const Icon(Icons.electric_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              Text(
-                "Operator : ",
+              const Text(
+                "Operator Name : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
-              Text(
-                req['operator_name'] ?? "Unknown Operator",
-                style: const TextStyle(fontSize: 14),
-              ),
+              Text("${req['operator_name'] ?? 'N/A'}"),
             ],
           ),
+
           const SizedBox(height: 8),
+
+          // ================= REQUEST TIME =================
           Row(
             children: [
               const Icon(Icons.access_time, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-
               const Text(
                 "Request Time : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
-
               Text(
                 req['created_at'] != null
-                    ? DateFormat(
-                        'dd MMM yyyy, hh:mm a',
-                      ).format(DateTime.parse(req['created_at']).toLocal())
+                    ? DateFormat('dd MMM yyyy, hh:mm a')
+                    .format(DateTime.parse(req['created_at']).toLocal())
                     : 'N/A',
               ),
             ],
@@ -170,6 +181,7 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

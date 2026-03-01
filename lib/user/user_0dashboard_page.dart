@@ -53,7 +53,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
 
           // -------- REQUEST (REBUILT WITH ID) --------
           RequestChargingPage(
-            key: ValueKey(selectedVehicleId), // 🔥 VERY IMPORTANT
+            key: ValueKey(selectedVehicleId), //  VERY IMPORTANT
             onBack: goToHome,
             preselectedVehicleId: selectedVehicleId,
           ),
