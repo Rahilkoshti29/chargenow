@@ -97,7 +97,6 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          // ================= HEADER ROW (Like Booking Page) =================
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
