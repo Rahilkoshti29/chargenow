@@ -41,12 +41,11 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
     final decoded = jsonDecode(response.body);
 
     if (response.statusCode == 200 && decoded['success'] == true) {
-      List<Map<String, dynamic>> list = List<Map<String, dynamic>>.from(
-        decoded['data'],
-      );
+      List<Map<String, dynamic>> list =
+      List<Map<String, dynamic>>.from(decoded['data']);
 
       list.sort(
-        (a, b) => (b['booking_id'] ?? 0).compareTo(a['booking_id'] ?? 0),
+            (a, b) => (b['booking_id'] ?? 0).compareTo(a['booking_id'] ?? 0),
       );
 
       setState(() => bookings = list);
@@ -83,6 +82,18 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   Widget bookingCard(Map<String, dynamic> booking) {
     final int status = booking['booking_status'] ?? 0;
 
+    // -------- Check payment status --------
+    bool isPaid = false;
+
+    if (booking['payments'] != null && booking['payments'].isNotEmpty) {
+      for (var p in booking['payments']) {
+        if (p['payment_status'] == 1) {
+          isPaid = true;
+          break;
+        }
+      }
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(18),
@@ -94,22 +105,18 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row
+          // ================= HEADER =================
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "Booking #${booking['booking_id']}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
-                ),
+                style:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: statusColor(status).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
@@ -126,6 +133,8 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
           ),
 
           const SizedBox(height: 12),
+
+          // ================= VEHICLE =================
           Row(
             children: [
               const Icon(Icons.directions_car, size: 18, color: primaryGreen),
@@ -140,6 +149,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
 
           const SizedBox(height: 8),
 
+          // ================= OPERATOR =================
           Row(
             children: [
               const Icon(Icons.electric_car, size: 18, color: primaryGreen),
@@ -151,9 +161,10 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
               Text("${booking['operator_name'] ?? 'N/A'}"),
             ],
           ),
+
           const SizedBox(height: 8),
 
-          // Created Date
+          // ================= TIME =================
           Row(
             children: [
               const Icon(Icons.access_time, size: 18, color: primaryGreen),
@@ -164,9 +175,8 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
               ),
               Text(
                 booking['created_at'] != null
-                    ? DateFormat(
-                        'dd MMM yyyy, hh:mm a',
-                      ).format(DateTime.parse(booking['created_at']).toLocal())
+                    ? DateFormat('dd MMM yyyy, hh:mm a')
+                    .format(DateTime.parse(booking['created_at']).toLocal())
                     : 'N/A',
               ),
             ],
@@ -174,34 +184,41 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
 
           const SizedBox(height: 15),
 
-          // ================= PAY NOW BUTTON =================
-          if (status == 2) // Completed
+          // ================= PAYMENT BUTTON =================
+          if (status == 2)
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryGreen,
+                  backgroundColor: isPaid ? Colors.grey : primaryGreen,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
+                onPressed: isPaid
+                    ? null
+                    : () async {
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => RazorpayPage(
-                        onBack: () {
-                          Navigator.pop(context);
-                        },
+                        bookingId: booking['booking_id'],
+                        operatorId: booking['operator'],
+                        amount: double.parse(
+                            booking['amount'].toString()),
                       ),
                     ),
                   );
-                },
 
-                child: const Text(
-                  "Pay Now",
-                  style: TextStyle(
+                  // Refresh bookings after payment
+                  if (result == true) {
+                    fetchBookings();
+                  }
+                },
+                child: Text(
+                  isPaid ? "Paid" : "Pay Now",
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -233,15 +250,15 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: primaryGreen))
           : RefreshIndicator(
-              onRefresh: fetchBookings,
-              child: bookings.isEmpty
-                  ? const Center(child: Text("No Bookings Found"))
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: bookings.length,
-                      itemBuilder: (_, i) => bookingCard(bookings[i]),
-                    ),
-            ),
+        onRefresh: fetchBookings,
+        child: bookings.isEmpty
+            ? const Center(child: Text("No Bookings Found"))
+            : ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: bookings.length,
+          itemBuilder: (_, i) => bookingCard(bookings[i]),
+        ),
+      ),
     );
   }
 }
