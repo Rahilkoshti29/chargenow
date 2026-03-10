@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chargenow/user/user_profile_3my_1payments_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -24,13 +25,11 @@ class RazorpayPage extends StatefulWidget {
 }
 
 class _RazorpayPageState extends State<RazorpayPage> {
-
+  static const Color bgColor = Color(0xFFF2FFF7);
   static const Color primaryGreen = Color(0xFF2ECC71);
   late Razorpay _razorpay;
 
-
   Future<void> recordPayment() async {
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -44,24 +43,29 @@ class _RazorpayPageState extends State<RazorpayPage> {
         "booking": widget.bookingId,
         "operator": widget.operatorId,
         "amount": widget.amount,
-        "payment_method": 2
+        "payment_method": 2,
       }),
     );
+    final decoded = jsonDecode(response.body);
 
-    print(response.body);
-
-    if (response.statusCode == 201) {
-
-      print("Payment Stored Successfully");
-
+    if (decoded['success'] == true) {
+      Fluttertoast.showToast(
+        msg: decoded['message'] ?? "Payment Successfull",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
     } else {
-
-      print("Payment Failed");
+      Fluttertoast.showToast(
+        msg: decoded['message'] ?? "Payment failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
     }
   }
-
-
-
 
   @override
   void initState() {
@@ -77,67 +81,38 @@ class _RazorpayPageState extends State<RazorpayPage> {
   }
 
   void openCheckout() {
-
     var options = {
       'key': 'rzp_test_SPAXv54T6cAOHf',
       'amount': (widget.amount * 100).toInt(),
       'currency': 'INR',
       'name': 'ChargeNow',
       'description': 'EV Charging Payment',
-      'method': {
-        'upi': true
-      },
-      'prefill': {
-        'contact': '9999999999',
-        'email': 'user@email.com'
-      },
-      'theme': {
-        'color': '#2ECC71'
-      }
+      'method': {'upi': true},
+      'prefill': {'contact': '9999999999', 'email': 'user@email.com'},
+      'theme': {'color': '#2ECC71'},
     };
 
     _razorpay.open(options);
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async{
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     await recordPayment();
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Payment Successful"),
-        content: Text("Payment ID: ${response.paymentId}"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text("OK"),
-          )
-        ],
-      ),
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => UserPaymentsPage()),
+      (route) => false,
     );
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Payment Failed"),
-        content: Text(response.message ?? "Error occurred"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text("OK"),
-          )
-        ],
-      ),
+    Fluttertoast.showToast(
+      msg: "Payment Failed",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
     );
+
+    Navigator.pop(context);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -153,13 +128,20 @@ class _RazorpayPageState extends State<RazorpayPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text("Processing Payment"),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+        ),
+        centerTitle: true,
+        title:  Text(
+          "Processing Payment",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: primaryGreen,
       ),
-      body: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      body: const Center(child: CircularProgressIndicator(color: primaryGreen)),
     );
   }
 }

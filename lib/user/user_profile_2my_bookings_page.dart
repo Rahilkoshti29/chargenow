@@ -205,15 +205,17 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                       builder: (context) => RazorpayPage(
                         bookingId: booking['booking_id'],
                         operatorId: booking['operator'],
-                        amount: double.parse(
-                            booking['amount'].toString()),
+                        amount: double.parse(booking['amount'].toString()),
                       ),
                     ),
                   );
 
-                  // Refresh bookings after payment
                   if (result == true) {
-                    fetchBookings();
+                    setState(() {
+                      booking['payments'] = [
+                        {"payment_status": 1}
+                      ];
+                    });
                   }
                 },
                 child: Text(
