@@ -15,13 +15,10 @@ class UserPaymentsPage extends StatefulWidget {
 }
 
 class _UserPaymentsPageState extends State<UserPaymentsPage> {
-
   static const Color primaryGreen = Color(0xFF2ECC71);
   static const Color bgColor = Color(0xFFF2FFF7);
 
   late Future<List<dynamic>> paymentFuture;
-
-  Set<int> feedbackGivenBookings = {};
 
   @override
   void initState() {
@@ -36,7 +33,6 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
   }
 
   Future<List<dynamic>> fetchPayments() async {
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -51,11 +47,17 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
     final decoded = jsonDecode(response.body);
 
     if (decoded['success'] == true) {
-      return decoded['data'] ?? [];
+
+      List<dynamic> payments = decoded['data'] ?? [];
+
+      // Latest payment first
+      return payments.reversed.toList();
+
     } else {
       return [];
     }
   }
+
 
   String getMethod(int? method) {
     switch (method) {
@@ -103,12 +105,10 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
   }
 
   Widget paymentCard(dynamic payment) {
-
     final status = payment['payment_status'];
     final method = payment['payment_method'];
 
-    bool feedbackGiven =
-    feedbackGivenBookings.contains(payment['booking_id']);
+    bool feedbackGiven = payment['feedback_given'] == true;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -116,28 +116,27 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10)
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Text(
                 "Booking #${payment['booking_id']}",
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
               ),
 
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 6),
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: getStatusColor(status).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
@@ -145,8 +144,9 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
                 child: Text(
                   getStatus(status),
                   style: TextStyle(
-                      color: getStatusColor(status),
-                      fontWeight: FontWeight.bold),
+                    color: getStatusColor(status),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -156,11 +156,12 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
 
           Row(
             children: [
-              const Icon(Icons.electric_car,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.electric_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              const Text("Operator : ",
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                "Operator : ",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               Text(payment['operator_name'] ?? ''),
             ],
           ),
@@ -169,11 +170,12 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
 
           Row(
             children: [
-              const Icon(Icons.payment,
-                  size: 18, color: primaryGreen),
+              const Icon(Icons.payment, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              const Text("Method : ",
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                "Method : ",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               Text(getMethod(method)),
             ],
           ),
@@ -187,8 +189,9 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
               Text(
                 "₹ ${payment['amount']}",
                 style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold),
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 formatDate(payment['created_at']),
@@ -204,11 +207,8 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: feedbackGiven
-                      ? Colors.grey
-                      : primaryGreen,
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor: feedbackGiven ? Colors.grey : primaryGreen,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -216,30 +216,24 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
                 onPressed: feedbackGiven
                     ? null
                     : () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => GiveFeedbackPage(
+                              operatorId: payment['operator'],
+                              bookingId: payment['booking_id'],
+                            ),
+                          ),
+                        );
 
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => GiveFeedbackPage(
-                        operatorId: payment['operator'],
-                      ),
-                    ),
-                  );
-
-                  if (result == true) {
-                    setState(() {
-                      feedbackGivenBookings
-                          .add(payment['booking_id']);
-                    });
-                  }
-                },
+                        refreshPayments();
+                      },
                 child: Text(
-                  feedbackGiven
-                      ? "Feedback Submitted"
-                      : "Give Feedback",
+                  feedbackGiven ? "Feedback Submitted" : "Give Feedback",
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -250,19 +244,16 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (_) =>
-                const UserDashboardPage(initialIndex: 3),
+                builder: (_) => const UserDashboardPage(initialIndex: 3),
               ),
             );
           },
@@ -270,39 +261,47 @@ class _UserPaymentsPageState extends State<UserPaymentsPage> {
         centerTitle: true,
         title: const Text(
           "My Payments",
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: primaryGreen,
       ),
 
-      body: FutureBuilder<List<dynamic>>(
-        future: paymentFuture,
-        builder: (context, snapshot) {
-
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-                child: CircularProgressIndicator());
-          }
-
-          final payments = snapshot.data ?? [];
-
-          if (payments.isEmpty) {
-            return const Center(
-                child: Text("No Payments Found"));
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: payments.length,
-            itemBuilder: (context, index) {
-              return paymentCard(payments[index]);
-            },
-          );
+      body: RefreshIndicator(
+        color: primaryGreen,
+        onRefresh: () async {
+          refreshPayments();
+          await paymentFuture;
         },
+        child: FutureBuilder<List<dynamic>>(
+          future: paymentFuture,
+          builder: (context, snapshot) {
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator(color: primaryGreen,));
+            }
+
+            final payments = snapshot.data ?? [];
+
+            if (payments.isEmpty) {
+              return ListView(
+                children: const [
+                  SizedBox(height: 300),
+                  Center(child: Text("No Payments Found")),
+                ],
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: payments.length,
+              itemBuilder: (context, index) {
+                return paymentCard(payments[index]);
+              },
+            );
+          },
+        ),
       ),
+
     );
   }
 }

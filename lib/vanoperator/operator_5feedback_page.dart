@@ -184,7 +184,7 @@ class _OperatorFeedbackPageState extends State<OperatorFeedbackPage> {
               const Icon(Icons.access_time, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
               const Text(
-                "Feedback Time : ",
+                "Time : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               Text(

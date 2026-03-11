@@ -1,16 +1,19 @@
 import 'dart:convert';
+import 'package:chargenow/user/user_0dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:chargenow/CommonWidget/apiconst.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GiveFeedbackPage extends StatefulWidget {
-
+  final int bookingId;
   final int operatorId;
 
   const GiveFeedbackPage({
     super.key,
     required this.operatorId,
+    required this.bookingId,
   });
 
   @override
@@ -30,17 +33,6 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
 
   Future<void> submitFeedback() async {
 
-    if (rating == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select rating")),
-      );
-      return;
-    }
-
-    setState(() {
-      isSubmitting = true;
-    });
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -48,36 +40,43 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
       Uri.parse('${Apiconst.base_url}user/feedback/'),
       headers: {
         'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: jsonEncode({
         "operator": widget.operatorId,
+        "booking": widget.bookingId,
         "rating": rating,
-        "comments": commentController.text
+        "comments": commentController.text,
       }),
     );
 
-    setState(() {
-      isSubmitting = false;
-    });
+    print(response.body);
 
     if (response.statusCode == 201) {
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("Feedback Submitted Successfully")),
+      Fluttertoast.showToast(
+        msg: "Feedback submitted successfully",
+        toastLength: Toast.LENGTH_SHORT,
       );
 
-      Navigator.pop(context, true);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const UserDashboardPage(initialIndex: 0),
+        ),
+            (route) => false,
+      );
 
     } else {
-      print(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Feedback Failed")),
 
+      Fluttertoast.showToast(
+        msg: "Feedback failed",
+        toastLength: Toast.LENGTH_SHORT,
       );
+
     }
   }
+
 
   Widget buildStar(int index) {
 
@@ -106,6 +105,17 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
       appBar: AppBar(
         backgroundColor: primaryGreen,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const UserDashboardPage(initialIndex: 3),
+              ),
+            );
+          },
+        ),
         title: const Text(
           "Give Feedback",
           style: TextStyle(
