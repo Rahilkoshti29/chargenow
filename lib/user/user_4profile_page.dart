@@ -1,7 +1,7 @@
 import 'package:chargenow/login_page.dart';
 import 'package:chargenow/user/user_profile_3my_1payments_page.dart';
 import 'package:chargenow/user/user_profile_5contactus_page.dart';
-import 'package:chargenow/user/user_profile_4myprofile_page.dart';
+import 'package:chargenow/user/user_profile_4myprofile_detail_page.dart';
 import 'package:chargenow/user/user_profile_7privacy_policy_pafe.dart';
 import 'package:chargenow/user/user_profile_6terms&conditions_page.dart';
 import 'package:chargenow/user/user_profile_2my_bookings_page.dart';

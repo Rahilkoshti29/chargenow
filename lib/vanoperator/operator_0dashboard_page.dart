@@ -95,7 +95,7 @@ class VanOperatorDashboard extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const MyVanPage()),
+                MaterialPageRoute(builder: (_) => const OperatorVanPage()),
               );
             },
             child: const CircleAvatar(

@@ -8,12 +8,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class GoogleMapScreen extends StatefulWidget {
+class OperatorGmapPage extends StatefulWidget {
   final double latitude;
   final double longitude;
   final int requestId;
 
-  const GoogleMapScreen({
+  const OperatorGmapPage({
     super.key,
     required this.latitude,
     required this.longitude,
@@ -21,10 +21,10 @@ class GoogleMapScreen extends StatefulWidget {
   });
 
   @override
-  State<GoogleMapScreen> createState() => _GoogleMapScreenState();
+  State<OperatorGmapPage> createState() => _OperatorGmapPage();
 }
 
-class _GoogleMapScreenState extends State<GoogleMapScreen> {
+class _OperatorGmapPage extends State<OperatorGmapPage> {
   static const Color primaryGreen = Color(0xFF2ECC71);
   static const Color bgColor = Color(0xFFF2FFF7);
 

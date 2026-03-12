@@ -36,7 +36,7 @@ class _UserDashboardPageState extends State<UserDashboardPage> {
         index: _currentIndex,
         children: [
           // -------- HOME --------
-          HomePage(
+          UserHomePage(
             onTabChange: (int index, {int? vehicleId}) {
               setState(() {
                 _currentIndex = index;

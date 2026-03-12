@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/vanoperator/operator_8gmap_screen.dart';
+import 'package:chargenow/vanoperator/operator_8gmap_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,7 +214,7 @@ class _OperatorRequestPageState extends State<OperatorRequestPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => GoogleMapScreen(
+                        builder: (_) => OperatorGmapPage(
                           latitude: lat,
                           longitude: lng,
                           requestId: requestId,

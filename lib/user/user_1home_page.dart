@@ -1,27 +1,27 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/user/user_profile_4myprofile_page.dart';
+import 'package:chargenow/user/user_profile_4myprofile_detail_page.dart';
 import 'package:chargenow/user/user_1home_page_add_vehicle_page.dart';
 import 'package:chargenow/user/user_1home_page_vehicle_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatefulWidget {
+class UserHomePage extends StatefulWidget {
   final Function(int index, {int? vehicleId}) onTabChange;
   final VoidCallback onNotificationTap;
 
-  const HomePage({
+  const UserHomePage({
     super.key,
     required this.onNotificationTap,
     required this.onTabChange,
   });
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<UserHomePage> createState() => _UserHomePage();
 }
 
-class _HomePageState extends State<HomePage> {
+class _UserHomePage extends State<UserHomePage> {
   static const Color primaryGreen = Color(0xFF2ECC71);
 
   late Future<List<dynamic>> vehicleFuture;

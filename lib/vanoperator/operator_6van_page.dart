@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MyVanPage extends StatefulWidget {
-  const MyVanPage({super.key});
+class OperatorVanPage extends StatefulWidget {
+  const OperatorVanPage({super.key});
 
   @override
-  State<MyVanPage> createState() => _MyVanPageState();
+  State<OperatorVanPage> createState() => _OperatorVanPage();
 }
 
-class _MyVanPageState extends State<MyVanPage> {
+class _OperatorVanPage extends State<OperatorVanPage> {
   static const Color primaryGreen = Color(0xFF2ECC71);
   static const Color bgColor = Color(0xFFF2FFF7);
 
