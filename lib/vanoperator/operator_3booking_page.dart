@@ -48,6 +48,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
 
     if (response.statusCode == 200) {
       final decoded = jsonDecode(response.body);
+
       setState(() {
         bookings = List.from(decoded['data'] ?? []).reversed.toList();
         isLoading = false;
@@ -74,13 +75,33 @@ class _OperatorBookingState extends State<OperatorBooking> {
     fetchBookings();
   }
 
+  // ================= CALCULATE CHARGING DURATION =================
+  String getDuration(String? start, String? end) {
+
+    if (start == null || end == null) {
+      return "Charging Running";
+    }
+
+    DateTime startTime = DateTime.parse(start).toLocal();
+    DateTime endTime = DateTime.parse(end).toLocal();
+
+    Duration diff = endTime.difference(startTime);
+
+    int minutes = diff.inMinutes;
+    int seconds = diff.inSeconds % 60;
+
+    if (minutes > 0) {
+      return "$minutes min $seconds sec";
+    } else {
+      return "$seconds sec";
+    }
+  }
+
+
   // ================= BOOKING CARD =================
   Widget bookingCard(dynamic booking) {
     final int bookingId =
         int.tryParse((booking['booking_id'] ?? '').toString()) ?? 0;
-
-    final int requestId =
-        int.tryParse((booking['request_id'] ?? '').toString()) ?? 0;
 
     final int status =
         int.tryParse((booking['booking_status'] ?? '0').toString()) ?? 0;
@@ -101,26 +122,21 @@ class _OperatorBookingState extends State<OperatorBooking> {
           ),
         ],
       ),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ================= BOOKING ID =================
-          // Text(
-          //   "Booking #$bookingId",
-          //   style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          // ),
-          //
-          // const SizedBox(height: 10),
-
           // ================= USER NAME =================
           Row(
             children: [
               const Icon(Icons.person, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              Text(
+
+              const Text(
                 "User : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
+
               Text(
                 booking['user_name'] ?? "Unknown User",
                 style: const TextStyle(fontSize: 14),
@@ -135,10 +151,12 @@ class _OperatorBookingState extends State<OperatorBooking> {
             children: [
               const Icon(Icons.directions_car, size: 18, color: primaryGreen),
               const SizedBox(width: 8),
-              Text(
+
+              const Text(
                 "Vehicle : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
+
               Text(
                 "${booking['vehicle_name'] ?? 'Unknown Vehicle'} "
                 "(${booking['vehicle_number'] ?? ''})",
@@ -147,25 +165,13 @@ class _OperatorBookingState extends State<OperatorBooking> {
             ],
           ),
 
-          // const SizedBox(height: 8),
-          //
-          // /// ================= REQUEST ID =================
-          // Row(
-          //   children: [
-          //     const Icon(Icons.receipt_long, size: 18, color: primaryGreen),
-          //     const SizedBox(width: 8),
-          //     Text(
-          //       "Request ID : $requestId",
-          //       style: const TextStyle(fontSize: 14),
-          //     ),
-          //   ],
-          // ),
           const SizedBox(height: 8),
 
-          // ================= DATE =================
+          // ================= REQUEST TIME =================
           Row(
             children: [
               const Icon(Icons.access_time, size: 18, color: primaryGreen),
+
               const SizedBox(width: 8),
 
               const Text(
@@ -183,12 +189,32 @@ class _OperatorBookingState extends State<OperatorBooking> {
             ],
           ),
 
+          const SizedBox(height: 8),
+
+          // ================= CHARGING DURATION =================
+          if (booking['start_time'] != null)
+            Row(
+              children: [
+                const Icon(Icons.timer, size: 18, color: primaryGreen),
+
+                const SizedBox(width: 8),
+
+                const Text(
+                  "Charging Duration : ",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+
+                Text(getDuration(booking['start_time'], booking['end_time'])),
+              ],
+            ),
+
           const SizedBox(height: 16),
 
           // ================= ACTION BUTTONS =================
           if (status == 0)
             SizedBox(
               width: double.infinity,
+
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryGreen,
@@ -197,7 +223,9 @@ class _OperatorBookingState extends State<OperatorBooking> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
+
                 onPressed: () => updateCharging(bookingId, "start"),
+
                 child: const Text(
                   "Start Charging",
                   style: TextStyle(color: Colors.white),
@@ -208,6 +236,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
           if (status == 1)
             SizedBox(
               width: double.infinity,
+
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
@@ -216,7 +245,9 @@ class _OperatorBookingState extends State<OperatorBooking> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
+
                 onPressed: () => updateCharging(bookingId, "complete"),
+
                 child: const Text(
                   "Complete Charging",
                   style: TextStyle(color: Colors.white),
@@ -263,6 +294,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
         ),
         backgroundColor: primaryGreen,
       ),
+
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: primaryGreen))
           : RefreshIndicator(
