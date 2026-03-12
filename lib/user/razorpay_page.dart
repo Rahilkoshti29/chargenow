@@ -29,7 +29,7 @@ class _RazorpayPageState extends State<RazorpayPage> {
   static const Color primaryGreen = Color(0xFF2ECC71);
   late Razorpay _razorpay;
 
-  Future<void> recordPayment() async {
+  Future<void> recordPayment(String paymentId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -43,7 +43,7 @@ class _RazorpayPageState extends State<RazorpayPage> {
         "booking": widget.bookingId,
         "operator": widget.operatorId,
         "amount": widget.amount,
-        "payment_method": 2,
+        "razorpay_payment_id": paymentId,
       }),
     );
     final decoded = jsonDecode(response.body);
@@ -87,16 +87,28 @@ class _RazorpayPageState extends State<RazorpayPage> {
       'currency': 'INR',
       'name': 'ChargeNow',
       'description': 'EV Charging Payment',
-      'method': {'upi': true},
-      'prefill': {'contact': '9999999999', 'email': 'user@email.com'},
-      'theme': {'color': '#2ECC71'},
+
+      'method': {
+        'upi': true,
+        'card': true,
+        'netbanking': true,
+        'wallet': true
+      },
+
+      'prefill': {
+        'contact': '9999999999',
+        'email': 'user@email.com'
+      },
+
+      'theme': {'color': '#2ECC71'}
     };
+
 
     _razorpay.open(options);
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    await recordPayment();
+    await recordPayment(response.paymentId!);
 
     Navigator.pushAndRemoveUntil(
       context,
