@@ -35,6 +35,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     setState(() {});
   }
 
+
   void showLogoutDialog() {
     showDialog(
       context: context,
@@ -166,8 +167,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => UserProfileDetailPage()),
-                );
+                  MaterialPageRoute(builder: (_) => const UserProfileDetailPage()),
+                ).then((value) {
+                  if (value == true) {
+                    _loadUserName();
+                  }
+                });
               },
             ),
           ]),

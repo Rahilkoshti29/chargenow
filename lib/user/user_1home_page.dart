@@ -27,18 +27,65 @@ class _UserHomePage extends State<UserHomePage> {
   late Future<List<dynamic>> vehicleFuture;
   String userName = 'User';
 
+
   @override
   void initState() {
     super.initState();
-    _loadUserName();
+    _fetchUserName();
     _refreshVehicles();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchUserName();
   }
 
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
-    userName = prefs.getString('name') ?? 'User';
-    setState(() {});
+
+    setState(() {
+      userName = prefs.getString('name') ?? 'User';
+    });
   }
+
+
+  Future<void> _fetchUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse('${Apiconst.base_url}user/profile/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+       // 'Cache-Control': 'no-cache'
+      },
+    );
+    final decoded = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+
+      if (decoded['success'] == true) {
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('name', decoded['data']['user_name']);
+
+        setState(() {
+          userName = decoded['data']['user_name'] ?? 'User';
+        });
+      }
+
+    }
+  }
+
+
+  // Future<void> _loadUserName() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   userName = prefs.getString('name') ?? 'User';
+  //   setState(() {});
+  // }
 
   void _refreshVehicles() {
     vehicleFuture = _fetchVehicles();
@@ -96,14 +143,21 @@ class _UserHomePage extends State<UserHomePage> {
           ),
           const SizedBox(width: 16),
           GestureDetector(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const UserProfileDetailPage(),
                 ),
               );
+
+              if (result == true) {
+                _fetchUserName();
+                setState(() {});
+              }
             },
+
+
             child: const CircleAvatar(
               radius: 22,
               backgroundColor: Colors.white,

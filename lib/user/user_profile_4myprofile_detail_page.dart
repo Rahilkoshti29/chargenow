@@ -101,15 +101,17 @@ class _UserProfileDetailPageState extends State<UserProfileDetailPage> {
 
     if (response.statusCode == 200 && decoded['success'] == true) {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_name', nameCtrl.text.trim());
+      await prefs.setString('name', nameCtrl.text.trim());
       await prefs.setString('user_email', emailCtrl.text.trim());
       Fluttertoast.showToast(
         msg: decoded['message'] ?? "Profile updated successfully",
         textColor: Colors.white,
         fontSize: 16,
       );
+
       Navigator.pop(context, true);
       setState(() => isEditing = false);
+      //await _fetchProfile();
     } else {
       Fluttertoast.showToast(
         msg: decoded['message'] ?? "Update failed",

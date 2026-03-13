@@ -89,14 +89,11 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -170,8 +167,9 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
               ),
               Text(
                 req['created_at'] != null
-                    ? DateFormat('dd MMM yyyy, hh:mm a')
-                    .format(DateTime.parse(req['created_at']).toLocal())
+                    ? DateFormat(
+                        'dd MMM yyyy, hh:mm a',
+                      ).format(DateTime.parse(req['created_at']).toLocal())
                     : 'N/A',
               ),
             ],
@@ -180,7 +178,6 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
