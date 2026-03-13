@@ -33,7 +33,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": emailController.text.trim(),
-          "new_password": confirmPasswordController.text.trim(),
+         // "new_password": confirmPasswordController.text.trim(),
         }),
       );
 
@@ -135,82 +135,82 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                     SizedBox(height: 20),
 
-                    CommonTextFormField(
-                      controller: passwordController,
-
-                      hintText: "New Password",
-                      prefixIcon: Icons.lock_outline,
-                      obscureText: hidePassword,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          hidePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            hidePassword = !hidePassword;
-                          });
-                        },
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return "Password is required";
-                        }
-
-                        if (v.length < 8) {
-                          return "Must be at least 8 characters";
-                        }
-
-                        if (!RegExp(r'[A-Z]').hasMatch(v)) {
-                          return "Must contain at least 1 uppercase letter";
-                        }
-
-                        if (!RegExp(r'[a-z]').hasMatch(v)) {
-                          return "Must contain at least 1 lowercase letter";
-                        }
-
-                        if (!RegExp(r'[0-9]').hasMatch(v)) {
-                          return "Must contain at least 1 number";
-                        }
-
-                        if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
-                          return "Must contain at least 1 special character (!@#\$&*~)";
-                        }
-
-                        return null;
-                      },
-                    ),
-
-                    SizedBox(height: 20),
-
-                    CommonTextFormField(
-                      controller: confirmPasswordController,
-                      hintText: "Confirm Password",
-                      prefixIcon: Icons.lock_outline,
-                      obscureText: hideConfirmPassword,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          hideConfirmPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            hideConfirmPassword = !hideConfirmPassword;
-                          });
-                        },
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return "Confirm your password";
-                        }
-                        if (v != passwordController.text) {
-                          return "Passwords do not match";
-                        }
-                        return null;
-                      },
-                    ),
+                    // CommonTextFormField(
+                    //   controller: passwordController,
+                    //
+                    //   hintText: "New Password",
+                    //   prefixIcon: Icons.lock_outline,
+                    //   obscureText: hidePassword,
+                    //   suffixIcon: IconButton(
+                    //     icon: Icon(
+                    //       hidePassword
+                    //           ? Icons.visibility_off
+                    //           : Icons.visibility,
+                    //     ),
+                    //     onPressed: () {
+                    //       setState(() {
+                    //         hidePassword = !hidePassword;
+                    //       });
+                    //     },
+                    //   ),
+                    //   validator: (v) {
+                    //     if (v == null || v.isEmpty) {
+                    //       return "Password is required";
+                    //     }
+                    //
+                    //     if (v.length < 8) {
+                    //       return "Must be at least 8 characters";
+                    //     }
+                    //
+                    //     if (!RegExp(r'[A-Z]').hasMatch(v)) {
+                    //       return "Must contain at least 1 uppercase letter";
+                    //     }
+                    //
+                    //     if (!RegExp(r'[a-z]').hasMatch(v)) {
+                    //       return "Must contain at least 1 lowercase letter";
+                    //     }
+                    //
+                    //     if (!RegExp(r'[0-9]').hasMatch(v)) {
+                    //       return "Must contain at least 1 number";
+                    //     }
+                    //
+                    //     if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+                    //       return "Must contain at least 1 special character (!@#\$&*~)";
+                    //     }
+                    //
+                    //     return null;
+                    //   },
+                    // ),
+                    //
+                    // SizedBox(height: 20),
+                    //
+                    // CommonTextFormField(
+                    //   controller: confirmPasswordController,
+                    //   hintText: "Confirm Password",
+                    //   prefixIcon: Icons.lock_outline,
+                    //   obscureText: hideConfirmPassword,
+                    //   suffixIcon: IconButton(
+                    //     icon: Icon(
+                    //       hideConfirmPassword
+                    //           ? Icons.visibility_off
+                    //           : Icons.visibility,
+                    //     ),
+                    //     onPressed: () {
+                    //       setState(() {
+                    //         hideConfirmPassword = !hideConfirmPassword;
+                    //       });
+                    //     },
+                    //   ),
+                    //   validator: (v) {
+                    //     if (v == null || v.isEmpty) {
+                    //       return "Confirm your password";
+                    //     }
+                    //     if (v != passwordController.text) {
+                    //       return "Passwords do not match";
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
 
                     SizedBox(height: 35),
 
