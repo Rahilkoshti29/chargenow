@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:chargenow/CommonWidget/textfomfield.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:chargenow/CommonWidget/apiconst.dart';
-import 'package:chargenow/CommonWidget/textfomfield.dart';
+import '../CommonWidget/apiconst.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -12,233 +13,388 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _formKey = GlobalKey<FormState>();
+  static const Color primaryGreen = Color(0xFF2ECC71);
+
+  int step = 1;
+  bool loading = false;
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+
+  final formKey = GlobalKey<FormState>();
 
   bool hidePassword = true;
-  bool hideConfirmPassword = true;
-  bool isLoading = false;
 
-  Future<void> resetPassword() async {
-    if (!_formKey.currentState!.validate()) return;
+  List<TextEditingController> otpControllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
 
-    setState(() => isLoading = true);
+  List<FocusNode> focusNodes = List.generate(6, (_) => FocusNode());
 
-    try {
-      final response = await http.post(
-        Uri.parse('${Apiconst.base_url}auth/forgot-password/'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "email": emailController.text.trim(),
-         // "new_password": confirmPasswordController.text.trim(),
-        }),
-      );
+  int seconds = 60;
+  Timer? timer;
 
-      final data = jsonDecode(response.body);
+  String getOTP() {
+    return otpControllers.map((c) => c.text).join();
+  }
 
-      if (response.statusCode == 200 && data['success'] == true) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(data['message'])));
+  void startTimer() {
+    seconds = 60;
 
-        Future.delayed( Duration(seconds: 1), () {
-          Navigator.pop(context);
-        });
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (seconds == 0) {
+        timer.cancel();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message'] ?? "Something went wrong"),
-            backgroundColor: Colors.red,
-          ),
-        );
+        setState(() => seconds--);
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-          content: Text("Server error. Please try again."),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      setState(() => isLoading = false);
+    });
+  }
+
+  // SEND OTP
+  Future sendOTP() async {
+    setState(() => loading = true);
+
+    final response = await http.post(
+      Uri.parse("${Apiconst.base_url}auth/send-otp/"),
+      body: {"email": emailController.text},
+    );
+
+    final data = jsonDecode(response.body);
+
+    setState(() => loading = false);
+
+    if (data["success"]) {
+      startTimer();
+
+      setState(() {
+        step = 2;
+      });
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(data["message"])));
     }
+  }
+
+  // VERIFY OTP
+  Future verifyOTP() async {
+    setState(() => loading = true);
+
+    final response = await http.post(
+      Uri.parse("${Apiconst.base_url}auth/verify-otp/"),
+      body: {"email": emailController.text, "otp": getOTP()},
+    );
+
+    final data = jsonDecode(response.body);
+
+    setState(() => loading = false);
+
+    if (data["success"]) {
+      setState(() {
+        step = 3;
+      });
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(data["message"])));
+    }
+  }
+
+  // RESET PASSWORD
+  Future resetPassword() async {
+    setState(() => loading = true);
+
+    final response = await http.post(
+      Uri.parse("${Apiconst.base_url}auth/reset-password/"),
+      body: {
+        "email": emailController.text,
+        "password": passwordController.text,
+      },
+    );
+
+    final data = jsonDecode(response.body);
+
+    setState(() => loading = false);
+
+    if (data["success"]) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Password Updated Successfully")),
+      );
+
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(data["message"])));
+    }
+  }
+
+  Widget otpBox(int index) {
+    return SizedBox(
+      width: 45,
+      child: TextField(
+        controller: otpControllers[index],
+        focusNode: focusNodes[index],
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        maxLength: 1,
+
+        cursorColor: primaryGreen,
+
+        decoration: InputDecoration(
+          counterText: "",
+          filled: true,
+          fillColor: Colors.white,
+
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: primaryGreen),
+          ),
+
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: primaryGreen, width: 2),
+          ),
+        ),
+
+        onChanged: (value) {
+          if (value.isNotEmpty && index < 5) {
+            FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+          }
+
+          if (value.isEmpty && index > 0) {
+            FocusScope.of(context).requestFocus(focusNodes[index - 1]);
+          }
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
+      backgroundColor: const Color(0xFFF2FFF7),
+
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new_sharp,
-            color: Colors.white,
-          ), // optional if icon is single-color
-        ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          "Forgot Password",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: const Text("Forgot Password", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+        backgroundColor: primaryGreen,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
-        backgroundColor: Color(0xff2ecc71),
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
-          : SingleChildScrollView(
-              padding: EdgeInsets.only(
-                left: 25,
-                right: 25,
-                top: 40,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 30,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Reset Password",
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
+
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+
+        child: Column(
+
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 40),
+
+            // ICON + LOADER (CENTER FIXED)
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  const Icon(
+                    Icons.lock_reset,
+                    size: 90,
+                    color: primaryGreen,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  if (loading)
+                    const SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: primaryGreen,
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      "Enter your email and set a new password",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-
-                    SizedBox(height: 35),
-
-                    CommonTextFormField(
-                      controller: emailController,
-                      hintText: "Email",
-                      prefixIcon: Icons.email_outlined,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return "Email is required";
-                        }
-                        if (!v.contains('@')) {
-                          return "Enter valid email";
-                        }
-                        return null;
-                      },
-                    ),
-
-                    SizedBox(height: 20),
-
-                    // CommonTextFormField(
-                    //   controller: passwordController,
-                    //
-                    //   hintText: "New Password",
-                    //   prefixIcon: Icons.lock_outline,
-                    //   obscureText: hidePassword,
-                    //   suffixIcon: IconButton(
-                    //     icon: Icon(
-                    //       hidePassword
-                    //           ? Icons.visibility_off
-                    //           : Icons.visibility,
-                    //     ),
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         hidePassword = !hidePassword;
-                    //       });
-                    //     },
-                    //   ),
-                    //   validator: (v) {
-                    //     if (v == null || v.isEmpty) {
-                    //       return "Password is required";
-                    //     }
-                    //
-                    //     if (v.length < 8) {
-                    //       return "Must be at least 8 characters";
-                    //     }
-                    //
-                    //     if (!RegExp(r'[A-Z]').hasMatch(v)) {
-                    //       return "Must contain at least 1 uppercase letter";
-                    //     }
-                    //
-                    //     if (!RegExp(r'[a-z]').hasMatch(v)) {
-                    //       return "Must contain at least 1 lowercase letter";
-                    //     }
-                    //
-                    //     if (!RegExp(r'[0-9]').hasMatch(v)) {
-                    //       return "Must contain at least 1 number";
-                    //     }
-                    //
-                    //     if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
-                    //       return "Must contain at least 1 special character (!@#\$&*~)";
-                    //     }
-                    //
-                    //     return null;
-                    //   },
-                    // ),
-                    //
-                    // SizedBox(height: 20),
-                    //
-                    // CommonTextFormField(
-                    //   controller: confirmPasswordController,
-                    //   hintText: "Confirm Password",
-                    //   prefixIcon: Icons.lock_outline,
-                    //   obscureText: hideConfirmPassword,
-                    //   suffixIcon: IconButton(
-                    //     icon: Icon(
-                    //       hideConfirmPassword
-                    //           ? Icons.visibility_off
-                    //           : Icons.visibility,
-                    //     ),
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         hideConfirmPassword = !hideConfirmPassword;
-                    //       });
-                    //     },
-                    //   ),
-                    //   validator: (v) {
-                    //     if (v == null || v.isEmpty) {
-                    //       return "Confirm your password";
-                    //     }
-                    //     if (v != passwordController.text) {
-                    //       return "Passwords do not match";
-                    //     }
-                    //     return null;
-                    //   },
-                    // ),
-
-                    SizedBox(height: 35),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 55,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff2ecc71),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onPressed: resetPassword,
-                        child: Text(
-                          "Reset Password",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
+
+
+            const SizedBox(height: 30),
+
+            if (!loading && step == 1) ...[
+              CommonTextFormField(
+                controller: emailController,
+                hintText: "Enter Email",
+                prefixIcon: Icons.email_outlined,
+              ),
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+
+                child: ElevatedButton(
+                  onPressed: sendOTP,
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryGreen,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+
+                  child: const Text(
+                    "Send OTP",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+
+            // OTP STEP
+            if (!loading && step == 2) ...[
+              const Text("Enter OTP", style: TextStyle(fontSize: 16)),
+
+              const SizedBox(height: 20),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(6, otpBox),
+              ),
+
+              const SizedBox(height: 25),
+
+              SizedBox(
+                width: double.infinity,
+
+                child: ElevatedButton(
+                  onPressed: verifyOTP,
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryGreen,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+
+                  child: const Text(
+                    "Verify OTP",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              seconds == 0
+                  ? TextButton(
+                      onPressed: sendOTP,
+                      style: TextButton.styleFrom(
+                        foregroundColor: primaryGreen,
+                      ),
+                      child: const Text(
+                        "Resend OTP",
+                        style: TextStyle(
+                          color: primaryGreen,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      "Resend OTP in $seconds sec",
+                      style: const TextStyle(color: primaryGreen),
+                    ),
+            ],
+
+            // RESET PASSWORD
+            if (!loading && step == 3) ...[
+              Form(
+                key: formKey,
+
+                child: CommonTextFormField(
+                  controller: passwordController,
+                  hintText: "New Password",
+                  prefixIcon: Icons.lock,
+
+                  obscureText: hidePassword,
+
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      hidePassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        hidePassword = !hidePassword;
+                      });
+                    },
+                  ),
+
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return "Password is required";
+                    }
+
+                    if (v.length < 8) {
+                      return "Must be at least 8 characters";
+                    }
+
+                    if (!RegExp(r'[A-Z]').hasMatch(v)) {
+                      return "Must contain at least 1 uppercase letter";
+                    }
+
+                    if (!RegExp(r'[a-z]').hasMatch(v)) {
+                      return "Must contain at least 1 lowercase letter";
+                    }
+
+                    if (!RegExp(r'[0-9]').hasMatch(v)) {
+                      return "Must contain at least 1 number";
+                    }
+
+                    if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+                      return "Must contain at least 1 special character (!@#\$&*~)";
+                    }
+
+                    return null;
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      resetPassword();
+                    }
+                  },
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryGreen,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+
+                  child: const Text(
+                    "Reset Password",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
