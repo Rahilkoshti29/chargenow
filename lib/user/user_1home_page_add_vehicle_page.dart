@@ -90,7 +90,7 @@ class _AddVehiclePageState extends State<AddVehiclePage> {
       ),
 
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
+          ? Center(child: CircularProgressIndicator(color:primaryGreen))
           : SingleChildScrollView(
               padding: EdgeInsets.all(20),
               child: Container(

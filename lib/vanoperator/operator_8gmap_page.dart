@@ -225,7 +225,7 @@ class _OperatorGmapPage extends State<OperatorGmapPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (!hasArrived) ...[
-                          const CircularProgressIndicator(),
+                          const CircularProgressIndicator(color: primaryGreen,),
                           const SizedBox(height: 12),
                           const Text(
                             "On the way to user...",

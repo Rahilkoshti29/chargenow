@@ -136,7 +136,7 @@ class _MyVehiclesPageState extends State<MyVehiclesPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// See Details
+          // See Details
           Align(
             alignment: Alignment.topRight,
             child: TextButton(

@@ -196,8 +196,9 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
         backgroundColor: primaryGreen,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: primaryGreen,))
           : RefreshIndicator(
+        color: primaryGreen,
               onRefresh: fetchRequests,
               child: requests.isEmpty
                   ? const Center(child: Text("No Requests Found"))

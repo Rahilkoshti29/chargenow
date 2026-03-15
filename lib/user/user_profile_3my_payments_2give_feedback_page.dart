@@ -183,6 +183,7 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
                     : submitFeedback,
                 child: isSubmitting
                     ? const CircularProgressIndicator(
+
                     color: Colors.white)
                     : const Text(
                   "Submit Feedback",

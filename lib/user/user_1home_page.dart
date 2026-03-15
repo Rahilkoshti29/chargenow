@@ -158,10 +158,6 @@ class _UserHomePage extends State<UserHomePage> {
                       },
                     ),
                   ),
-                  Text(
-                    '$userName !',
-                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                  ),
                   const SizedBox(height: 28),
                   _offersRow(),
                 ],
