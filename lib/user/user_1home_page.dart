@@ -84,18 +84,18 @@ class _UserHomePage extends State<UserHomePage> {
           ],
         ),
         actions: [
-          GestureDetector(
-            onTap: widget.onNotificationTap,
-            child: const CircleAvatar(
-              radius: 22,
-              backgroundColor: Colors.white,
-              child: Icon(
-                Icons.notifications_none,
-                color: Colors.black,
-                size: 25,
-              ),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: widget.onNotificationTap,
+          //   child: const CircleAvatar(
+          //     radius: 22,
+          //     backgroundColor: Colors.white,
+          //     child: Icon(
+          //       Icons.notifications_none,
+          //       color: Colors.black,
+          //       size: 25,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(width: 16),
           GestureDetector(
             onTap: () async {
