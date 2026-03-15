@@ -31,61 +31,15 @@ class _UserHomePage extends State<UserHomePage> {
   @override
   void initState() {
     super.initState();
-    _fetchUserName();
+    _loadUserName();
     _refreshVehicles();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _fetchUserName();
   }
 
   Future<void> _loadUserName() async {
     final prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      userName = prefs.getString('name') ?? 'User';
-    });
+    userName = prefs.getString('name') ?? 'User';
+    setState(() {});
   }
-
-
-  Future<void> _fetchUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
-    final response = await http.get(
-      Uri.parse('${Apiconst.base_url}user/profile/'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-       // 'Cache-Control': 'no-cache'
-      },
-    );
-    final decoded = jsonDecode(response.body);
-
-    if (response.statusCode == 200) {
-      final decoded = jsonDecode(response.body);
-
-      if (decoded['success'] == true) {
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('name', decoded['data']['user_name']);
-
-        setState(() {
-          userName = decoded['data']['user_name'] ?? 'User';
-        });
-      }
-
-    }
-  }
-
-
-  // Future<void> _loadUserName() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   userName = prefs.getString('name') ?? 'User';
-  //   setState(() {});
-  // }
 
   void _refreshVehicles() {
     vehicleFuture = _fetchVehicles();
@@ -107,6 +61,7 @@ class _UserHomePage extends State<UserHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _loadUserName();
     return Scaffold(
       backgroundColor: const Color(0xFFF2FFF7),
       appBar: AppBar(
@@ -151,10 +106,7 @@ class _UserHomePage extends State<UserHomePage> {
                 ),
               );
 
-              if (result == true) {
-                _fetchUserName();
-                setState(() {});
-              }
+              _loadUserName();
             },
 
 
@@ -205,6 +157,10 @@ class _UserHomePage extends State<UserHomePage> {
                         }
                       },
                     ),
+                  ),
+                  Text(
+                    '$userName !',
+                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 28),
                   _offersRow(),

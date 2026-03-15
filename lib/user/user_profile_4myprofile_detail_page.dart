@@ -111,7 +111,7 @@ class _UserProfileDetailPageState extends State<UserProfileDetailPage> {
 
       Navigator.pop(context, true);
       setState(() => isEditing = false);
-      //await _fetchProfile();
+      await _fetchProfile();
     } else {
       Fluttertoast.showToast(
         msg: decoded['message'] ?? "Update failed",

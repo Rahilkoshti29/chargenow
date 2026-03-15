@@ -81,6 +81,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    _loadUserName();
     return Scaffold(
       backgroundColor: const Color(0xFFF2FFF7),
       appBar: AppBar(
@@ -170,9 +171,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     builder: (_) => const UserProfileDetailPage(),
                   ),
                 ).then((value) {
-                  if (value == true) {
-                    _loadUserName();
-                  }
+                  _loadUserName();
                 });
               },
             ),
