@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:chargenow/CommonWidget/apiconst.dart';
 import 'package:chargenow/user/user_2request_charging_view_operator_map_page.dart';
-import 'package:chargenow/user/user_2request_charging_page_select_location_page.dart';
+import 'package:chargenow/user/user_2request_charging_select_location_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
