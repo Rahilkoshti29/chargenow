@@ -1,5 +1,12 @@
+import 'dart:convert';
+
+import 'package:chargenow/user/user_0dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:chargenow/CommonWidget/textfomfield.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../CommonWidget/apiconst.dart';
 
 class BatteryHealthPage extends StatefulWidget {
   const BatteryHealthPage({super.key});
@@ -209,7 +216,7 @@ class _BatteryHealthPageState extends State<BatteryHealthPage> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _submitData();
+                        submitData();
                       }
                     },
                     child: const Text(
@@ -274,22 +281,104 @@ class _BatteryHealthPageState extends State<BatteryHealthPage> {
   }
 
   // ===== SUBMIT FUNCTION =====
-  void _submitData() {
-    final data = {
-      "age": ageCtrl.text,
-      "km": kmCtrl.text,
-      "cycles": cyclesCtrl.text,
-      "charging_level": chargingLevelCtrl.text,
-      "range_drop": rangeDropCtrl.text,
-      "fast_charging": fastCharging,
-      "overnight": overnightCharging,
-      "driving_style": drivingStyle,
-      "drain_speed": drainSpeed,
-      "charging_time_increase": chargingTimeIncrease,
-    };
+  Future<void> submitData() async {
+    if (_formKey.currentState!.validate()) {
 
-    print(data);
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
 
-    // 👉 NEXT STEP: SEND THIS TO ML API
+      final url = Uri.parse('${Apiconst.base_url}user/battery-health/');
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token", // 🔥 IMPORTANT
+        },
+        body: jsonEncode({
+          "age": ageCtrl.text,
+          "km": kmCtrl.text,
+          "fast_charging": fastCharging,
+          "cycles": cyclesCtrl.text,
+          "charge_level": chargingLevelCtrl.text,
+          "overnight": overnightCharging,
+          "driving_style": drivingStyle,
+          "range_drop": rangeDropCtrl.text,
+          "drain_speed": drainSpeed,
+          "charge_time": chargingTimeIncrease,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+     // print("API RESPONSE: $data");
+
+      if (data['success'] == true) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            backgroundColor: Colors.white,
+            title: const Text("Battery Health"),
+
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Battery Health: ${data['data']['health_percentage']}%",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text("Status: ${data['data']['status']}"),
+                const SizedBox(height: 12),
+                const Text(
+                  "Recommendation:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                Text(data['data']['recommendation']),
+              ],
+            ),
+
+            // ✅ CENTER BUTTON
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryGreen,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                onPressed: () {
+                  //  CLOSE DIALOG
+                  Navigator.pop(context);
+
+                  //  GO TO DASHBOARD HOME (INDEX 0)
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const UserDashboardPage(initialIndex: 0),
+                    ),
+                        (route) => false,
+                  );
+                },
+                child: const Text(
+                  "OK",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? "Error occurred")),
+        );
+      }
+    }
   }
 }
+
