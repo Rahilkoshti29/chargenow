@@ -293,7 +293,7 @@ class _BatteryHealthPageState extends State<BatteryHealthPage> {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", //  IMPORTANT
+          "Authorization": "Bearer $token",
         },
         body: jsonEncode({
           "age": ageCtrl.text,
