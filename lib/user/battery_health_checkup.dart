@@ -293,7 +293,7 @@ class _BatteryHealthPageState extends State<BatteryHealthPage> {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // 🔥 IMPORTANT
+          "Authorization": "Bearer $token", //  IMPORTANT
         },
         body: jsonEncode({
           "age": ageCtrl.text,
@@ -341,7 +341,7 @@ class _BatteryHealthPageState extends State<BatteryHealthPage> {
               ],
             ),
 
-            // ✅ CENTER BUTTON
+            //  CENTER BUTTON
             actionsAlignment: MainAxisAlignment.center,
             actions: [
               ElevatedButton(
