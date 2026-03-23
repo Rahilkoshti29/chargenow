@@ -1,4 +1,5 @@
 import 'package:chargenow/login_page.dart';
+import 'package:chargenow/user/battery_health_checkup.dart';
 import 'package:chargenow/user/user_profile_3my_1payments_page.dart';
 import 'package:chargenow/user/user_profile_5contactus_page.dart';
 import 'package:chargenow/user/user_profile_4myprofile_detail_page.dart';
@@ -173,6 +174,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ).then((value) {
                   _loadUserName();
                 });
+              },
+            ),
+            _menuItem(
+              Icons.battery_charging_full_rounded,
+              "Check My Battery Health",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => BatteryHealthPage()),
+                );
               },
             ),
           ]),
