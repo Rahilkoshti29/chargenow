@@ -159,11 +159,21 @@ class _GiveFeedbackPageState extends State<GiveFeedbackPage> {
 
             TextField(
               controller: commentController,
+              cursorColor: Colors.grey,
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: "Write your feedback...",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey, width: 2),
                 ),
               ),
             ),
