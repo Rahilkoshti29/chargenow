@@ -400,7 +400,7 @@ class _UserHomePage extends State<UserHomePage> {
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _offerBox(Icons.ev_station, 'Doorstep', 'Charging'),
+              child: _offerBox(Icons.ev_station, 'On-Demand', 'Charging'),
             ),
           ],
         ),

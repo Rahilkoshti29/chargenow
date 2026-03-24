@@ -175,7 +175,7 @@ class _OperatorBookingState extends State<OperatorBooking> {
               const SizedBox(width: 8),
 
               const Text(
-                "Request Time : ",
+                "Booking Time : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
 

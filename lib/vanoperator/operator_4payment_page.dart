@@ -144,6 +144,12 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
                     ? "Card"
                     : method == 2
                     ? "UPI"
+                    : method == 3
+                    ? "Net Banking"
+                    : method == 4
+                    ? "Wallet"
+                    : method == 5
+                    ? "PayLater"
                     : "Unknown",
               ),
             ],
@@ -177,7 +183,7 @@ class _OperatorPaymentsPageState extends State<OperatorPaymentsPage> {
               const SizedBox(width: 8),
 
               const Text(
-                "Request Time : ",
+                "Payment Time : ",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
 
