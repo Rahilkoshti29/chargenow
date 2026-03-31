@@ -133,8 +133,8 @@ class _RegisterPageState extends State<RegisterPage> {
       final streamedResponse = await request.send();
       final responseBody = await streamedResponse.stream.bytesToString();
 
-      debugPrint("Status Code: ${streamedResponse.statusCode}");
-      debugPrint("Body: $responseBody");
+      //debugPrint("Status Code: ${streamedResponse.statusCode}");
+      //debugPrint("Body: $responseBody");
 
       final data = jsonDecode(responseBody);
 
@@ -205,150 +205,163 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: Color(0xff2ecc71)))
-          : Column(
-              children: [
-                Container(
-                  height: 230,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: primaryGreen,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
-                    ),
-                  ),
-                  child: SafeArea(
-                    bottom: false,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(height: 10),
-                        Text(
-                          "Power Up Your Journey",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            "Set Up Your Profile & Start Charging Smarter",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: 20),
-
-                // ROLE SELECTOR
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    roleChip("User", RegisterType.user),
-                    SizedBox(width: 12),
-                    roleChip("Operator", RegisterType.operator),
-                  ],
-                ),
-
-                SizedBox(height: 20),
-
-                //  FORM
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Form(
-                      key: _formKey,
-                      child: selectedType == RegisterType.user
-                          ? userForm()
-                          : operatorForm(),
-                    ),
-                  ),
-                ),
-
-                //  REGISTER BUTTON
-                Padding(
-                  padding: EdgeInsets.all(20),
+          ? Center(child: CircularProgressIndicator(color: primaryGreen))
+          : SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      SizedBox(
-                        width: double.infinity,
-                        height: 55,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryGreen,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ), //
-
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              if (selectedType == RegisterType.user) {
-                                registerUser(context); //  User API
-                              } else {
-                                registerOperator(context);
-                              }
-                            }
-                          },
-                          child: Text(
-                            selectedType == RegisterType.user
-                                ? "Register as User"
-                                : "Register as Operator",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 14),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => LoginPage()),
-                          );
-                        },
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(text: "Already have an account? "),
-                              TextSpan(
-                                text: "Login",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff2ecc71),
-                                  decoration: TextDecoration.underline,
-                                  decorationThickness: 1.5,
-                                  decorationColor: Color(0xff2ecc71),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _topHeader(),
+                      const SizedBox(height: 20),
+                      _roleSelector(),
+                      const SizedBox(height: 20),
+                      _formSection(),
+                      _bottomSection(),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            );
+          },
+        ),
+      ),
+
+
     );
   }
+  Widget _topHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+      decoration: BoxDecoration(
+        color: primaryGreen,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
+        ),
+      ),
+      child: Column(
+        children: const [
+          Text(
+            "Power Up Your Journey",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Set Up Your Profile & Start Charging Smarter",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _roleSelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        roleChip("User", RegisterType.user),
+        const SizedBox(width: 12),
+        roleChip("Operator", RegisterType.operator),
+      ],
+    );
+  }
+  Widget _formSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Form(
+        key: _formKey,
+        child: selectedType == RegisterType.user
+            ? userForm()
+            : operatorForm(),
+      ),
+    );
+  }
+  Widget _bottomSection() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 55,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryGreen,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  if (selectedType == RegisterType.user) {
+                    registerUser(context);
+                  } else {
+                    registerOperator(context);
+                  }
+                }
+              },
+              child: Text(
+                selectedType == RegisterType.user
+                    ? "Register as User"
+                    : "Register as Operator",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => LoginPage()),
+              );
+            },
+            child: Center(
+              child: Text.rich(
+                TextSpan(
+                  text: "Already have an account? ",
+                  children: [
+                    TextSpan(
+                      text: "Login",
+                      style: TextStyle(
+                        color: Color(0xff2ecc71),
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                        decorationThickness: 1.5,
+                        decorationColor: Color(0xff2ecc71),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   //  ROLE CHIP
   Widget roleChip(String text, RegisterType type) {
@@ -433,25 +446,25 @@ class _RegisterPageState extends State<RegisterPage> {
               return "Password is required";
             }
 
-            // if (v.length < 8) {
-            //   return "Must be at least 8 characters";
-            // }
-            //
-            // if (!RegExp(r'[A-Z]').hasMatch(v)) {
-            //   return "Must contain at least 1 uppercase letter";
-            // }
-            //
-            // if (!RegExp(r'[a-z]').hasMatch(v)) {
-            //   return "Must contain at least 1 lowercase letter";
-            // }
-            //
-            // if (!RegExp(r'[0-9]').hasMatch(v)) {
-            //   return "Must contain at least 1 number";
-            // }
-            //
-            // if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
-            //   return "Must contain at least 1 special character (!@#\$&*~)";
-            // }
+            if (v.length < 8) {
+              return "Must be at least 8 characters";
+            }
+
+            if (!RegExp(r'[A-Z]').hasMatch(v)) {
+              return "Must contain at least 1 uppercase letter";
+            }
+
+            if (!RegExp(r'[a-z]').hasMatch(v)) {
+              return "Must contain at least 1 lowercase letter";
+            }
+
+            if (!RegExp(r'[0-9]').hasMatch(v)) {
+              return "Must contain at least 1 number";
+            }
+
+            if (!RegExp(r'[!@#\$&*~]').hasMatch(v)) {
+              return "Must contain at least 1 special character (!@#\$&*~)";
+            }
 
             return null;
           },
