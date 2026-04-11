@@ -14,7 +14,7 @@
     <application
 
 
-    android:label="chargenow"
+    android:label="ChargeNow"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data
